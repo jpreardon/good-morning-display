@@ -15,6 +15,7 @@ var updateWeather = function() {
 			$("#temperature").html(data.current_observation.temp_f+'&deg;');
 			$("#current-weather").html(data.current_observation.weather);
 			$("#weather-icon").attr("src", iconURL + data.current_observation.icon + ".gif");
+			$("#humidity-feel").html("Humidity " + data.current_observation.relative_humidity + ", feels like " + data.current_observation.feelslike_f + "&deg;");
 			$("#todays-forecast").html(data.forecast.txt_forecast.forecastday[0].fcttext);
 			$("#todays-forecast-short").html(data.forecast.simpleforecast.forecastday[0].high.fahrenheit + "&deg;/" + data.forecast.simpleforecast.forecastday[0].low.fahrenheit + "&deg;");
 			$("#todays-day").html(data.forecast.txt_forecast.forecastday[0].title);
@@ -39,16 +40,36 @@ var updateTransit = function() {
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
 		
-		// $("#123-icon").html(data[0].name[0]);
+		$("#123-icon").attr("alt", data[0].name[0]);
 		$("#123-status").html(data[0].status[0]);
+		$("#123-status").attr("class", data[0].status[0].replace(' ','-').toLowerCase());
 		$("#123-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[0].text[0]);
-		// $("#BDFM-icon").html(data[4].name[0]);
+		if (data[0].status[0] == "GOOD SERVICE") {
+			$("#123-status").attr("onClick", "");
+		} else {
+			$("#123-status").attr("onClick", "show123Text();");
+		}
+		
+		$("#BDFM-icon").attr("alt", data[4].name[0]);
 		$("#BDFM-status").html(data[4].status[0]);
+		$("#BDFM-status").attr("class", data[4].status[0].replace(' ','-').toLowerCase());
 		$("#BDFM-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[4].text[0]);
-		// $("#NQR-icon").html(data[8].name[0]);
+		if (data[4].status[0] == "GOOD SERVICE") {
+			$("#BDFM-status").attr("onClick", "");
+		} else {
+			$("#BDFM-status").attr("onClick", "showBDFMText();");
+		}
+		
+		$("#NQR-icon").attr("alt", data[8].name[0]);
 		$("#NQR-status").html(data[8].status[0]);
+		$("#NQR-status").attr("class", data[8].status[0].replace(' ','-').toLowerCase());
 		$("#NQR-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[8].text[0]);
 		$("#transit-update-time").html("as of " + date.toLocaleTimeString());
+		if (data[8].status[0] == "GOOD SERVICE") {
+			$("#NQR-status").attr("onClick", "");
+		} else {
+			$("#NQR-status").attr("onClick", "showNQRText();");
+		}
 	});
 }
 
