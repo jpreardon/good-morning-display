@@ -110,6 +110,10 @@
 	color: gray;
 }
 
+.planned-work, .good-service, .sandy-reroute, .suspended, .service-change {
+	text-transform: capitalize;
+}
+
 .planned-work {
 	color: #996600;
 }

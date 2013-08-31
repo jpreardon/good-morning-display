@@ -41,7 +41,7 @@ var updateTransit = function() {
 		var date = new Date();
 		
 		$("#123-icon").attr("alt", data[0].name[0]);
-		$("#123-status").html(data[0].status[0]);
+		$("#123-status").html(data[0].status[0].toLowerCase());
 		$("#123-status").attr("class", data[0].status[0].replace(' ','-').toLowerCase());
 		$("#123-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[0].text[0]);
 		if (data[0].status[0] == "GOOD SERVICE") {
@@ -51,7 +51,7 @@ var updateTransit = function() {
 		}
 		
 		$("#BDFM-icon").attr("alt", data[4].name[0]);
-		$("#BDFM-status").html(data[4].status[0]);
+		$("#BDFM-status").html(data[4].status[0].toLowerCase());
 		$("#BDFM-status").attr("class", data[4].status[0].replace(' ','-').toLowerCase());
 		$("#BDFM-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[4].text[0]);
 		if (data[4].status[0] == "GOOD SERVICE") {
@@ -61,7 +61,7 @@ var updateTransit = function() {
 		}
 		
 		$("#NQR-icon").attr("alt", data[8].name[0]);
-		$("#NQR-status").html(data[8].status[0]);
+		$("#NQR-status").html(data[8].status[0].toLowerCase());
 		$("#NQR-status").attr("class", data[8].status[0].replace(' ','-').toLowerCase());
 		$("#NQR-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[8].text[0]);
 		$("#transit-update-time").html("as of " + date.toLocaleTimeString());
