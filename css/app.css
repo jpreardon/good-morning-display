@@ -1,0 +1,109 @@
+/** Application specific sylings for Good Morning Display **/
+
+.subwayIcon123 {
+	width: 81px;
+	height: 23px;
+	background: url(../img/subway-icons.png) 0 0;
+}
+
+.subwayIconBDFM {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -45px;
+}
+
+.subwayIconNQR {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -22px;
+}
+
+#weather-container {
+	text-align: center;
+	margin-top: 1em;
+}
+
+#transit-status {
+	
+.subwayIcon123 {
+        width: 81px;
+        height: 23px;
+        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
+}
+
+
+.subwayIcon123 {
+        width: 81px;
+        height: 23px;
+        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
+}
+margin
+.subwayIcon123 {
+        width: 81px;
+        height: 23px;
+        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
+}
+
+
+.subwayIcon123 {
+        width: 81px;
+        height: 23px;
+        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
+}
+-top: 1em;
+	margin-bottom: 1em;
+	text-align: left;
+}
+
+#transit-status table {
+	width: 100%;
+}
+
+.weather-icon {
+	font-size: 10em;
+}	
+
+
+.form-buttons {
+	float: right;
+}
+
+.no-settings-alert {
+	display: none;
+}
+
+#weather-update-time, #transit-update-time {
+	font-size: 0.40em;
+	color: silver;
+}
+
+.forecast {
+	text-align: left;
+	font-weight: bold;
+	font-size: smaller;
+	padding: 0;
+}
+
+.forecast-header {
+	background-color: silver;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+}
+
+.short-day {
+	font-size: .85em;
+	color: gray;
+	text-transform: uppercase;
+	text-align: center;
+	padding: 0;
+}
+
+#settings-container {
+	text-align: right;
+}
+
+#settings-button {
+	color: silver;
+	font-size: 1.5em;
+	padding: 0;
+}
