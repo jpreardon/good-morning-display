@@ -36,7 +36,7 @@ var updateWeather = function() {
 }
 
 var updateTransit = function() {
-	$.getJSON("mta-status/service_status.py", function(data) {
+	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
 		
 		// $("#123-icon").html(data[0].name[0]);
