@@ -12,11 +12,10 @@ var updateWeather = function() {
 		var iconURL = "http://icons.wxug.com/i/c/j/";
 
 		$.getJSON(queryString, function(data) {
-			console.log(data);
-			
 			var forecasts = new Array();
 			var forecastIndex = 0;
 			
+			// Get the hourly forecasts we want
 			$.each(data.hourly_forecast, function(i, v) {
 			    if (v.FCTTIME.hour == "9" || v.FCTTIME.hour == "13" || v.FCTTIME.hour == "17") {
 					if (forecastIndex < 3) {
@@ -29,6 +28,7 @@ var updateWeather = function() {
 			    }
 			});
 			
+			// Populate the data in the HTML page
 			$("#temperature").html(data.current_observation.temp_f+'&deg;');
 			$("#current-weather").html(data.current_observation.weather);
 			$("#weather-icon").attr("src", iconURL + data.current_observation.icon + ".gif");
@@ -123,6 +123,8 @@ function updateSettings() {
 	}
 }
 
+/** The following functions show additional text when requested **/
+
 function showSettings() {
 	populateSettingsForm();
 	$('#settings').foundation('reveal', 'open');
@@ -140,9 +142,11 @@ function showNQRText() {
 	$('#NQR-text').foundation('reveal', 'open');
 }
 
-function refreshPage() {
+/* This function is here so we can refresh quickly when a device wakes up, but without
+   hitting the APIs every second (or less). */
+function refreshPage() {	
 	date = new Date();
-	// Update the weather information
+	// Update the weather information, if needed
 	if ((!localStorage.getItem("lastWeatherUpdate")) || (Number(localStorage.lastWeatherUpdate) + WEATHER_UPDATE_FREQ < date.getTime())) {
 		// Update weather!
 		updateWeather();
@@ -150,7 +154,7 @@ function refreshPage() {
 		localStorage.lastWeatherUpdate = date.getTime();
 	}
 	
-	// Update the transit information
+	// Update the transit information, if needed
 	if ((!localStorage.getItem("lastTransitUpdate")) || (Number(localStorage.lastTransitUpdate) + TRANSIT_UPDATE_FREQ < date.getTime())) {
 		// Update transit!
 		updateTransit();
