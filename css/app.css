@@ -29,25 +29,6 @@
 	text-align: left;
 }
 
-.subwayIcon123 {
-        width: 81px;
-        height: 23px;
-        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
-}
-
-.subwayIcon123 {
-        width: 81px;
-        height: 23px;
-        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
-}
-
-
-.subwayIcon123 {
-        width: 81px;
-        height: 23px;
-        backround-url(http://new.mta.info/sites/all/modules/custom/statusblock/images/sprite_reg.gif) 0 0;
-}
-
 #transit-status table {
 	width: 100%;
 }
@@ -55,7 +36,6 @@
 .weather-icon {
 	font-size: 10em;
 }	
-
 
 .form-buttons {
 	float: right;
@@ -73,17 +53,10 @@
 	margin: 0;
 }
 
-.forecast {
+.forecast, .forecast p {
 	text-align: left;
 	font-weight: bold;
-	font-size: smaller;
 	padding: 0;
-}
-
-.forecast-header {
-	background-color: silver;
-	padding-top: 0.2em;
-	padding-bottom: 0.2em;
 }
 
 .short-day {
@@ -110,7 +83,7 @@
 	color: gray;
 }
 
-.planned-work, .good-service, .sandy-reroute, .suspended, .service-change {
+.planned-work, .good-service, .sandy-reroute, .suspended, .service-change, .delays {
 	text-transform: capitalize;
 }
 

@@ -7,30 +7,44 @@ var updateWeather = function() {
 		/** Set up a query string for weather underground **/
 		var apiKey = localStorage.api;
 		var zipCode = localStorage.zip;
-		var queryString = "http://api.wunderground.com/api/" + apiKey + "/conditions/forecast/q/" + zipCode + ".json?callback=?";
+		var queryString = "http://api.wunderground.com/api/" + apiKey + "/conditions/forecast/hourly/q/" + zipCode + ".json?callback=?";
 		var date = new Date();
 		var iconURL = "http://icons.wxug.com/i/c/j/";
 
 		$.getJSON(queryString, function(data) {
+			console.log(data);
+			
+			var forecasts = new Array();
+			var forecastIndex = 0;
+			
+			$.each(data.hourly_forecast, function(i, v) {
+			    if (v.FCTTIME.hour == "9" || v.FCTTIME.hour == "13" || v.FCTTIME.hour == "17") {
+					if (forecastIndex < 3) {
+						forecasts[forecastIndex] = v;
+						forecastIndex++;
+					} 
+					else {
+						return false;
+					}
+			    }
+			});
+			
 			$("#temperature").html(data.current_observation.temp_f+'&deg;');
 			$("#current-weather").html(data.current_observation.weather);
 			$("#weather-icon").attr("src", iconURL + data.current_observation.icon + ".gif");
 			$("#humidity-feel").html("Humidity " + data.current_observation.relative_humidity + ", feels like " + data.current_observation.feelslike_f + "&deg;");
-			$("#todays-forecast").html(data.forecast.txt_forecast.forecastday[0].fcttext);
-			$("#todays-forecast-short").html(data.forecast.simpleforecast.forecastday[0].high.fahrenheit + "&deg;/" + data.forecast.simpleforecast.forecastday[0].low.fahrenheit + "&deg;");
-			$("#todays-day").html(data.forecast.txt_forecast.forecastday[0].title);
-			$("#todays-day-short").html(data.forecast.simpleforecast.forecastday[0].date.weekday_short + " " + data.forecast.simpleforecast.forecastday[0].date.ampm);
-			$("#todays-icon").attr("src", iconURL + data.forecast.txt_forecast.forecastday[0].icon + ".gif");
-			$("#tonights-forecast").html(data.forecast.txt_forecast.forecastday[1].fcttext);
-			$("#tonights-forecast-short").html(data.forecast.simpleforecast.forecastday[1].high.fahrenheit + "&deg;/" + data.forecast.simpleforecast.forecastday[1].low.fahrenheit + "&deg;");
-			$("#tonights-day").html(data.forecast.txt_forecast.forecastday[1].title);
-			$("#tonights-day-short").html(data.forecast.simpleforecast.forecastday[1].date.weekday_short + " " + data.forecast.simpleforecast.forecastday[1].date.ampm);
-			$("#tonights-icon").attr("src", iconURL + data.forecast.txt_forecast.forecastday[1].icon + ".gif");
-			$("#tomorrows-forecast").html(data.forecast.txt_forecast.forecastday[2].fcttext);
-			$("#tomorrows-forecast-short").html(data.forecast.simpleforecast.forecastday[2].high.fahrenheit + "&deg;/" + data.forecast.simpleforecast.forecastday[2].low.fahrenheit + "&deg;");
-			$("#tomorrows-day").html(data.forecast.txt_forecast.forecastday[2].title);
-			$("#tomorrows-day-short").html(data.forecast.simpleforecast.forecastday[2].date.weekday_short + " " + data.forecast.simpleforecast.forecastday[2].date.ampm);
-			$("#tomorrows-icon").attr("src", iconURL + data.forecast.txt_forecast.forecastday[2].icon + ".gif");
+			$("#first-forecast").html(forecasts[0].temp.english + "&deg; " + forecasts[0].condition);
+			$("#first-forecast-short").html(forecasts[0].temp.english + "&deg;");
+			$("#first-day-short").html(forecasts[0].FCTTIME.weekday_name_abbrev + " " + forecasts[0].FCTTIME.hour_padded + ":00");
+			$("#first-icon").attr("src", iconURL + forecasts[0].icon + ".gif");
+			$("#second-forecast").html(forecasts[1].temp.english + "&deg; " + forecasts[1].condition);
+			$("#second-forecast-short").html(forecasts[1].temp.english + "&deg;");
+			$("#second-day-short").html(forecasts[1].FCTTIME.weekday_name_abbrev + " " + forecasts[1].FCTTIME.hour_padded + ":00");
+			$("#second-icon").attr("src", iconURL + forecasts[1].icon + ".gif");
+			$("#third-forecast").html(forecasts[2].temp.english + "&deg; " + forecasts[2].condition);
+			$("#third-forecast-short").html(forecasts[2].temp.english + "&deg;");
+			$("#third-day-short").html(forecasts[2].FCTTIME.weekday_name_abbrev + " " + forecasts[2].FCTTIME.hour_padded + ":00");
+			$("#third-icon").attr("src", iconURL + forecasts[2].icon + ".gif");
 			$("#weather-update-time").html("as of " + date.toLocaleTimeString());
 		});
 	}	
