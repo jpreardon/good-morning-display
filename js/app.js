@@ -2,8 +2,9 @@
 var WEATHER_UPDATE_FREQ = 600000; // In milliseconds (every 10 minutes)
 var TRANSIT_UPDATE_FREQ = 60000; // In milliseconds (every minute)
 
+// A big fat function to call the weather API and update the page with data
 var updateWeather = function() {
-	if (weatherDataStored()) {
+	if (dataStored()) {
 		/** Set up a query string for weather underground **/
 		var apiKey = localStorage.api;
 		var zipCode = localStorage.zip;
@@ -50,100 +51,148 @@ var updateWeather = function() {
 	}	
 }
 
+// Look at the transit lines stored in settings and create a table to hold them
+// This should get called on initilization and every time the settings are updated
+function createTransitContainers() {
+	// Remove the existing information
+	$("#transit-table tbody").html("");
+	$("#transit-status-text").html("");
+	
+	// Create an array of the values we want and insert data
+	if (localStorage["transitLines"]) {
+		var transitLines = JSON.parse(localStorage["transitLines"]);
+		var tableRowContent;
+		$.each(transitLines, function (i, v) {
+			tableRowContent = '<tr><td><img width="1" height="1" src="img/trans.gif" id="' + v + '-icon" class="subwayIcon' + v +'"></td>';
+			tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
+			// Add table row
+			$("#transit-table tbody").append(tableRowContent);
+			// Add status text
+			$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>')
+		});
+	}
+}
+
+// The status JSON is kind of a mess in that it is an array of arrays, but not
+// very well formed. This function returns the desired object for a given line.
+function selectTransitStatus(line, data) {
+	var returnValue;
+	$.each(data, function(i, v) {
+	    if (v.name[0] == line) {
+			returnValue = v;
+	        return;
+	    }
+	});
+	return returnValue;
+}
+
+// A big fat function to call the transit API and updat the page
 var updateTransit = function() {
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
-		
-		$("#123-icon").attr("alt", data[0].name[0]);
-		$("#123-status").html(data[0].status[0].toLowerCase());
-		$("#123-status").attr("class", data[0].status[0].replace(' ','-').toLowerCase());
-		$("#123-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[0].text[0]);
-		if (data[0].status[0] == "GOOD SERVICE") {
-			$("#123-status").attr("onClick", "");
-		} else {
-			$("#123-status").attr("onClick", "show123Text();");
+		var statusObject;
+		// Get the list of lines we are supposed to show
+		if (localStorage["transitLines"]) {
+			var transitLines = JSON.parse(localStorage["transitLines"]);
+			// Loop through the list and update the row
+			$.each(transitLines, function (i, v) {
+				// Get the proper JSON object for the line in question
+				statusObject = selectTransitStatus(v, data);
+				$("#" + v + "-icon").attr("alt", statusObject.name[0]);
+				$("#" + v + "-status").html(statusObject.status[0].toLowerCase());
+				$("#" + v + "-status").attr("class", statusObject.status[0].replace(' ','-').toLowerCase());
+				$("#" + v + "-text").html("<a class='close-reveal-modal'>&#215;</a>" + statusObject.text[0]);
+				if (statusObject.status[0] == "GOOD SERVICE") {
+					$("#" + v + "-status").attr("onClick", "");
+				} else {
+					$("#" + v + "-status").attr("onClick", "showText('" + v + "');");
+				}
+			});
 		}
-		
-		$("#BDFM-icon").attr("alt", data[4].name[0]);
-		$("#BDFM-status").html(data[4].status[0].toLowerCase());
-		$("#BDFM-status").attr("class", data[4].status[0].replace(' ','-').toLowerCase());
-		$("#BDFM-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[4].text[0]);
-		if (data[4].status[0] == "GOOD SERVICE") {
-			$("#BDFM-status").attr("onClick", "");
-		} else {
-			$("#BDFM-status").attr("onClick", "showBDFMText();");
-		}
-		
-		$("#NQR-icon").attr("alt", data[8].name[0]);
-		$("#NQR-status").html(data[8].status[0].toLowerCase());
-		$("#NQR-status").attr("class", data[8].status[0].replace(' ','-').toLowerCase());
-		$("#NQR-text").html("<a class='close-reveal-modal'>&#215;</a>" + data[8].text[0]);
 		$("#transit-update-time").html("as of " + date.toLocaleTimeString());
-		if (data[8].status[0] == "GOOD SERVICE") {
-			$("#NQR-status").attr("onClick", "");
-		} else {
-			$("#NQR-status").attr("onClick", "showNQRText();");
-		}
 	});
 }
 
+// If settings exist in localStorage, get them and populate the form
 function populateSettingsForm() {
+	// Populate weather information
 	$("#wuapikey").val(localStorage.api);
 	$("#wuzip").val(localStorage.zip);
+	
+	// Populate transit information
+	// Create an array of the values we want, fill it up then fill in the form
+	if (localStorage["transitLines"]) {
+		var transitLines = JSON.parse(localStorage["transitLines"]);
+		$.each(transitLines, function (i, v) {
+			$("#" + v).prop("checked", true);
+		});
+	}
 }
 
-function weatherDataStored() {
-	if ((localStorage.getItem("api") === null) || (localStorage.getItem("zip") === null)) {
+// Check to see if there is data stored in localStorage, this is somewhat mislabeled in that it returns
+// false if any of the datapoints are missing.
+function dataStored() {
+	if ((localStorage.getItem("api") === null) || (localStorage.getItem("zip") === null) || (localStorage.getItem("transitLines") === null)) {
 		return false;
 	} else {
 		return true;
 	}
 }
 
+// Check to see if settings have ever been set, if now, show an error and the settings form.
 function checkSettings() {
-	if (!weatherDataStored()) {
+	if (!dataStored()) {
 		$("#no-settings-alert").show();
-		$('#settings').foundation('reveal', 'open');
+		showSettings();
+		// ('#settings').foundation('reveal', 'open');
 	} else {
 		$("#no-settings-alert").attr("visibility", "hidden");
 		$("#no-settings-alert").hide();
 		return true;
 	}
 }
-	
+
+// Save the settings from the form to localStorage
 function updateSettings() {
+	// Save the weather settings
 	if ($("#wuapikey").val() && $("#wuzip").val()) {
 		localStorage.api = $("#wuapikey").val();
 		localStorage.zip = $("#wuzip").val();
 	}
-	if (weatherDataStored()) {
+	if (dataStored()) {
 		$('#settings').foundation('reveal', 'close');
 		$("#no-settings-alert").hide();
 		updateWeather();
 	}
+	
+	// Save the transit settings
+	// Create an array of the values we want and store it
+	var transitLines = new Array;
+	$("input[name='transitLines[]']:checked").each(function () {
+		transitLines.push($(this).val());
+	});
+	localStorage["transitLines"] = JSON.stringify(transitLines);
+	
+	// Refresh the transit info on the page
+	createTransitContainers();
+	
+	// Update the transit info
+	updateTransit();
 }
 
-/** The following functions show additional text when requested **/
-
+// Show the settings form, this function makes sure it is populated before showing
 function showSettings() {
 	populateSettingsForm();
 	$('#settings').foundation('reveal', 'open');
 }
 
-function show123Text() {
-	$('#123-text').foundation('reveal', 'open');
+// Show the detailed status information for a particular line
+function showText(line) {
+	$('#' + line + '-text').foundation('reveal', 'open');
 }
 
-function showBDFMText() {
-	$('#BDFM-text').foundation('reveal', 'open');
-}
-
-function showNQRText() {
-	$('#NQR-text').foundation('reveal', 'open');
-}
-
-/* This function is here so we can refresh quickly when a device wakes up, but without
-   hitting the APIs every second (or less). */
+// This function is here so we can refresh quickly when a device wakes up, but without
+// hitting the APIs every second (or less).
 function refreshPage() {	
 	date = new Date();
 	// Update the weather information, if needed
@@ -165,6 +214,7 @@ function refreshPage() {
 
 // Iniitialize the page
 checkSettings();
+createTransitContainers();
 updateWeather();
 updateTransit();
 

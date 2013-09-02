@@ -1,23 +1,5 @@
 /** Application specific sylings for Good Morning Display **/
 
-.subwayIcon123 {
-	width: 81px;
-	height: 23px;
-	background: url(../img/subway-icons.png) 0 0;
-}
-
-.subwayIconBDFM {
-        width: 81px;
-        height: 23px;
-        background: url(../img/subway-icons.png) 0 -45px;
-}
-
-.subwayIconNQR {
-        width: 81px;
-        height: 23px;
-        background: url(../img/subway-icons.png) 0 -22px;
-}
-
 #weather-container {
 	text-align: center;
 	margin-top: 1em;
@@ -83,6 +65,76 @@
 	color: gray;
 }
 
+/** Transit Icons **/
+
+.subwayIcon123 {
+	width: 81px;
+	height: 23px;
+	background: url(../img/subway-icons.png) 0 0;
+}
+
+.subwayIconNQR {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -22px;
+}
+
+.subwayIconBDFM {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -45px;
+}
+
+.subwayIcon7 {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -68px;
+}
+
+.subwayIconL {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -91px;
+}
+
+.subwayIconSIR {
+        width: 81px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 0 -114px;
+}
+
+.subwayIcon456 {
+        width: 60px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 60px 0;
+}
+
+.subwayIconACE {
+        width: 60px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 60px -22px;
+}
+
+.subwayIconJZ {
+        width: 60px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 60px -45px;
+}
+
+.subwayIconG {
+        width: 60px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 60px -68px;
+}
+
+.subwayIconS {
+        width: 60px;
+        height: 23px;
+        background: url(../img/subway-icons.png) 60px -91px;
+}
+
+/** Transit status colors **/
+
 .planned-work, .good-service, .sandy-reroute, .suspended, .service-change, .delays {
 	text-transform: capitalize;
 }
@@ -106,3 +158,4 @@
 .suspended, .service-change {
 	color: #960;
 }
+

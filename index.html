@@ -78,20 +78,9 @@
 		<div id="transit-container" class="small-12 columns">
 			<div class="row">
 				<div class="small-11 small-centered columns" id="transit-status">
-					<table>
+					<table id="transit-table">
 						<tbody>
-							<tr>
-								<td><img width="1" height="1" src="img/trans.gif" id="123-icon" class="subwayIcon123"></td>
-								<td><a id="123-status" onClick="">N/A</a></td>
-							</tr>
-							<tr>
-								<td><img width="1" height="1" src="img/trans.gif" id="BDFM-icon" class="subwayIconBDFM"></td>
-								<td><a id="BDFM-status" onClick="showBDFMText();">N/A</a></td>
-							</tr>
-							<tr>
-								<td><img width="1" height="1" src="img/trans.gif" id="NQR-icon" class="subwayIconNQR"></td>
-								<td><a id="NQR-status" onClick="showNQRText();">N/A</a></td>
-							</tr>
+							
 						</tbody>
 					</table>
 				</div>
@@ -162,16 +151,34 @@
 
 	<div id="settings" class="reveal-modal">
 		<h2>Settings</h2>
-		<form id="settings-form" data-abide>
+		<form id="settings-form" class="custom" data-abide>
 			<fieldset>
 				<legend>Weather</legend>
 				<div class="row">
-					<div class="large-6 columns">
+					<div class="small-6 columns">
 						<label>Weather Underground API Key</label>
 						<input type="text" id="wuapikey" value="" required>
 						<label>Zip Code</label>
 						<input type="text" id="wuzip" value="" required>
 					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend>Transit</legend>
+				<div class="large-6 columns">
+					<label for="123"><input type="checkbox" id="123" name="transitLines[]" value="123"> 123</label>
+					<label for="456"><input type="checkbox" id="456" name="transitLines[]" value="456"> 456</label>
+					<label for="7"><input type="checkbox" id="7" name="transitLines[]" value="7" > 7</label>
+					<label for="ACE"><input type="checkbox" id="ACE" name="transitLines[]" value="ACE"> ACE</label>
+					<label for="BDFM"><input type="checkbox" id="BDFM" name="transitLines[]" value="BDFM" > BDFM</label>
+					<label for="G"><input type="checkbox" id="G" name="transitLines[]" value="G"> G</label>
+				</div>
+				<div class="large-6 columns">
+					<label for="JZ"><input type="checkbox" id="JZ" name="transitLines[]" value="JZ"> JZ</label>
+					<label for="L"><input type="checkbox" id="L" name="transitLines[]" value="L"> L</label>
+					<label for="NQR"><input type="checkbox" id="NQR" name="transitLines[]" value="NQR"> NQR</label>
+					<label for="S"><input type="checkbox" id="S" name="transitLines[]" value="S"> S</label>
+					<label for="SIR"><input type="checkbox" id="SIR" name="transitLines[]" value="SIR"> SIR</label>
 				</div>
 			</fieldset>
 		</form>
@@ -189,9 +196,8 @@
 		</div>
 	</div>
 	
-	<div id="123-text" class="reveal-modal"></div>
-	<div id="BDFM-text" class="reveal-modal"></div>
-	<div id="NQR-text" class="reveal-modal"></div>
+	<div id="transit-status-text">
+	</div>
 	<script src="js/app.js" type="text/javascript"></script>
 </body>
 </html>
