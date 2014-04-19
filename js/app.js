@@ -15,20 +15,20 @@ var updateWeather = function() {
 		$.getJSON(queryString, function(data) {
 			var forecasts = new Array();
 			var forecastIndex = 0;
-			
+
 			// Get the hourly forecasts we want
 			$.each(data.hourly_forecast, function(i, v) {
 			    if (v.FCTTIME.hour == "9" || v.FCTTIME.hour == "13" || v.FCTTIME.hour == "17") {
 					if (forecastIndex < 3) {
 						forecasts[forecastIndex] = v;
 						forecastIndex++;
-					} 
+					}
 					else {
 						return false;
 					}
 			    }
 			});
-			
+
 			// Populate the data in the HTML page
 			$("#temperature").html(data.current_observation.temp_f+'&deg;');
 			$("#current-weather").html(data.current_observation.weather);
@@ -48,7 +48,7 @@ var updateWeather = function() {
 			$("#third-icon").attr("src", iconURL + forecasts[2].icon + ".gif");
 			$("#weather-update-time").html("as of " + date.toLocaleTimeString());
 		});
-	}	
+	}
 }
 
 // Look at the transit lines stored in settings and create a table to hold them
@@ -57,18 +57,27 @@ function createTransitContainers() {
 	// Remove the existing information
 	$("#transit-table tbody").html("");
 	$("#transit-status-text").html("");
-	
+
 	// Create an array of the values we want and insert data
 	if (localStorage["transitLines"]) {
 		var transitLines = JSON.parse(localStorage["transitLines"]);
 		var tableRowContent;
 		$.each(transitLines, function (i, v) {
-			tableRowContent = '<tr><td><img width="1" height="1" src="img/trans.gif" id="' + v + '-icon" class="subwayIcon' + v +'"></td>';
-			tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
-			// Add table row
-			$("#transit-table tbody").append(tableRowContent);
-			// Add status text
-			$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>')
+			// TODO: This is really bad design, but I just want it to work (famous last words)
+			if (v != "NJT158") {
+				tableRowContent = '<tr><td><img width="1" height="1" src="img/trans.gif" id="' + v + '-icon" class="subwayIcon' + v +'"></td>';
+				tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
+				// Add table row
+				$("#transit-table tbody").append(tableRowContent);
+				// Add status text
+				$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>');
+			} else {
+				// In this area, we are dealing with the bus, we need to display different information here
+				tableRowContent = '<tr><td>158 New York</td>';
+				tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
+				// Add table row
+				$("#transit-table tbody").append(tableRowContent);
+			}
 		});
 	}
 }
@@ -86,7 +95,7 @@ function selectTransitStatus(line, data) {
 	return returnValue;
 }
 
-// A big fat function to call the transit API and updat the page
+// A big fat function to call the transit API and update the page
 var updateTransit = function() {
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
@@ -118,7 +127,7 @@ function populateSettingsForm() {
 	// Populate weather information
 	$("#wuapikey").val(localStorage.api);
 	$("#wuzip").val(localStorage.zip);
-	
+
 	// Populate transit information
 	// Create an array of the values we want, fill it up then fill in the form
 	if (localStorage["transitLines"]) {
@@ -164,7 +173,7 @@ function updateSettings() {
 		$("#no-settings-alert").hide();
 		updateWeather();
 	}
-	
+
 	// Save the transit settings
 	// Create an array of the values we want and store it
 	var transitLines = new Array;
@@ -172,10 +181,10 @@ function updateSettings() {
 		transitLines.push($(this).val());
 	});
 	localStorage["transitLines"] = JSON.stringify(transitLines);
-	
+
 	// Refresh the transit info on the page
 	createTransitContainers();
-	
+
 	// Update the transit info
 	updateTransit();
 }
@@ -193,7 +202,7 @@ function showText(line) {
 
 // This function is here so we can refresh quickly when a device wakes up, but without
 // hitting the APIs every second (or less).
-function refreshPage() {	
+function refreshPage() {
 	date = new Date();
 	// Update the weather information, if needed
 	if ((!localStorage.getItem("lastWeatherUpdate")) || (Number(localStorage.lastWeatherUpdate) + WEATHER_UPDATE_FREQ < date.getTime())) {
@@ -202,7 +211,7 @@ function refreshPage() {
 		// Set the last update time
 		localStorage.lastWeatherUpdate = date.getTime();
 	}
-	
+
 	// Update the transit information, if needed
 	if ((!localStorage.getItem("lastTransitUpdate")) || (Number(localStorage.lastTransitUpdate) + TRANSIT_UPDATE_FREQ < date.getTime())) {
 		// Update transit!
@@ -220,4 +229,3 @@ updateTransit();
 
 // Refresh every second
 setInterval(refreshPage, 1000);
-
