@@ -156,31 +156,43 @@
 				<legend>Weather</legend>
 				<div class="row">
 					<div class="small-6 columns">
-						<label>Weather Underground API Key</label>
+						<label for="wuapikey">Weather Underground API Key</label>
 						<input type="text" id="wuapikey" value="" required>
-						<label>Zip Code</label>
+						<label for="wuzip">Zip Code</label>
 						<input type="text" id="wuzip" value="" required>
 					</div>
 				</div>
 			</fieldset>
 			<fieldset>
 				<legend>Transit</legend>
-				<div class="large-6 columns">
-					<label for="123"><input type="checkbox" id="123" name="transitLines[]" value="123"> 123</label>
-					<label for="456"><input type="checkbox" id="456" name="transitLines[]" value="456"> 456</label>
-					<label for="7"><input type="checkbox" id="7" name="transitLines[]" value="7" > 7</label>
-					<label for="ACE"><input type="checkbox" id="ACE" name="transitLines[]" value="ACE"> ACE</label>
-					<label for="BDFM"><input type="checkbox" id="BDFM" name="transitLines[]" value="BDFM" > BDFM</label>
-					<label for="G"><input type="checkbox" id="G" name="transitLines[]" value="G"> G</label>
-				</div>
-				<div class="large-6 columns">
-					<label for="JZ"><input type="checkbox" id="JZ" name="transitLines[]" value="JZ"> JZ</label>
-					<label for="L"><input type="checkbox" id="L" name="transitLines[]" value="L"> L</label>
-					<label for="NQR"><input type="checkbox" id="NQR" name="transitLines[]" value="NQR"> NQR</label>
-					<label for="S"><input type="checkbox" id="S" name="transitLines[]" value="S"> S</label>
-					<label for="SIR"><input type="checkbox" id="SIR" name="transitLines[]" value="SIR"> SIR</label>
-          <label for="NJT158"><input type="checkbox" id="NJT158" name="transitLines[]" value="NJT158"> 158 Bus</label>
-				</div>
+        <h6>NYC Subway</h6>
+        <div class="row">
+  				<div class="large-6 columns">
+  					<label for="123"><input type="checkbox" id="123" name="transitLines[]" value="123"> 123</label>
+  					<label for="456"><input type="checkbox" id="456" name="transitLines[]" value="456"> 456</label>
+  					<label for="7"><input type="checkbox" id="7" name="transitLines[]" value="7" > 7</label>
+  					<label for="ACE"><input type="checkbox" id="ACE" name="transitLines[]" value="ACE"> ACE</label>
+  					<label for="BDFM"><input type="checkbox" id="BDFM" name="transitLines[]" value="BDFM" > BDFM</label>
+  					<label for="G"><input type="checkbox" id="G" name="transitLines[]" value="G"> G</label>
+  				</div>
+  				<div class="large-6 columns">
+  					<label for="JZ"><input type="checkbox" id="JZ" name="transitLines[]" value="JZ"> JZ</label>
+  					<label for="L"><input type="checkbox" id="L" name="transitLines[]" value="L"> L</label>
+  					<label for="NQR"><input type="checkbox" id="NQR" name="transitLines[]" value="NQR"> NQR</label>
+  					<label for="S"><input type="checkbox" id="S" name="transitLines[]" value="S"> S</label>
+  					<label for="SIR"><input type="checkbox" id="SIR" name="transitLines[]" value="SIR"> SIR</label>
+  				</div>
+        </div>
+        <h6>NJT Bus</h6>
+        <div class="row">
+          <div class="large-3 columns end">
+            <label for="njttrack"><input type="checkbox" id="njttrack"> Track a Bus</label>
+            <label for="njtstop">Stop Number</label>
+            <input type="text" id="njtstop" value="" required>
+            <label for="njtroute">Route Number</label>
+            <input type="text" id="njtroute" value="" required>
+          </div>
+        </div>
 			</fieldset>
 		</form>
 		<div class="row">

@@ -63,22 +63,18 @@ function createTransitContainers() {
 		var transitLines = JSON.parse(localStorage["transitLines"]);
 		var tableRowContent;
 		$.each(transitLines, function (i, v) {
-			// TODO: This is really bad design, but I just want it to work (famous last words)
-			if (v != "NJT158") {
-				tableRowContent = '<tr><td><img width="1" height="1" src="img/trans.gif" id="' + v + '-icon" class="subwayIcon' + v +'"></td>';
-				tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
-				// Add table row
-				$("#transit-table tbody").append(tableRowContent);
-				// Add status text
-				$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>');
-			} else {
-				// In this area, we are dealing with the bus, we need to display different information here
-				tableRowContent = '<tr><td><strong>158 New York</strong></td>';
-				tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
-				// Add table row
-				$("#transit-table tbody").append(tableRowContent);
-			}
+			tableRowContent = '<tr><td><img width="1" height="1" src="img/trans.gif" id="' + v + '-icon" class="subwayIcon' + v +'"></td>';
+			tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
+			// Add table row
+			$("#transit-table tbody").append(tableRowContent);
+			// Add status text
+			$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>');
 		});
+		// In this area, we are dealing with the bus, we need to display different information here
+		tableRowContent = '<tr><td><strong>' + localStorage.route + ' Bus</strong></td>';
+		tableRowContent = tableRowContent + '<td><a id="bus-status" onClick="">N/A</a></td></tr>';
+		// Add table row
+		$("#transit-table tbody").append(tableRowContent);
 	}
 }
 
@@ -98,15 +94,16 @@ function selectTransitStatus(line, data) {
 // A big fat function to call the transit API and update the page
 var updateTransit = function() {
 	// TODO NJT Should be happening in its own funtion, but adding here for now
-	$.getJSON("cgi-bin/njt_service_status.py", function(data) {
+	var njtUrl = "cgi-bin/njt_service_status.py?stop=" + localStorage.stop + "&route=" + localStorage.route;
+	$.getJSON(njtUrl, function(data) {
 		if (data.noPredictionMessage) {
-			$("#NJT158-status").html("Take your time...");
-			$("#NJT158-status").attr("class", "planned-work");
+			$("#bus-status").html("Take your time...");
+			$("#bus-status").attr("class", "planned-work");
 		} else if (data.pre) {
-			$("#NJT158-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
-			$("#NJT158-status").attr("class", "good-service");
+			$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
+			$("#bus-status").attr("class", "good-service");
 		} else {
-			$("#NJT158-status").html("Unavailable");
+			$("#bus-status").html("Unavailable");
 		}
 	});
 
@@ -119,17 +116,13 @@ var updateTransit = function() {
 			// Loop through the list and update the row
 			$.each(transitLines, function (i, v) {
 				// Get the proper JSON object for the line in question
-				if (v != "NJT158") {
-					statusObject = selectTransitStatus(v, data);
-					$("#" + v + "-icon").attr("alt", statusObject.name[0]);
-					$("#" + v + "-status").html(statusObject.status[0].toLowerCase());
-					$("#" + v + "-status").attr("class", statusObject.status[0].replace(' ','-').toLowerCase());
-					$("#" + v + "-text").html("<a class='close-reveal-modal'>&#215;</a>" + statusObject.text[0]);
-					if (statusObject.status[0] == "GOOD SERVICE") {
-						$("#" + v + "-status").attr("onClick", "");
-					} else {
-						$("#" + v + "-status").attr("onClick", "showText('" + v + "');");
-					}
+				statusObject = selectTransitStatus(v, data);
+				$("#" + v + "-icon").attr("alt", statusObject.name[0]);
+				$("#" + v + "-status").html(statusObject.status[0].toLowerCase());
+				$("#" + v + "-status").attr("class", statusObject.status[0].replace(' ','-').toLowerCase());
+				$("#" + v + "-text").html("<a class='close-reveal-modal'>&#215;</a>" + statusObject.text[0]);
+				if (statusObject.status[0] == "GOOD SERVICE") {
+					$("#" + v + "-status").attr("onClick", "");
 				}
 			});
 		}
@@ -152,6 +145,15 @@ function populateSettingsForm() {
 			$("#" + v).prop("checked", true);
 		});
 	}
+
+	// Populate NJT Information
+	if (localStorage.trackBus == "TRUE") {
+		$("#njttrack").prop("checked", true);
+	} else {
+		$("#njttrack").prop("checked", false);
+	}
+	$("#njtstop").val(localStorage.stop);
+	$("#njtroute").val(localStorage.route);
 }
 
 // Check to see if there is data stored in localStorage, this is somewhat mislabeled in that it returns
@@ -197,6 +199,15 @@ function updateSettings() {
 		transitLines.push($(this).val());
 	});
 	localStorage["transitLines"] = JSON.stringify(transitLines);
+
+	// Save the NJT bus settings
+	if ($("#njttrack").is(":checked")) {
+		localStorage.trackBus = "TRUE";
+	} else {
+		localStorage.trackBus = "FALSE";
+	}
+	localStorage.stop = $("#njtstop").val();
+	localStorage.route = $("#njtroute").val();
 
 	// Refresh the transit info on the page
 	createTransitContainers();
