@@ -71,10 +71,12 @@ function createTransitContainers() {
 			$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>');
 		});
 		// In this area, we are dealing with the bus, we need to display different information here
-		tableRowContent = '<tr><td><strong>' + localStorage.route + ' Bus</strong></td>';
-		tableRowContent = tableRowContent + '<td><a id="bus-status" onClick="">N/A</a></td></tr>';
-		// Add table row
-		$("#transit-table tbody").append(tableRowContent);
+		if (localStorage.trackBus == "TRUE") {
+			tableRowContent = '<tr><td><strong>' + localStorage.route + ' Bus</strong></td>';
+			tableRowContent = tableRowContent + '<td><a id="bus-status" onClick="">N/A</a></td></tr>';
+			// Add table row
+			$("#transit-table tbody").append(tableRowContent);
+		}
 	}
 }
 
@@ -94,18 +96,20 @@ function selectTransitStatus(line, data) {
 // A big fat function to call the transit API and update the page
 var updateTransit = function() {
 	// TODO NJT Should be happening in its own funtion, but adding here for now
-	var njtUrl = "cgi-bin/njt_service_status.py?stop=" + localStorage.stop + "&route=" + localStorage.route;
-	$.getJSON(njtUrl, function(data) {
-		if (data.noPredictionMessage) {
-			$("#bus-status").html("Take your time...");
-			$("#bus-status").attr("class", "planned-work");
-		} else if (data.pre) {
-			$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
-			$("#bus-status").attr("class", "good-service");
-		} else {
-			$("#bus-status").html("Unavailable");
-		}
-	});
+	if (localStorage.trackBus == "TRUE") {
+		var njtUrl = "cgi-bin/njt_service_status.py?stop=" + localStorage.stop + "&route=" + localStorage.route;
+		$.getJSON(njtUrl, function(data) {
+			if (data.noPredictionMessage) {
+				$("#bus-status").html("Take your time...");
+				$("#bus-status").attr("class", "planned-work");
+			} else if (data.pre) {
+				$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
+				$("#bus-status").attr("class", "good-service");
+			} else {
+				$("#bus-status").html("Unavailable");
+			}
+		});
+  }
 
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
