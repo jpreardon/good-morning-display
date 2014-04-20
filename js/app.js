@@ -73,7 +73,7 @@ function createTransitContainers() {
 				$("#transit-status-text").append('<div id="' + v + '-text" class="reveal-modal"></div>');
 			} else {
 				// In this area, we are dealing with the bus, we need to display different information here
-				tableRowContent = '<tr><td>158 New York</td>';
+				tableRowContent = '<tr><td><strong>158 New York</strong></td>';
 				tableRowContent = tableRowContent + '<td><a id="' + v + '-status" onClick="">N/A</a></td></tr>';
 				// Add table row
 				$("#transit-table tbody").append(tableRowContent);
@@ -101,12 +101,13 @@ var updateTransit = function() {
 	$.getJSON("cgi-bin/njt_service_status.py", function(data) {
 		if (data.noPredictionMessage) {
 			$("#NJT158-status").html("Take your time...");
+			$("#NJT158-status").attr("class", "planned-work");
 		} else if (data.pre) {
 			$("#NJT158-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
+			$("#NJT158-status").attr("class", "good-service");
 		} else {
 			$("#NJT158-status").html("Unavailable");
 		}
-
 	});
 
 	$.getJSON("cgi-bin/service_status.py", function(data) {
