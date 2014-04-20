@@ -97,6 +97,18 @@ function selectTransitStatus(line, data) {
 
 // A big fat function to call the transit API and update the page
 var updateTransit = function() {
+	// TODO NJT Should be happening in its own funtion, but adding here for now
+	$.getJSON("cgi-bin/njt_service_status.py", function(data) {
+		if (data.noPredictionMessage) {
+			$("#NJT158-status").html("Take your time...");
+		} else if (data.pre) {
+			$("#NJT158-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
+		} else {
+			$("#NJT158-status").html("Unavailable");
+		}
+
+	});
+
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
 		var statusObject;
@@ -106,18 +118,21 @@ var updateTransit = function() {
 			// Loop through the list and update the row
 			$.each(transitLines, function (i, v) {
 				// Get the proper JSON object for the line in question
-				statusObject = selectTransitStatus(v, data);
-				$("#" + v + "-icon").attr("alt", statusObject.name[0]);
-				$("#" + v + "-status").html(statusObject.status[0].toLowerCase());
-				$("#" + v + "-status").attr("class", statusObject.status[0].replace(' ','-').toLowerCase());
-				$("#" + v + "-text").html("<a class='close-reveal-modal'>&#215;</a>" + statusObject.text[0]);
-				if (statusObject.status[0] == "GOOD SERVICE") {
-					$("#" + v + "-status").attr("onClick", "");
-				} else {
-					$("#" + v + "-status").attr("onClick", "showText('" + v + "');");
+				if (v != "NJT158") {
+					statusObject = selectTransitStatus(v, data);
+					$("#" + v + "-icon").attr("alt", statusObject.name[0]);
+					$("#" + v + "-status").html(statusObject.status[0].toLowerCase());
+					$("#" + v + "-status").attr("class", statusObject.status[0].replace(' ','-').toLowerCase());
+					$("#" + v + "-text").html("<a class='close-reveal-modal'>&#215;</a>" + statusObject.text[0]);
+					if (statusObject.status[0] == "GOOD SERVICE") {
+						$("#" + v + "-status").attr("onClick", "");
+					} else {
+						$("#" + v + "-status").attr("onClick", "showText('" + v + "');");
+					}
 				}
 			});
 		}
+
 		$("#transit-update-time").html("as of " + date.toLocaleTimeString());
 	});
 }
