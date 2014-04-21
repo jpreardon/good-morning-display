@@ -1,10 +1,12 @@
 #Good Morning Display
 
-This is simple display that shows weather NYC and NJ transit information. It was created mostly as a proof of concept and is very much a work in progress. **Proceed at your own risk**. 
+This is simple display that shows weather NYC and NJ transit information. It was created mostly as a proof of concept and is very much a work in progress. **Proceed at your own risk**.
 
 Currently, it looks best on a small, smartphone screen. Although, it should work fine on larger displays. It uses local storage, so you'll need a modern browser.
 
 Read more here: [Good Morning Display](http://jpreardon.com/projects/good-morning-display/).
+
+![Good Morning Display Screenshot](img/screenshot.png)
 
 ##Instructions
 
