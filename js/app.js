@@ -103,8 +103,13 @@ var updateTransit = function() {
 				$("#bus-status").html("Take your time...");
 				$("#bus-status").attr("class", "planned-work");
 			} else if (data.pre) {
-				$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
-				$("#bus-status").attr("class", "good-service");
+				if (data.pre[0].pt[0]) {
+					$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
+					$("#bus-status").attr("class", "good-service");
+				} else {
+					$("#bus-status").html(data.pre[0].pu[0]);
+					$("#bus-status").attr("class", "delays");
+				}
 			} else {
 				$("#bus-status").html("Unavailable");
 			}
