@@ -1,6 +1,6 @@
 // Global variables, because everybody loves variables
 var WEATHER_UPDATE_FREQ = 600000; // In milliseconds (every 10 minutes)
-var TRANSIT_UPDATE_FREQ = 60000; // In milliseconds (every minute)
+var TRANSIT_UPDATE_FREQ = 120000; // In milliseconds (every 2 minutes)
 
 // A big fat function to call the weather API and update the page with data
 var updateWeather = function() {
