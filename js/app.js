@@ -95,27 +95,6 @@ function selectTransitStatus(line, data) {
 
 // A big fat function to call the transit API and update the page
 var updateTransit = function() {
-	// TODO NJT Should be happening in its own funtion, but adding here for now
-	if (localStorage.trackBus == "TRUE") {
-		var njtUrl = "cgi-bin/njt_service_status.py?stop=" + localStorage.stop + "&route=" + localStorage.route;
-		$.getJSON(njtUrl, function(data) {
-			if (data.noPredictionMessage) {
-				$("#bus-status").html("Take your time...");
-				$("#bus-status").attr("class", "planned-work");
-			} else if (data.pre) {
-				if (data.pre[0].pt[0]) {
-					$("#bus-status").html(data.pre[0].pt[0] + " " + data.pre[0].pu[0]);
-					$("#bus-status").attr("class", "good-service");
-				} else {
-					$("#bus-status").html(data.pre[0].pu[0]);
-					$("#bus-status").attr("class", "delays");
-				}
-			} else {
-				$("#bus-status").html("Unavailable");
-			}
-		});
-  }
-
 	$.getJSON("cgi-bin/service_status.py", function(data) {
 		var date = new Date();
 		var statusObject;
@@ -154,15 +133,6 @@ function populateSettingsForm() {
 			$("#" + v).prop("checked", true);
 		});
 	}
-
-	// Populate NJT Information
-	if (localStorage.trackBus == "TRUE") {
-		$("#njttrack").prop("checked", true);
-	} else {
-		$("#njttrack").prop("checked", false);
-	}
-	$("#njtstop").val(localStorage.stop);
-	$("#njtroute").val(localStorage.route);
 }
 
 // Check to see if there is data stored in localStorage, this is somewhat mislabeled in that it returns
@@ -208,15 +178,6 @@ function updateSettings() {
 		transitLines.push($(this).val());
 	});
 	localStorage["transitLines"] = JSON.stringify(transitLines);
-
-	// Save the NJT bus settings
-	if ($("#njttrack").is(":checked")) {
-		localStorage.trackBus = "TRUE";
-	} else {
-		localStorage.trackBus = "FALSE";
-	}
-	localStorage.stop = $("#njtstop").val();
-	localStorage.route = $("#njtroute").val();
 
 	// Refresh the transit info on the page
 	createTransitContainers();
