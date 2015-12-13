@@ -22,11 +22,8 @@
     <div class="row">
   		<div id="weather-container" class="small-12 columns">
   			<div class="row">
-  				<div class="small-6 columns offset-3">
-  					<img id="weather-icon" src="http://icons.wxug.com/i/c/j/clear.gif" />
-  					<h1 id="temperature">N/A</h1>
-  					<p id="current-weather">Mildly froggy</p>
-  					<p id="humidity-feel">feels like 20º</p>
+  				<div class="small-6 columns offset-3" id="current-weather">
+  					<!-- current weather goes here -->
   				</div>
         </div>
       </div>
@@ -38,17 +35,24 @@
 
 
     <script type="text/babel">
-      var CurrentTemperature = React.createClass({
+      var CurrentWeather = React.createClass({
         render: function() {
           return (
-            <span>100º</span>
+            <div>
+              <img id="weather-icon" src={this.props.weather.icon} />
+              <h1 id="temperature">{this.props.weather.temp}</h1>
+              <p id="current-weather">{this.props.weather.conditions}</p>
+              <p id="humidity-feel">{this.props.weather.feel}</p>
+            </div>
           );
         }
       });
 
+      var data = {temp: "90", icon: "http://icons.wxug.com/i/c/j/clear.gif", conditions: 'Mildly froggy', feel: 'feels like 20º'};
+
       ReactDOM.render(
-          <CurrentTemperature />,
-          document.getElementById('temperature')
+          <CurrentWeather weather={data} />,
+          document.getElementById('current-weather')
       );
     </script>
   </body>
