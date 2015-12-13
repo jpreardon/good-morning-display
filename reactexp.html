@@ -10,6 +10,8 @@
     <script src="js/vendor/modernizr.js"></script>
     <script src="https://fb.me/react-0.14.3.js"></script>
     <script src="https://fb.me/react-dom-0.14.3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="js/vendor/jquery.js"></script>
   </head>
   <body>
 
@@ -17,18 +19,37 @@
       <!-- React test container. -->
     </div>
 
+    <div class="row">
+  		<div id="weather-container" class="small-12 columns">
+  			<div class="row">
+  				<div class="small-6 columns offset-3">
+  					<img id="weather-icon" src="http://icons.wxug.com/i/c/j/clear.gif" />
+  					<h1 id="temperature">N/A</h1>
+  					<p id="current-weather">Mildly froggy</p>
+  					<p id="humidity-feel">feels like 20º</p>
+  				</div>
+        </div>
+      </div>
+    </div>
+    <script src="js/foundation.min.js"></script>
     <script>
-      var Hello = React.createClass({displayName: 'Hello',
-          render: function() {
-              return React.createElement("div", null, "Hello ", this.props.name);
-          }
+      $(document).foundation();
+    </script>
+
+
+    <script type="text/babel">
+      var CurrentTemperature = React.createClass({
+        render: function() {
+          return (
+            <span>100º</span>
+          );
+        }
       });
 
       ReactDOM.render(
-          React.createElement(Hello, {name: "Universe!!!"}),
-          document.getElementById('container')
+          <CurrentTemperature />,
+          document.getElementById('temperature')
       );
     </script>
-
   </body>
 </html>
