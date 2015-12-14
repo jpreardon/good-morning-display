@@ -12,7 +12,7 @@ Read more here: [Good Morning Display](http://jpreardon.com/projects/good-mornin
 
 1. Get a [Weather Underground API key](http://www.wunderground.com/weather/api/).
 
-2. Put the contents of this repository on a server somewhere and ensure that the python scripts in cgi-bin are executable. An .htaccess file is included in the cgi-bin directory to add a Python file handler. I needed this for my hosted environment, you might not.
+2. Put the contents of this repository on a server somewhere and ensure that the python scripts in cgi-bin are executable. An .htaccess file is included in the cgi-bin directory to add a Python file handler. I needed this for my hosted environment, you might not. If you are running this from your local machine, you'll need to run a webserver, otherwise the transit script won't work. There are several ways to do this, one easy way is to run <code>python -m CGIHTTPServer</code> in the root directory (same as index.html).
 
 3. Hit index.html with a browser. You'll be prompted to enter your Weather Underground API Key, zip code and select which NYC subway lines you want to display. All of the preferences are stored in the browser.
 
