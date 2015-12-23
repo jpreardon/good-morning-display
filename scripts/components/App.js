@@ -1,8 +1,9 @@
 import React from 'react'
-import jq from 'jquery'
+import u from '../utils.js'
 
 // TODO: This needs to go elsewhere, I might put it back in localStorage at some point, for now, I leave it
 const WEATHER_API = 'http://api.wunderground.com/api/1197e676c4b523c6/conditions/forecast/hourly/q/11238.json'
+
 
 class App extends React.Component {
   constructor() {
@@ -11,8 +12,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    jq.get(WEATHER_API, result => {
-      console.log(result.current_observation.icon_url)
+    u.fetchData(WEATHER_API, result => {
       this.setState({
         current: result.current_observation,
         icon_url: `http://icons.wxug.com/i/c/i/${result.current_observation.icon}`
