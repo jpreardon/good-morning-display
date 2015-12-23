@@ -10,7 +10,7 @@ import App from './components/App'
 
 var routes = (
   <Router>
-    <Route path="/" component={App}/>
+    <Route path="/" component={App} />
   </Router>
 )
 
