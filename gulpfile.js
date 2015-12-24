@@ -88,13 +88,9 @@ gulp.task('scripts', function() {
   return buildScript('main.js', false); // this will run once because we set watch to false
 });
 
-gulp.task('misc', function() {
-  gulp.src(['js/foundation.min.js', 'js/vendor/jquery.js'])
-    .pipe( gulp.dest('build/scripts') )
-})
 
 // The default task
-gulp.task('default', ['clean', 'styles', 'scripts', 'misc', 'browser-sync'], function() {
+gulp.task('default', ['clean', 'styles', 'scripts', 'browser-sync'], function() {
   gulp.watch('css/**/*', ['styles'])
   return buildScript('main.js', true)
 })
