@@ -18,11 +18,13 @@ class CurrentConditions extends React.Component {
 
   render() {
     return (
-      <div className="small-6 columns">
-        <img className="weather-icon" src={this.state.icon_url} />
-        <p className="temperature">{this.state.current.temp_f}º F</p>
-        <p className="current-weather">{this.state.current.weather}</p>
-        <p className="humidity-feel">Humidity {this.state.current.relative_humidity}, feels like {this.state.current.feelslike_string}</p>
+      <div className="current-weather">
+        <div className="inner">
+          <img className="weather-icon" src={this.state.icon_url} />
+          <p className="temperature">{this.state.current.temp_f}º F</p>
+          <p className="current-observation">{this.state.current.weather}</p>
+          <p className="humidity-feel">Humidity {this.state.current.relative_humidity}, feels like {this.state.current.feelslike_string}</p>
+        </div>
       </div>
     )
   }

@@ -13,11 +13,9 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="row">
-        <div id="weather-containter">
-          <CurrentConditions weatherApi={WEATHER_API} />
-          <Forecast />
-        </div>
+      <div>
+        <CurrentConditions weatherApi={WEATHER_API} />
+        <Forecast />
       </div>
     )
   }
