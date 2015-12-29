@@ -2,10 +2,13 @@ import React from 'react'
 import ForecastItem from './ForecastItem'
 
 // TODO This, right here, is such a hack, but I don't seem to be doing things
-// the "react way" and probably not the javascript way either. But, I've been
+// the "react way" and probably not the "javascript way" either. But, I've been
 // looking at this stupid thing for hours and I can't get it to work. Now it's
 // time to go and I want something to work, so I'm going to totally hack this
 // up. Take that!
+//
+// One day, I'll refactor all of this mess down to the three lines of code I
+// actually need...
 
 var weekday_1 = ""
 var time_1 = ""
