@@ -36,10 +36,9 @@ body {
   margin: 0;
 }
 
-.forecast-weather p, img {
+.forecast-weather p  {
   vertical-align: middle;
   display: inline-block;
-  margin-right: 8%;
   margin-top: 2%;
 }
 
@@ -49,7 +48,21 @@ body {
   font-size: 175%;
 }
 
-.humidity-feel{
+.humidity-feel {
   font-size: 80%;
   color: gray;
+}
+
+.day-time {
+  color: gray;
+  margin-right: 15%;
+}
+
+/* Image sizing */
+
+.mini-icon {
+  height: 20%;
+  width: 20%;
+  vertical-align: top;
+  margin-right: 15%;
 }
