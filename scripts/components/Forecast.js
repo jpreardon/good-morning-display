@@ -16,11 +16,13 @@ class Forecast extends React.Component {
       if (forecast.FCTTIME.hour == "9" || forecast.FCTTIME.hour == "13" || forecast.FCTTIME.hour == "17") {
         if (forecastCount < 4) {
           ourForecasts.push({
+            key: forecastCount,
             weekday: forecast.FCTTIME.weekday_name_abbrev.toUpperCase(),
             time: `${forecast.FCTTIME.hour_padded}:00`,
             imageUrl: `http://icons.wxug.com/i/c/j/${forecast.icon}`,
             temp: forecast.temp.english
           })
+          forecastCount++
         }
       }
     })
@@ -31,7 +33,7 @@ class Forecast extends React.Component {
           {ourForecasts.map( function(forecast) {
             return (
               <ForecastItem
-                key={forecast.weekday+forecast.time}
+                key={forecast.key}
                 day={forecast.weekday}
                 time={forecast.time}
                 image_url={forecast.imageUrl}
