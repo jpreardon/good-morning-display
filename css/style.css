@@ -43,6 +43,14 @@ body {
   margin-top: 2%;
 }
 
+.updated-time {
+  clear: both;
+  float: right;
+  margin: 0 5% 0 0;
+  color: silver;
+  font-size: 80%;
+}
+
 /* Typography */
 
 .temperature {
