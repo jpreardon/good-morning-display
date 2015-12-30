@@ -51,6 +51,29 @@ body {
   font-size: 80%;
 }
 
+.weather-container {
+  overflow: hidden;
+}
+
+.transit-container {
+  clear: both;
+  margin: 10% 2%;
+  overflow: hidden;
+}
+
+.transit-container table {
+  margin: 0 auto;
+  width: 70%;
+}
+
+td.train-line {
+  width: 50%;
+}
+
+td.service-status {
+  width: 50%;
+}
+
 /* Typography */
 
 .temperature {

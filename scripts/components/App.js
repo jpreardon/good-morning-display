@@ -3,6 +3,7 @@ import u from '../utils.js'
 import CurrentConditions from './CurrentConditions'
 import Forecast from './Forecast'
 import UpdateTime from './UpdateTime'
+import TransitStatus from './TransitStatus'
 
 // TODO: This needs to go elsewhere, I might put it back in localStorage at some point, for now, I leave it
 const WEATHER_API = 'http://api.wunderground.com/api/1197e676c4b523c6/conditions/forecast/hourly/q/11238.json'
@@ -36,9 +37,15 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <CurrentConditions current={this.state.current} icon_url={this.state.icon_url} />
-        <Forecast forecasts={this.state.forecasts} />
-        <UpdateTime time={this.state.updateTime} />
+        <div className="weather-container">
+          <CurrentConditions current={this.state.current} icon_url={this.state.icon_url} />
+          <Forecast forecasts={this.state.forecasts} />
+          <UpdateTime time={this.state.updateTime} />
+        </div>
+        <div className="transit-container">
+          <TransitStatus />
+          <UpdateTime time="never!" />
+        </div>
       </div>
     )
   }
