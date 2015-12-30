@@ -63,7 +63,8 @@ body {
 
 .transit-container table {
   margin: 0 auto;
-  width: 70%;
+  width: 94%;
+  border 1px solid silver;
 }
 
 td.train-line {
@@ -72,6 +73,15 @@ td.train-line {
 
 td.service-status {
   width: 50%;
+}
+
+tbody tr:nth-child(odd) {
+   background-color: #eeeeee;
+}
+
+td {
+  padding: 1% 1% 1% 3%;
+  margin: 0;
 }
 
 /* Typography */
@@ -88,6 +98,10 @@ td.service-status {
 .day-time {
   color: gray;
   margin-right: 15%;
+}
+
+.service-status {
+  font-size: 90%;
 }
 
 /* Image sizing */
