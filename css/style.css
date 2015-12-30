@@ -22,6 +22,7 @@ body {
 .forecast-weather {
   width: 46%;
   float: right;
+  margin-top: 4%;
 }
 
 .inner{
