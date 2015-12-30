@@ -17,7 +17,7 @@
 
 .weather-icon {
 	font-size: 10em;
-}	
+}
 
 .form-buttons {
 	float: right;
@@ -158,4 +158,3 @@
 .suspended, .service-change {
 	color: #960;
 }
-

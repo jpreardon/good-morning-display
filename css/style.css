@@ -1,0 +1,55 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+/* Positioning */
+
+.current-weather, .forecast-weather {
+  padding: 2%;
+}
+
+.current-weather {
+  width: 46%;
+  float: left;
+}
+
+.current-weather p {
+  margin: 0.5em 0;
+}
+
+.forecast-weather {
+  width: 46%;
+  float: right;
+}
+
+.inner{
+  width: 80%;
+  margin: auto;
+  text-align: center;
+}
+
+.forecast-weather ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.forecast-weather p, img {
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 8%;
+  margin-top: 2%;
+}
+
+/* Typography */
+
+.temperature {
+  font-size: 175%;
+}
+
+.humidity-feel{
+  font-size: 80%;
+  color: gray;
+}

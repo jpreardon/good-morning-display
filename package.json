@@ -1,0 +1,41 @@
+{
+  "name": "gmd",
+  "version": "1.0.0",
+  "description": "This is simple display that shows weather and NYC transit information. It was created mostly as a proof of concept with a potential user base of one (me), and is very much a work in progress. **Proceed at your own risk**.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpreardon/good-morning-display.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jpreardon/good-morning-display/issues"
+  },
+  "homepage": "https://github.com/jpreardon/good-morning-display#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browser-sync": "^2.10.1",
+    "browserify": "^12.0.1",
+    "connect-history-api-fallback": "^1.1.0",
+    "del": "^2.2.0",
+    "gulp": "^3.9.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-util": "^3.0.7",
+    "history": "^1.17.0",
+    "jquery": "^2.1.4",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "react-router": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.6.1"
+  },
+  "dependencies": {}
+}
