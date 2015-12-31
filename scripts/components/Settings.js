@@ -16,7 +16,7 @@ class Settings extends React.Component {
       this.state.weatherKey = localStorage.weatherKey
     }
 
-    // TODO If transitlines exist in local storage, load them up
+    // If transitlines exist in local storage, load them up
     if (localStorage['transitLines']) {
       // Get the data from local storage
       this.state.transitLines = JSON.parse(localStorage["transitLines"])
@@ -29,7 +29,7 @@ class Settings extends React.Component {
     localStorage.zipcode = event.target['zipcode'].value
     localStorage.weatherKey = event.target['weather-api-key'].value
 
-    // TODO save transitlines to local storage
+    // Save transitlines to local storage
     localStorage["transitLines"] = JSON.stringify(this.state.transitLines)
 
     // TODO There is probably a more reactfull and elegant way to do this

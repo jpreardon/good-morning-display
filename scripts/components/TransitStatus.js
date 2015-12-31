@@ -1,4 +1,5 @@
 import React from 'react'
+import TransitItem from './TransitItem'
 
 class TransitStatus extends React.Component {
   constructor(props) {
@@ -21,6 +22,20 @@ class TransitStatus extends React.Component {
   }
 
   render() {
+    // TODO We only want to render the lines that are indicated in settings
+
+    // 1. Get the transitLines array from local storage
+    var transitLines = JSON.parse(localStorage["transitLines"])
+
+    // 2. Loop through the array and render a row for each selected line
+    //    don't forget to set the style for each
+    return (
+      <ul>
+        {transitLines.map( function(line) { return <TransitItem key={line} line={line} /> })}
+      </ul>
+    )
+
+    {/*}
     var statusObject = new Object
     this.props.transitStatus.forEach( data => {
       statusObject[data.name[0]] = this.prettyStatus(data.status[0])
@@ -99,6 +114,7 @@ class TransitStatus extends React.Component {
         </table>
       </div>
     )
+    {*/}
   }
 }
 
