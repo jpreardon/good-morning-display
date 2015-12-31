@@ -19,6 +19,12 @@ body {
   margin: 0.5em 0;
 }
 
+p.current-observation {
+  margin-top: -8%;
+  color: gray;
+  font-size: 80%;
+}
+
 .forecast-weather {
   width: 46%;
   float: right;
@@ -55,6 +61,10 @@ body {
   overflow: hidden;
 }
 
+.weather-icon {
+  margin-top: 10%;
+}
+
 .transit-container {
   clear: both;
   margin: 10% 2%;
@@ -86,8 +96,9 @@ td {
 
 /* Typography */
 
-.temperature {
+p.temperature {
   font-size: 225%;
+  margin: 5%;
 }
 
 .humidity-feel {
