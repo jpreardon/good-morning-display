@@ -5,8 +5,8 @@ import Forecast from './Forecast'
 import UpdateTime from './UpdateTime'
 import TransitStatus from './TransitStatus'
 
-// TODO: This needs to go elsewhere, I might put it back in localStorage at some point, for now, I leave it
-const WEATHER_API = 'http://api.wunderground.com/api/1197e676c4b523c6/conditions/forecast/hourly/q/11238.json'
+// TODO: Redirect to settings if the weatherKey and zipcode don't exist in local storage
+const WEATHER_API = `http://api.wunderground.com/api/${localStorage.weatherKey}/conditions/forecast/hourly/q/${localStorage.zipcode}.json`
 const TRANSIT_API = 'http://jpreardon.com/gmd/cgi-bin/service_status.py'
 
 // Update frequency constants
