@@ -8,9 +8,11 @@ class TransitStatus extends React.Component {
   prettyStatus(uglyStatus) {
     switch (uglyStatus) {
       case 'SERVICE CHANGE':
-        return 'Service Change'
+        return 'Service change'
       case 'GOOD SERVICE':
-        return 'Good Service'
+        return 'Good service'
+      case 'PLANNED WORK':
+        return 'Planned work'
       case 'DELAYS':
         return 'Delays'
       default:
