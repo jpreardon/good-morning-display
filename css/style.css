@@ -64,7 +64,7 @@ body {
 .transit-container table {
   margin: 0 auto;
   width: 94%;
-  border 1px solid silver;
+  border: 1px solid silver;
 }
 
 td.train-line {
