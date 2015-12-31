@@ -28,6 +28,10 @@ class Settings extends React.Component {
     localStorage.weatherKey = event.target['weather-api-key'].value
 
     // TODO save transitlines to local storage
+
+    // TODO There is probably a more reactfull and elegant way to do this
+    // Redirect to the main page
+    window.location = '/'
   }
 
   render() {

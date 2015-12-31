@@ -4,6 +4,7 @@ import CurrentConditions from './CurrentConditions'
 import Forecast from './Forecast'
 import UpdateTime from './UpdateTime'
 import TransitStatus from './TransitStatus'
+import Footer from './Footer'
 
 // TODO: Redirect to settings if the weatherKey and zipcode don't exist in local storage
 const WEATHER_API = `http://api.wunderground.com/api/${localStorage.weatherKey}/conditions/forecast/hourly/q/${localStorage.zipcode}.json`
@@ -83,6 +84,7 @@ class App extends React.Component {
           <TransitStatus transitStatus={this.state.transit}/>
         </div>
         <UpdateTime time={this.state.transitUpdateTime} />
+        <Footer />
       </div>
     )
   }

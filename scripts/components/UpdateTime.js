@@ -8,7 +8,9 @@ class UpdateTime extends React.Component {
 
   render() {
     return (
-      <p className="updated-time">as of {this.props.time}</p>
+      <div className="updated">
+        <p className="updated-time">as of {this.props.time}</p>
+      </div>
     )
   }
 

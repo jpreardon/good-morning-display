@@ -49,8 +49,12 @@ p.current-observation {
   margin-top: 2%;
 }
 
-.updated-time {
+.updated {
   clear: both;
+  overflow: hidden;
+}
+
+.updated-time {
   float: right;
   margin: 0 5% 0 0;
   color: silver;
@@ -67,7 +71,7 @@ p.current-observation {
 
 .transit-container {
   clear: both;
-  margin: 10% 2%;
+  margin: 5% 2%;
   overflow: hidden;
 }
 
@@ -103,6 +107,21 @@ input[type="text"], input[type="number"] {
   width: 90%;
   margin: 0;
   border: 1px solid silver;
+}
+
+.footer {
+  clear: both;
+  margin: 2%;
+}
+
+p.title {
+  color: silver;
+  float: left;
+  margin: 2% 0;
+}
+
+.settings-link {
+  float: right;
 }
 
 /* Typography */
