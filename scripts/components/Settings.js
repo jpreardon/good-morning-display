@@ -45,7 +45,8 @@ class Settings extends React.Component {
     return(
       <div className="settings-container">
         <h1>Settings</h1>
-        <p>You need to set some stuff up.</p>
+        <p>We need some information to make this work. All settings are
+          required. These settings are stored only in your browser.</p>
         <h2>Weather</h2>
         <form onSubmit={this.saveForm.bind(this)}>
           <label htmlFor="weather-api-key">Weather Underground API Key</label>
@@ -53,7 +54,7 @@ class Settings extends React.Component {
           <label htmlFor="zipcode">Zip Code</label>
           <input type="number" id="zipcode" defaultValue={this.state.zipcode}/>
           <h2>Transit</h2>
-          <p>Select which lines you want</p>
+          <p>Choose the lines you are interested in. At least one is required.</p>
           <CheckboxGroup
             name="transitLines"
             value={this.state.transitLines}
@@ -103,7 +104,7 @@ class Settings extends React.Component {
               <span className="mta-bullet mta-s">S</span>
             </label>
           </CheckboxGroup>
-          <input type="Submit" />
+          <input type="submit" />
         </form>
       </div>
     )

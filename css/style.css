@@ -4,10 +4,28 @@ body {
   font-family: sans-serif;
 }
 
+#main {
+  padding: 1% 5%;
+  max-width: 450px;
+  margin: auto;
+}
+
+h1 {
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 120%;
+}
+
+p {
+  font-size: 90%;
+}
+
 /* Positioning */
 
-.current-weather, .forecast-weather, .settings-container {
-  padding: 2%;
+.current-weather, .forecast-weather {
+  padding: 0%;
 }
 
 .current-weather {
@@ -49,6 +67,10 @@ p.current-observation {
   margin-top: 2%;
 }
 
+.forecast-temp {
+  float: right;
+}
+
 .updated {
   clear: both;
   overflow: hidden;
@@ -56,7 +78,7 @@ p.current-observation {
 
 .updated-time {
   float: right;
-  margin: 0 5% 0 0;
+  margin: 0;
   color: silver;
   font-size: 80%;
 }
@@ -71,13 +93,13 @@ p.current-observation {
 
 .transit-container {
   clear: both;
-  margin: 5% 2%;
+  margin: 5% 0;
   overflow: hidden;
 }
 
 .transit-container table {
   margin: 0 auto;
-  width: 94%;
+  width: 100%;
   border: 1px solid silver;
 }
 
@@ -99,19 +121,28 @@ td {
 }
 
 label {
+  font-size: 90%;
   display: block;
-  margin: 10% 0 1% 0;
+  margin: 4% 0 1% 0;
+}
+
+input[type=submit] {
+  margin-top: 5%;
+  width: 100%;
+  height: 5%;
 }
 
 input[type="text"], input[type="number"] {
-  width: 90%;
+  width: 96%;
   margin: 0;
+  padding: 2%;
+  font-size: 90%;
   border: 1px solid silver;
 }
 
 .footer {
   clear: both;
-  margin: 2%;
+  margin: 2% 0;
 }
 
 p.title {

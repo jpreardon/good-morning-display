@@ -74,7 +74,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="app-container">
         <div className="weather-container">
           <CurrentConditions current={this.state.current} icon_url={this.state.icon_url} />
           <Forecast forecasts={this.state.forecasts} />
