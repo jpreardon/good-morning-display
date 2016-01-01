@@ -11,7 +11,28 @@ let utils = {
       url: url,
       success: callback
     })
+  },
+
+  // Checks local storage to see if key exists and has data
+  // Pass true to the optional isArray argument if the key is an array,
+  // otherwise, it might return false even if the array is empty.
+  localStorageIsSet : function(key, isArray) {
+    // If it's an array, parse and check length
+    if(isArray) {
+      if(localStorage.getItem(key) === null || JSON.parse(localStorage.getItem(key)).length === 0) {
+        return false
+      } else {
+        return true
+      }
+    }
+
+    if (localStorage.getItem(key) === null || localStorage.getItem(key).trim() === '') {
+      return false
+    } else {
+      return true
+    }
   }
+
 }
 
 export default utils;

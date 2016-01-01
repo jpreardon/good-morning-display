@@ -39,7 +39,6 @@ class Settings extends React.Component {
 
   handleTransitLineChange() {
     this.state.transitLines = this.refs.transitLinesGroup.getCheckedValues()
-    console.log(this.state.transitLines)
   }
 
   render() {
