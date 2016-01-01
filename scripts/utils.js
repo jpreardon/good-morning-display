@@ -5,7 +5,7 @@ let utils = {
   // it could just as well be in the individual functions that call it.
   // TODO: Make this something other than jquery
   // TODO: What happens when there's an error???
-  fetchData : function(url, callback) {
+  fetchData(url, callback) {
     jquery.ajax({
       type: 'GET',
       url: url,
@@ -16,7 +16,7 @@ let utils = {
   // Checks local storage to see if key exists and has data
   // Pass true to the optional isArray argument if the key is an array,
   // otherwise, it might return false even if the array is empty.
-  localStorageIsSet : function(key, isArray) {
+  localStorageIsSet(key, isArray) {
     // If it's an array, parse and check length
     if(isArray) {
       if(localStorage.getItem(key) === null || JSON.parse(localStorage.getItem(key)).length === 0) {
