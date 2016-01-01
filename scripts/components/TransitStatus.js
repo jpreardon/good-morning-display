@@ -6,13 +6,10 @@ class TransitStatus extends React.Component {
     super(props)
   }
 
-  getLineStatus(line) {
-    var lineStatus = ''
+  getLineStatus(line, callback) {
     this.props.transitStatus.forEach( data => {
       if (data.name[0] === line) {
-        lineStatus = this.prettyStatus(data.status[0])
-        //return lineStatus
-        return lineStatus
+        return callback(this.prettyStatus(data.status[0]))
       }
     })
   }
@@ -38,20 +35,22 @@ class TransitStatus extends React.Component {
     // 1. Get the transitLines array from local storage
     var transitLines = JSON.parse(localStorage["transitLines"])
 
-    // 1A. Put these lines in another array with the statuses
+    // 2. Put these lines in another array with the statuses
     var transitLinesWithStatuses = []
-    transitLines.forEach( function(line) {
-      transitLinesWithStatuses.push([line, ])
+    transitLines.forEach( line => {
+      this.getLineStatus(line, function(status) {
+        transitLinesWithStatuses.push([line, status])
+      })
     })
 
-    // 2. Loop through the array and render a row for each selected line
+    // 3. Loop through the array and render a row for each selected line
     //    don't forget to set the style for each
     return (
       <div>
         <table>
           <tbody>
-              {transitLines.map( function (line) {
-                return <TransitItem key={line} line={line} status={this.getLineStatus(line)} />
+              {transitLinesWithStatuses.map( function(line) {
+                return <TransitItem key={line[0]} line={line[0]} status={line[1]} />
               }.bind(this))}
           </tbody>
         </table>
