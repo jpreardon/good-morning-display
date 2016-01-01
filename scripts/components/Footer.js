@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router'
 
 class Footer extends React.Component {
   constructor() {
@@ -9,7 +10,7 @@ class Footer extends React.Component {
     return(
       <div className="footer">
         <p className="title">Good Morning Display</p>
-        <a className="settings-link" href="settings"><img src='img/settings-icon.png' /></a>
+        <Link to='/settings' className="settings-link"><img src='img/settings-icon.png' /></Link>
       </div>
     )
   }

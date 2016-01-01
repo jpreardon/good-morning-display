@@ -1,5 +1,6 @@
 import React from 'react'
 import CheckboxGroup from 'react-checkbox-group'
+import { Link } from 'react-router'
 
 class Settings extends React.Component {
   constructor() {
@@ -32,9 +33,8 @@ class Settings extends React.Component {
     // Save transitlines to local storage
     localStorage["transitLines"] = JSON.stringify(this.state.transitLines)
 
-    // TODO There is probably a more reactfull and elegant way to do this
-    // Redirect to the main page
-    window.location = '/'
+    // Navigate back to the dashboard
+    this.props.history.pushState(null, '/')
   }
 
   handleTransitLineChange() {
