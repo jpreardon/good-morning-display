@@ -6,7 +6,6 @@ import UpdateTime from './UpdateTime'
 import TransitStatus from './TransitStatus'
 import Footer from './Footer'
 
-// TODO: Redirect to settings if the weatherKey and zipcode don't exist in local storage
 const WEATHER_API = `http://api.wunderground.com/api/${localStorage.weatherKey}/conditions/forecast/hourly/q/${localStorage.zipcode}.json`
 const TRANSIT_API = 'http://jpreardon.com/gmd/cgi-bin/service_status.py'
 

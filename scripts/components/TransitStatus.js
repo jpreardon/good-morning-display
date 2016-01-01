@@ -30,13 +30,12 @@ class TransitStatus extends React.Component {
   }
 
   render() {
-    // TODO We only want to render the lines that are indicated in settings,
-    // this seems messy and over complicated, refactor!
+    // TODO this seems messy and over complicated, refactor!
 
-    // 1. Get the transitLines array from local storage
+    // Get the transitLines array from local storage
     var transitLines = JSON.parse(localStorage["transitLines"])
 
-    // 2. Put these lines in another array with the statuses
+    // Put these lines in another array with the statuses
     var transitLinesWithStatuses = []
     transitLines.forEach( line => {
       this.getLineStatus(line, function(status) {
@@ -44,8 +43,7 @@ class TransitStatus extends React.Component {
       })
     })
 
-    // 3. Loop through the array and render a row for each selected line
-    //    don't forget to set the style for each
+    // Loop through the array and render a row for each selected line
     return (
       <div>
         <table>
