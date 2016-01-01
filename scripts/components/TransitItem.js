@@ -7,7 +7,12 @@ class TransitItem extends React.Component {
 
   render() {
     return(
-      <p>{this.props.line}</p>
+      <tr>
+        <td className="train-line">
+          {this.props.line}
+        </td>
+        <td className="service-status">{this.props.status}</td>
+      </tr>
     )
   }
 
