@@ -78,6 +78,9 @@ class Settings extends React.Component {
               <span className="mta-bullet mta-c">C</span>
               <span className="mta-bullet mta-e">E</span>
             </label>
+            <label><input type="checkbox" value="G"/>
+              <span className="mta-bullet mta-g">G</span>
+            </label>
             <label><input type="checkbox" value="BDFM"/>
               <span className="mta-bullet mta-b">B</span>
               <span className="mta-bullet mta-d">D</span>

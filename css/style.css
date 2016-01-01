@@ -89,7 +89,7 @@ td.service-status {
   width: 50%;
 }
 
-tbody tr:nth-child(odd) {
+tbody tr:nth-child(even) {
    background-color: #eeeeee;
 }
 
