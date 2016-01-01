@@ -50,9 +50,9 @@ class Settings extends React.Component {
         <h2>Weather</h2>
         <form onSubmit={this.saveForm.bind(this)}>
           <label htmlFor="weather-api-key">Weather Underground API Key</label>
-          <input type="text" id="weather-api-key" defaultValue={this.state.weatherKey} />
+          <input type="text" id="weather-api-key" autocomplete="off" autocapitalize="off" defaultValue={this.state.weatherKey} />
           <label htmlFor="zipcode">Zip Code</label>
-          <input type="number" id="zipcode" defaultValue={this.state.zipcode}/>
+          <input type="number" id="zipcode" autocomplete="off" defaultValue={this.state.zipcode}/>
           <h2>Transit</h2>
           <p>Choose the lines you are interested in. At least one is required.</p>
           <CheckboxGroup

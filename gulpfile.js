@@ -17,7 +17,8 @@ var notify = require('gulp-notify')
 var paths = {
   html : 'index.html',
   styles : 'css/**/*',
-  scripts : 'scripts/main.js'
+  scripts : 'scripts/main.js',
+  images: 'img/**/*'
 }
 
 // Delete everything in the build directory
@@ -29,6 +30,12 @@ gulp.task('clean', function() {
 gulp.task('styles', function() {
   gulp.src(paths.styles)
     .pipe( gulp.dest('build/css') )
+})
+
+// Copy Images
+gulp.task('images', function() {
+  gulp.src(paths.images)
+    .pipe( gulp.dest('build/img') )
 })
 
 // Stolen from Wes Bos's file
@@ -90,7 +97,7 @@ gulp.task('scripts', function() {
 
 
 // The default task
-gulp.task('default', ['clean', 'styles', 'scripts', 'browser-sync'], function() {
+gulp.task('default', ['clean', 'images', 'styles', 'scripts', 'browser-sync'], function() {
   gulp.watch('css/**/*', ['styles'])
   return buildScript('main.js', true)
 })

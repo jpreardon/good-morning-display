@@ -10,7 +10,7 @@ class Footer extends React.Component {
     return(
       <div className="footer">
         <p className="title">Good Morning Display</p>
-        <Link to='/settings' className="settings-link"><img src='img/settings-icon.png' /></Link>
+        <Link to='/settings' className="settings-link"><img src='build/img/settings-icon.png' /></Link>
       </div>
     )
   }
