@@ -99,6 +99,7 @@ class Settings extends React.Component {
               <span className="mta-bullet mta-n">N</span>
               <span className="mta-bullet mta-q">Q</span>
               <span className="mta-bullet mta-r">R</span>
+              <span className="mta-bullet mta-w">W</span>
             </label>
             <label><input type="checkbox" value="S"/>
               <span className="mta-bullet mta-s">S</span>
