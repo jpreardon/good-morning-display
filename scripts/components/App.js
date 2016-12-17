@@ -30,7 +30,7 @@ class App extends React.Component {
     u.fetchData(WEATHER_API, (result) => {
       this.setState({
         current: result.current_observation,
-        icon_url: `http://icons.wxug.com/i/c/i/${result.current_observation.icon}`,
+        icon_url: `http://icons.wxug.com/i/c/i/${result.current_observation.icon}.gif`,
         forecasts: result.hourly_forecast,
         weatherUpdateTime: new Date().toLocaleTimeString()
       })
