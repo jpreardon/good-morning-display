@@ -19,7 +19,7 @@ class Forecast extends React.Component {
             key: forecastCount,
             weekday: forecast.FCTTIME.weekday_name_abbrev.toUpperCase(),
             time: `${forecast.FCTTIME.hour_padded}:00`,
-            imageUrl: `http://icons.wxug.com/i/c/j/${forecast.icon}.gif`,
+            imageUrl: `https://icons.wxug.com/i/c/j/${forecast.icon}.gif`,
             temp: forecast.temp.english
           })
           forecastCount++

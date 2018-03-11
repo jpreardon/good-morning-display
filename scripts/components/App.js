@@ -6,8 +6,8 @@ import UpdateTime from './UpdateTime'
 import TransitStatus from './TransitStatus'
 import Footer from './Footer'
 
-const WEATHER_API = `http://api.wunderground.com/api/${localStorage.weatherKey}/conditions/forecast/hourly/q/${localStorage.zipcode}.json`
-const TRANSIT_API = 'http://jpreardon.com/gmd/cgi-bin/service_status.py'
+const WEATHER_API = `https://api.wunderground.com/api/${localStorage.weatherKey}/conditions/forecast/hourly/q/${localStorage.zipcode}.json`
+const TRANSIT_API = 'https://jpreardon.com/gmd/cgi-bin/service_status.py'
 
 // Update frequency constants
 const WEATHER_UPDATE_FREQ = 1800000 // In milliseconds (every 30 minutes)
@@ -30,7 +30,7 @@ class App extends React.Component {
     u.fetchData(WEATHER_API, (result) => {
       this.setState({
         current: result.current_observation,
-        icon_url: `http://icons.wxug.com/i/c/i/${result.current_observation.icon}.gif`,
+        icon_url: `https://icons.wxug.com/i/c/i/${result.current_observation.icon}.gif`,
         forecasts: result.hourly_forecast,
         weatherUpdateTime: new Date().toLocaleTimeString()
       })
