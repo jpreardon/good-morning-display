@@ -16,4 +16,4 @@ Read more here: [Good Morning Display](https://jpreardon.com/projects/good-morni
 
 3. Hit the index file with a browser. You'll be prompted to enter your Weather Underground API Key, zip code and select which NYC subway lines you want to display. All of the preferences are stored in the browser.
 
-Copyright (c) 2013-16 John P. Reardon Licensed under the MIT license.
+Copyright (c) 2013-18 John P. Reardon Licensed under the MIT license.
