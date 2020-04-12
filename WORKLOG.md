@@ -6,6 +6,7 @@
 - Delete everything except the readme
 - Update the readme
 - Add the design files
+- Add PDF of design ideas
 
 For context:
 
@@ -18,3 +19,5 @@ This hasn't been working for quite some time. Here's a note from a now deleted b
 The transit status no longer works either. I think they changed the format and URL a few weeks ago. 
 
 I'm going to ditch the whole thing and start fresh...
+
+By the way, I'm not sure if it is best practice to do this sort of thing in a branch, then merge and tag a new version. I'm going with the latter just to keep it in one place.
