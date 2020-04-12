@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Good Morning Display II</title>
+        <meta name="viewport" content="width=device-width, intial-scale=1">
+
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"> 
+        <style>
+            body {
+                font-family: 'Roboto', sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+
+            #container {
+                width: 800px;
+                height: 480px;
+                background-color: #000000;
+                color: #ffffff;
+                overflow: auto;
+                display: grid;
+                grid-template-columns: 260px 1fr;
+                grid-template-rows: 32px 196px 32px 196px 32px;
+            }
+
+            .big-number {
+                font-weight: 100;
+                font-size: 72px;
+                line-height: 72px;
+                margin: 0;
+            }
+
+            .big-label {
+                font-weight: 100;
+                font-size: 16px;
+                line-height: 16px;
+                margin: 0;
+            }
+
+            #temperature {
+                border: 2px solid #ffffff;
+                height: 192px;
+                width: 192px;
+                border-radius: 50%
+                -moz-border-radius:50%;
+                -webkit-border-radius:50%;
+                margin-left: 32px;
+                display: flex;
+                align-items: center;
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            #wind {
+                border: 2px solid #ffffff;
+                height: 192px;
+                width: 192px;
+                border-radius: 50%
+                -moz-border-radius:50%;
+                -webkit-border-radius:50%;
+                margin-left: 32px;
+                display: flex;
+                align-items: center;
+                grid-column: 1;
+                grid-row: 4;
+            }
+
+            #forecast {
+                padding: 0 32px;
+                grid-column: 2;
+                grid-row: 2 / 5;
+            }
+
+            #forecast h2 {
+                font-weight: 100;
+                font-size: 24px;
+                margin-bottom: 16px;
+                margin-top: 32px;
+            }
+
+            #forecast h2:first-child {
+                margin-top: 0;
+            }
+
+            #forecast p {
+                font-weight: 100;
+                font-size: 16px;
+                margin: 0;
+            }
+
+            .inner {
+                margin: auto;
+                text-align: center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="temperature">
+                <div class="inner">
+                    <p class="big-number">57º</p>
+                    <p class="big-label">mostly cloudy</p>
+                </div>
+            </div>
+            <div id="wind">
+                <div class="inner">
+                    <p class="big-number">40</p>
+                    <p class="big-label">knots</p>
+                </div>
+            </div>
+            <div id="forecast">
+                <h2>Tonight</h2>
+                <p>Mostly clear, with a low around 42. West wind 2 to 9 mph.</p>
+
+                <h2>Sunday</h2>
+                <p>Partly sunny, with a high near 61. South wind 6 to 16 mph.</p>
+
+                <h2>Sunday Night</h2>
+                <p>Rain likely after 2am. Cloudy, with a low around 53. South wind 14 to 18 mph, with gusts as high as 31 mph. Chance of precipitation is 60%. New rainfall amounts between a half and three quarters of an inch possible.</p>
+            </div>
+        </div>
+    </body>
+</html>

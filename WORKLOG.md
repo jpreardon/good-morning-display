@@ -1,12 +1,45 @@
 # Worklog
 
-## 2020-04-11
+## Summary
+
+For this version 2 of the Good Morning display, I'm currently targeting a Raspberry Pi touch display. It's overkill for simple stuff, but one day, I might want to get more advanced. It would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
+
+## TODO
+
+- Get mockup running on raspi
+- Hook up [NWS API](https://www.weather.gov/documentation/services-web-api) ([json spec](https://api.weather.gov/openapi.json))
+  - My grid square and zone are 34,33 and NYZ075
+  - [Current conditions](https://api.weather.gov/stations/KNYC/observations/latest)
+  - [Forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast) and [hourly forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast/hourly) are available. I'm leaning toward the more text based forecast over the hourly. However, I have seen some errors where the forecast doesn't exist:
+  ```
+  status: 503
+  title: Forecast Grid Invalid
+  detail: The forecast grid is missing data for time 2020-04-18T18:00:00-04:00.
+  ```
+  - [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
+- Mock up cool wind/relative humidity features in HTML
+
+## Notes
+
+### 2020-04-12
+
+Work on getting a basic page mocked up. We're targeting the 800x480 display on a Raspberry Pi touch for this project.
+
+- Made a super simple HTML 5 index.html based on [HTML 5 boilerplate](https://github.com/h5bp/html5-boilerplate/blob/master/dist/index.html). I skipped much of what is there, I'll probably need to add it at some point. I'm putting all the styles in that file, for now. I'll break it out soon enough.
+- I originally mocked this thing up with Helvetica, but I'm not paying for that web font, so I'm going with Roboto, it's close enough for this exercise.
+- I'm using a grid layout, I hope the browser on the raspi can handle it
+- Basic HTML mockup done
+  - It doesn't include some of the cool wind/relative humidity features
+  - I made some changes to the font sizes and weights to make things fit better in the viewport
+
+### 2020-04-11
 
 - Create new branch
 - Delete everything except the readme
 - Update the readme
-- Add the design files
+- Add the design file
 - Add PDF of design ideas
+- Experimented with the [National Weather Service API](https://www.weather.gov/documentation/services-web-api) a bit. I put the details in the TODO above.
 
 For context:
 
