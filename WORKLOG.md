@@ -6,7 +6,6 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## TODO
 
-- Get mockup running on raspi
 - Hook up [NWS API](https://www.weather.gov/documentation/services-web-api) ([json spec](https://api.weather.gov/openapi.json))
   - My grid square and zone are 34,33 and NYZ075
   - [Current conditions](https://api.weather.gov/stations/KNYC/observations/latest)
@@ -17,6 +16,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
   detail: The forecast grid is missing data for time 2020-04-18T18:00:00-04:00.
   ```
   - [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
+- Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
 - Mock up cool wind/relative humidity features in HTML
 
 ## Notes
@@ -31,6 +31,10 @@ Work on getting a basic page mocked up. We're targeting the 800x480 display on a
 - Basic HTML mockup done
   - It doesn't include some of the cool wind/relative humidity features
   - I made some changes to the font sizes and weights to make things fit better in the viewport
+- Setting up [Raspi in kiosk mode](https://pimylifeup.com/raspberry-pi-kiosk/), need a better browser.
+  - This was a good setup guide, but it failed to tell me to install chromium (it probably expects a more recent raspi), so I installed it. It looks like Chromium doesn't support css grid :(
+  - Installed Firefox. CSS grid works, but the page looks like crap on the raspitouch screen, and I've found that the touch screen no longer works :(
+  - Given the low res and lack of touch interface, I might rethink my display strategy. I'm going to work on the data side of things for bit, then come back to this.
 
 ### 2020-04-11
 
