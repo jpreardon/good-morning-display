@@ -6,16 +6,13 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## TODO
 
-- Hook up [NWS API](https://www.weather.gov/documentation/services-web-api) ([json spec](https://api.weather.gov/openapi.json))
-  - My grid square and zone are 34,33 and NYZ075
-  - [Current conditions](https://api.weather.gov/stations/KNYC/observations/latest)
-  - [Forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast) and [hourly forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast/hourly) are available. I'm leaning toward the more text based forecast over the hourly. However, I have seen some errors where the forecast doesn't exist:
+- [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
+- Deal with forecast errors like this one:
   ```
   status: 503
   title: Forecast Grid Invalid
   detail: The forecast grid is missing data for time 2020-04-18T18:00:00-04:00.
   ```
-  - [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
 - Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
 - Mock up cool wind/relative humidity features in HTML
 
@@ -37,6 +34,11 @@ Work on getting a basic page mocked up. We're targeting the 800x480 display on a
   - Given the low res and lack of touch interface, I might rethink my display strategy. I'm going to work on the data side of things for bit, then come back to this.
 - Fix a couple issues in the style syntax
 - Get basic weather conditions and forecast hooked up
+  - Hook up [NWS API](https://www.weather.gov/documentation/services-web-api) ([json spec](https://api.weather.gov/openapi.json))
+  - My grid square and zone are 34,33 and NYZ075
+  - [Current conditions](https://api.weather.gov/stations/KNYC/observations/latest)
+  - [Forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast) and [hourly forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast/hourly) are available. I went with the detailed forecast 
+  - Add update time, remove placeholder data, fix grid height issue, change knots to MPH.
 
 ### 2020-04-11
 

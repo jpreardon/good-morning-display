@@ -22,7 +22,7 @@
                 overflow: auto;
                 display: grid;
                 grid-template-columns: 260px 1fr;
-                grid-template-rows: 32px 196px 32px 196px 32px;
+                grid-template-rows: 32px 192px 32px 192px 32px;
             }
 
             .big-number {
@@ -66,7 +66,20 @@
             #forecast {
                 padding: 0 32px;
                 grid-column: 2;
-                grid-row: 2 / 5;
+                grid-row: 2 / 4;
+            }
+
+            #update-time {
+                grid-column: 2;
+                grid-row: 5;
+                text-align: right;
+            }
+
+            #update-time p {
+                margin: 12px 8px 0 0;
+                color: #6f6f6f;
+                font-weight: 100;
+                font-size: 12px;
             }
 
             #forecast h2 {
@@ -99,6 +112,11 @@
             function msToKts(metersPerSecond) {
                 knots = metersPerSecond * 1.943844
                 return knots.toFixed(1)
+            }
+
+            function mpsToMph(metersPerSecond) {
+                milesPerHour = metersPerSecond * 2.236936
+                return milesPerHour.toFixed(1)
             }
 
             function degreesToCardinal(degrees) {
@@ -182,8 +200,8 @@
                 $.getJSON(current_condition_url, function(data) {
                     $("#temperature > div.inner > p.big-number").html(parseInt(cToF(data.properties.temperature.value)) + "º")
                     $("#temperature > div.inner > p.big-label").html(data.properties.textDescription)
-                    $("#wind > div.inner > p.big-number").html(msToKts(data.properties.windSpeed.value))
-                    $("#wind > div.inner > p.big-label").html("Knots " + degreesToCardinal(data.properties.windDirection.value))
+                    $("#wind > div.inner > p.big-number").html(mpsToMph(data.properties.windSpeed.value))
+                    $("#wind > div.inner > p.big-label").html("MPH " + degreesToCardinal(data.properties.windDirection.value))
                 })
 
                 $.getJSON(forecast_url, function(data) {
@@ -194,6 +212,9 @@
                     $("#forecast > #f3-title").html(data.properties.periods[2].name)
                     $("#forecast > #f3").html(data.properties.periods[2].shortForecast)
                 })
+                
+                updateTime = new Date(Date.now())
+                $("#update-time > p").html(updateTime.getHours() + ":" + updateTime.getMinutes())
             }
 
             $( document ).ready(function() {
@@ -206,25 +227,28 @@
         <div id="container">
             <div id="temperature">
                 <div class="inner">
-                    <p class="big-number">57º</p>
-                    <p class="big-label">mostly cloudy</p>
+                    <p class="big-number"></p>
+                    <p class="big-label"></p>
                 </div>
             </div>
             <div id="wind">
                 <div class="inner">
-                    <p class="big-number">40</p>
-                    <p class="big-label">knots</p>
+                    <p class="big-number"></p>
+                    <p class="big-label"></p>
                 </div>
             </div>
             <div id="forecast">
-                <h2 id="f1-title">Tonight</h2>
-                <p id="f1">Mostly clear, with a low around 42. West wind 2 to 9 mph.</p>
+                <h2 id="f1-title"></h2>
+                <p id="f1"></p>
 
-                <h2 id="f2-title">Sunday</h2>
-                <p id="f2">Partly sunny, with a high near 61. South wind 6 to 16 mph.</p>
+                <h2 id="f2-title"></h2>
+                <p id="f2"></p>
 
-                <h2 id="f3-title">Sunday Night</h2>
-                <p id="f3">Rain likely after 2am. Cloudy, with a low around 53. South wind 14 to 18 mph, with gusts as high as 31 mph. Chance of precipitation is 60%. New rainfall amounts between a half and three quarters of an inch possible.</p>
+                <h2 id="f3-title"></h2>
+                <p id="f3"></p>
+            </div>
+            <div id="update-time">
+                <p></p>
             </div>
         </div>
     </body>
