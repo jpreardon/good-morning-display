@@ -24,6 +24,7 @@ I monitored this throughout the day, and it was a little disappointing that the 
 
 - Handle errors in the forecast data request fixes #2
 - Handle nulls in current conditions data fixes #3
+- Handle long current condition strings fixes #5
 
 ### 2020-04-12
 
