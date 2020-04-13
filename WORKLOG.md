@@ -36,6 +36,7 @@ Work on getting a basic page mocked up. We're targeting the 800x480 display on a
   - Installed Firefox. CSS grid works, but the page looks like crap on the raspitouch screen, and I've found that the touch screen no longer works :(
   - Given the low res and lack of touch interface, I might rethink my display strategy. I'm going to work on the data side of things for bit, then come back to this.
 - Fix a couple issues in the style syntax
+- Get basic weather conditions and forecast hooked up
 
 ### 2020-04-11
 

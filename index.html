@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, intial-scale=1">
 
         <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet"> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
@@ -90,6 +91,116 @@
                 text-align: center;
             }
         </style>
+        <script>
+            function cToF(celsius) {
+                return celsius * 9 /5 + 32
+            }
+
+            function msToKts(metersPerSecond) {
+                knots = metersPerSecond * 1.943844
+                return knots.toFixed(1)
+            }
+
+            function degreesToCardinal(degrees) {
+                var windDirection = "?"
+
+                if (degrees >= 0 && degrees <= 11.25) {
+                    windDirection = "N"
+                }
+
+                if (degrees > 348.75 && degrees <= 360) {
+                    windDirection = "N"
+                }
+
+                if (degrees > 11.25 && degrees <= 33.75) {
+                    windDirection = "NNE"
+                }
+
+                if (degrees > 33.75 && degrees <= 56.25) {
+                    windDirection = "NE"
+                }
+
+                if (degrees > 56.25 && degrees <= 78.75) {
+                windDirection = "ENE"
+                }
+
+                if (degrees > 78.75 && degrees <= 101.25) {
+                    windDirection = "E"
+                }
+
+                if (degrees > 101.25 && degrees <= 123.75) {
+                    windDirection = "ESE"
+                }
+
+                if (degrees > 123.75 && degrees <= 146.25) {
+                    windDirection = "SE"
+                }
+
+                if (degrees > 146.25 && degrees <= 168.75) {
+                    windDirection = "SSE"
+                }
+
+                if (degrees > 168.75 && degrees <= 191.25) {
+                    windDirection = "S"
+                }
+
+                if (degrees > 191.25 && degrees <= 213.75) {
+                    windDirection = "SSW"
+                }
+
+                if (degrees > 213.75 && degrees <= 236.25) {
+                    windDirection = "SW"
+                }
+
+                if (degrees > 236.25 && degrees <= 258.75) {
+                    windDirection = "WSW"
+                }
+
+                if (degrees > 258.75 && degrees <= 281.25) {
+                    windDirection = "W"
+                }
+
+                if (degrees > 281.25 && degrees <= 303.75) {
+                    windDirection = "WNW"
+                }
+
+                if (degrees > 303.75 && degrees <= 326.25) {
+                    windDirection = "NW"
+                }
+
+                if (degrees > 326.25 && degrees <= 348.75) {
+                    windDirection = "NNW"
+                }
+
+                return windDirection
+            }
+
+            function updateWeather() {
+                const current_condition_url = "https://api.weather.gov/stations/KNYC/observations/latest"
+                const forecast_url = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
+
+                $.getJSON(current_condition_url, function(data) {
+                    $("#temperature > div.inner > p.big-number").html(parseInt(cToF(data.properties.temperature.value)) + "º")
+                    $("#temperature > div.inner > p.big-label").html(data.properties.textDescription)
+                    $("#wind > div.inner > p.big-number").html(msToKts(data.properties.windSpeed.value))
+                    $("#wind > div.inner > p.big-label").html("Knots " + degreesToCardinal(data.properties.windDirection.value))
+                })
+
+                $.getJSON(forecast_url, function(data) {
+                    $("#forecast > #f1-title").html(data.properties.periods[0].name)
+                    $("#forecast > #f1").html(data.properties.periods[0].detailedForecast)
+                    $("#forecast > #f2-title").html(data.properties.periods[1].name)
+                    $("#forecast > #f2").html(data.properties.periods[1].detailedForecast)
+                    $("#forecast > #f3-title").html(data.properties.periods[2].name)
+                    $("#forecast > #f3").html(data.properties.periods[2].shortForecast)
+                })
+            }
+
+            $( document ).ready(function() {
+                updateWeather()
+                window.setInterval(updateWeather, 60 * 30 * 1000)
+            })
+        </script>
     </head>
     <body>
         <div id="container">
@@ -106,14 +217,14 @@
                 </div>
             </div>
             <div id="forecast">
-                <h2>Tonight</h2>
-                <p>Mostly clear, with a low around 42. West wind 2 to 9 mph.</p>
+                <h2 id="f1-title">Tonight</h2>
+                <p id="f1">Mostly clear, with a low around 42. West wind 2 to 9 mph.</p>
 
-                <h2>Sunday</h2>
-                <p>Partly sunny, with a high near 61. South wind 6 to 16 mph.</p>
+                <h2 id="f2-title">Sunday</h2>
+                <p id="f2">Partly sunny, with a high near 61. South wind 6 to 16 mph.</p>
 
-                <h2>Sunday Night</h2>
-                <p>Rain likely after 2am. Cloudy, with a low around 53. South wind 14 to 18 mph, with gusts as high as 31 mph. Chance of precipitation is 60%. New rainfall amounts between a half and three quarters of an inch possible.</p>
+                <h2 id="f3-title">Sunday Night</h2>
+                <p id="f3">Rain likely after 2am. Cloudy, with a low around 53. South wind 14 to 18 mph, with gusts as high as 31 mph. Chance of precipitation is 60%. New rainfall amounts between a half and three quarters of an inch possible.</p>
             </div>
         </div>
     </body>
