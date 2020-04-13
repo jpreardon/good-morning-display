@@ -39,6 +39,7 @@ Work on getting a basic page mocked up. We're targeting the 800x480 display on a
   - [Current conditions](https://api.weather.gov/stations/KNYC/observations/latest)
   - [Forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast) and [hourly forecast](https://api.weather.gov/gridpoints/OKX/34,33/forecast/hourly) are available. I went with the detailed forecast 
   - Add update time, remove placeholder data, fix grid height issue, change knots to MPH.
+  - Add moment.js for date/time formatting. Fixes #1.
 
 ### 2020-04-11
 
