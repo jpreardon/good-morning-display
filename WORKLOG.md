@@ -22,6 +22,9 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 I monitored this throughout the day, and it was a little disappointing that the forecast didn't work most of the day due to a 503 error. From time to time, null temperatures and wind speeds would come through as well. I'm going to do a couple quick fixes, but longer term, this weather API might not be the right one.
 
+- Handle errors in the forecast data request fixes #2
+- Handle nulls in current conditions data fixes #3
+
 ### 2020-04-12
 
 Work on getting a basic page mocked up. We're targeting the 800x480 display on a Raspberry Pi touch for this project.

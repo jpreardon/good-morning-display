@@ -70,10 +70,13 @@
                 grid-row: 2 / 5;
             }
 
+            p.error {
+                color: #6f6f6f;
+            }
+
             #forecast p.error {
                 padding-top: 40%;
                 text-align: center;
-                color: #6f6f6f;
             }
 
             #update-time {
@@ -113,21 +116,37 @@
         </style>
         <script>
             function cToF(celsius) {
-                return celsius * 9 /5 + 32
-            }
-
-            function msToKts(metersPerSecond) {
-                knots = metersPerSecond * 1.943844
-                return knots.toFixed(1)
+                if (celsius == null) {
+                    return null
+                } else {
+                    celsius = celsius * 9 /5 + 32
+                    return celsius.toFixed(0) + "º"
+                }
             }
 
             function mpsToMph(metersPerSecond) {
-                milesPerHour = metersPerSecond * 2.236936
-                return milesPerHour.toFixed(1)
+                if (metersPerSecond == null) {
+                    return null
+                } else {
+                    milesPerHour = metersPerSecond * 2.236936
+                    return milesPerHour.toFixed(1)
+                }
+            }
+
+            function replaceNulls(value, replacement = "--") {
+                if (value == null) {
+                    return replacement
+                } else {
+                    return value
+                } 
             }
 
             function degreesToCardinal(degrees) {
                 var windDirection = "?"
+
+                if (degrees == null) {
+                    return null
+                }
 
                 if (degrees >= 0 && degrees <= 11.25) {
                     windDirection = "N"
@@ -146,7 +165,7 @@
                 }
 
                 if (degrees > 56.25 && degrees <= 78.75) {
-                windDirection = "ENE"
+                    windDirection = "ENE"
                 }
 
                 if (degrees > 78.75 && degrees <= 101.25) {
@@ -204,14 +223,20 @@
                 const current_condition_url = "https://api.weather.gov/stations/KNYC/observations/latest"
                 const forecast_url = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
 
-                $.getJSON(current_condition_url, function(data) {
-                    $("#temperature > div.inner > p.big-number").html(parseInt(cToF(data.properties.temperature.value)) + "º")
-                    $("#temperature > div.inner > p.big-label").html(data.properties.textDescription)
-                    $("#wind > div.inner > p.big-number").html(mpsToMph(data.properties.windSpeed.value))
-                    $("#wind > div.inner > p.big-label").html("MPH " + degreesToCardinal(data.properties.windDirection.value))
+                $.getJSON( current_condition_url ) 
+                    .done(function( json ) {
+                        $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
+                        $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
+                        $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
+                        $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value)))
+                    })
+                    .fail(function ( jqxhr, textStatus, error ) {
+                        $("#temperature > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
+                        $("#wind > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
+                        console.log("[Current Conditions] " + textStatus + ": " + error)
                 })
 
-                $.getJSON(forecast_url)
+                $.getJSON( forecast_url )
                     .done(function( json ) {
                         $("#forecast > #f1-title").html(json.properties.periods[0].name)
                         $("#forecast > #f1").html(json.properties.periods[0].detailedForecast)
@@ -223,7 +248,7 @@
                     .fail(function ( jqxhr, textStatus, error ) {
                         $("#forecast").html('<p class="error">Forecast not available ¯\\_(ツ)_/¯</p>')
                         console.log("[Forecast] " + textStatus + ": " + error)
-                    })
+                })
                 
                 $("#update-time > p").html(moment().format("HH:mm"))
             }
