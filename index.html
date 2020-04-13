@@ -67,7 +67,13 @@
             #forecast {
                 padding: 0 32px;
                 grid-column: 2;
-                grid-row: 2 / 4;
+                grid-row: 2 / 5;
+            }
+
+            #forecast p.error {
+                padding-top: 40%;
+                text-align: center;
+                color: #6f6f6f;
             }
 
             #update-time {
@@ -205,14 +211,19 @@
                     $("#wind > div.inner > p.big-label").html("MPH " + degreesToCardinal(data.properties.windDirection.value))
                 })
 
-                $.getJSON(forecast_url, function(data) {
-                    $("#forecast > #f1-title").html(data.properties.periods[0].name)
-                    $("#forecast > #f1").html(data.properties.periods[0].detailedForecast)
-                    $("#forecast > #f2-title").html(data.properties.periods[1].name)
-                    $("#forecast > #f2").html(data.properties.periods[1].detailedForecast)
-                    $("#forecast > #f3-title").html(data.properties.periods[2].name)
-                    $("#forecast > #f3").html(data.properties.periods[2].shortForecast)
-                })
+                $.getJSON(forecast_url)
+                    .done(function( json ) {
+                        $("#forecast > #f1-title").html(json.properties.periods[0].name)
+                        $("#forecast > #f1").html(json.properties.periods[0].detailedForecast)
+                        $("#forecast > #f2-title").html(json.properties.periods[1].name)
+                        $("#forecast > #f2").html(json.properties.periods[1].detailedForecast)
+                        $("#forecast > #f3-title").html(json.properties.periods[2].name)
+                        $("#forecast > #f3").html(json.properties.periods[2].shortForecast)
+                    })
+                    .fail(function ( jqxhr, textStatus, error ) {
+                        $("#forecast").html('<p class="error">Forecast not available ¯\\_(ツ)_/¯</p>')
+                        console.log("[Forecast] " + textStatus + ": " + error)
+                    })
                 
                 $("#update-time > p").html(moment().format("HH:mm"))
             }
