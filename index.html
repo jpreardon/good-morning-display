@@ -145,10 +145,6 @@
             function degreesToCardinal(degrees) {
                 var windDirection = "?"
 
-                if (degrees == null) {
-                    return null
-                }
-
                 if (degrees >= 0 && degrees <= 11.25) {
                     windDirection = "N"
                 }
@@ -217,6 +213,10 @@
                     windDirection = "NNW"
                 }
 
+                if (degrees == null) {
+                    windDirection = null
+                }
+
                 return windDirection
             }
 
@@ -229,7 +229,7 @@
                         $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
                         $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
                         $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
-                        $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value)))
+                        $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value), ""))
                     })
                     .fail(function ( jqxhr, textStatus, error ) {
                         $("#temperature > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')

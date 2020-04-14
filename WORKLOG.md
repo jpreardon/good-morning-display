@@ -7,12 +7,6 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 ## TODO
 
 - [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
-- Deal with forecast errors like this one:
-  ```
-  status: 503
-  title: Forecast Grid Invalid
-  detail: The forecast grid is missing data for time 2020-04-18T18:00:00-04:00.
-  ```
 - Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
 - Mock up cool wind/relative humidity features in HTML
 
@@ -25,6 +19,7 @@ I monitored this throughout the day, and it was a little disappointing that the 
 - Handle errors in the forecast data request fixes #2
 - Handle nulls in current conditions data fixes #3
 - Handle long current condition strings fixes #5
+- Don't display "--" for null wind direction
 
 ### 2020-04-12
 
