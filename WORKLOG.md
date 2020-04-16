@@ -6,11 +6,16 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## TODO
 
-- [Alerts](https://api.weather.gov/alerts/active/zone/NYZ075)
 - Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
 - Mock up cool wind/relative humidity features in HTML
 
 ## Notes
+
+### 2020-04-15
+
+Let's redo the layout in a way that allows for older browsers to actually render it (e.g. no css grid). This is really too bad since this was super easy with css grid. This probably isn't the right way to do this, but I'm going to lay this thing out at the original fixed size first (without grid), then work on making it proportional.
+
+- Layout without css grid
 
 ### 2020-04-13
 
@@ -19,7 +24,7 @@ I monitored this throughout the day, and it was a little disappointing that the 
 - Handle errors in the forecast data request fixes #2
 - Handle nulls in current conditions data fixes #3
 - Handle long current condition strings fixes #5
-- Don't display "--" for null wind direction
+- Don't display -- for null wind direction
 
 ### 2020-04-12
 
