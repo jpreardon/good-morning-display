@@ -16,6 +16,11 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 Let's redo the layout in a way that allows for older browsers to actually render it (e.g. no css grid). This is really too bad since this was super easy with css grid. This probably isn't the right way to do this, but I'm going to lay this thing out at the original fixed size first (without grid), then work on making it proportional.
 
 - Layout without css grid
+- Make margins and padding of layout percentages
+
+In the process of doing all this so I cold run this on an old iPad, I realized that it doesn't work at all on the iPad. It mush have something to do with jQuery. Bummer. I'm going to forget about the actual device for a bit and focus on getting it working the way I want on desktop--for now.
+
+The two commits here essentially fix issue 7, although the responsive layout needs more work.
 
 ### 2020-04-13
 

@@ -11,13 +11,13 @@
         <style>
             body {
                 font-family: 'Roboto', sans-serif;
+                margin: 0;
+                padding: 0;
             }
 
             #container {
-                width: 800px;
-                height: 480px;
-                /* width: 100vw;
-                height: 100vh; */
+                width: 100%;
+                height: 100vh;
                 background-color: #000000;
                 color: #ffffff;
                 overflow: auto;
@@ -39,6 +39,8 @@
             }
 
             #current-conditions {
+                margin-top: 4%;
+                margin-left: 4%;
                 float: left;
             }
 
@@ -47,8 +49,6 @@
                 height: 192px;
                 width: 192px;
                 border-radius: 50%;
-                margin-left: 32px;
-                margin-top: 32px;
                 display: flex;
                 align-items: center;
             }
@@ -58,17 +58,16 @@
                 height: 192px;
                 width: 192px;
                 border-radius: 50%;
-                margin-left: 32px;
-                margin-top: 24px;
-                margin-bottom: 32px;
+                margin-top: 12.2%;
                 display: flex;
                 align-items: center;
             }
 
             #forecast {
-                padding: 0 32px;
-                margin-top: 32px;
-                margin-left: 256px;
+                padding-left: 4%;
+                margin-top: 4%;
+                margin-left: 28.5%;
+                padding-right: 4%;
             }
 
             p.error {
@@ -81,20 +80,18 @@
             }
 
             #update-time {
+                margin-left: 2%;
+                margin-top: 14%;
                 width: 40px;
                 height: 15px;
-                text-align: right;
-                position: absolute;
-                top: 457px;
-                left: 752px;
+                text-align: left;
+                clear: both;
             }
 
             #update-time p {
                 color: #6f6f6f;
                 font-weight: 100;
                 font-size: 12px;
-                text-align: right;
-                margin: 0;
             }
 
             #forecast h2 {
