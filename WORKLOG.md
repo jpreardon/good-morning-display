@@ -18,6 +18,7 @@ Doing some clean-up work on the wind indicator...
 
 - Delete function degreesToCardinal(degrees) and hard code wind label
 - Stop the flashing at 0º wind direction on page load/refresh and deal with nulls in wind direction gracefully
+- Set max width and height on container
 
 ### 2020-04-16
 
