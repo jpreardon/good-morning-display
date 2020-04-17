@@ -8,8 +8,18 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 - Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
 - Mock up cool wind/relative humidity features in HTML
+  - Stop the flashing at 0º wind direction on page load/refresh
+  - Deal with nulls/no wind direction gracefully
+  - Remove un-needed code (e.g. the degrees to cardinal function)
+  - Start work on relative humidity
 
 ## Notes
+
+### 2020-04-16
+
+Let's try getting the wind direction indicator to work as designed. I really wanted to do this with CSS only (no images). While I'm sure this is possible, it was easier for me to get an image working. A problem with this is that it depends on the size of the element staying the same. Maybe I can get around this by using an SVG instead of a PNG. Anyway, the initial version is sort of working, but needs a bit of cleanup.
+
+- Initial implementation of graphical wind indicator.
 
 ### 2020-04-15
 

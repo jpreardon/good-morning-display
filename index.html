@@ -13,13 +13,13 @@
                 font-family: 'Roboto', sans-serif;
                 margin: 0;
                 padding: 0;
+                background-color: #000000;
+                color: #ffffff;
             }
 
             #container {
                 width: 100%;
                 height: 100vh;
-                background-color: #000000;
-                color: #ffffff;
                 overflow: auto;
             }
 
@@ -61,6 +61,17 @@
                 margin-top: 12.2%;
                 display: flex;
                 align-items: center;
+                position: relative;
+                z-index: auto;
+            }
+
+            #wind-arrow {
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
             }
 
             #forecast {
@@ -115,6 +126,7 @@
                 margin: auto;
                 text-align: center;
             }
+
         </style>
         <script>
             function cToF(celsius) {
@@ -230,7 +242,9 @@
                         $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
                         $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
                         $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
-                        $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value), ""))
+                        /* $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value), "")) */
+                        $("#wind > div.inner > p.big-label").html("MPH")
+                        $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)")
                     })
                     .fail(function ( jqxhr, textStatus, error ) {
                         $("#temperature > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
@@ -272,6 +286,9 @@
                 </div>
                 <div id="wind">
                     <div class="inner">
+                        <div id="wind-arrow">
+                            <img src="wind-arrow.png" />
+                        </div>
                         <p class="big-number"></p>
                         <p class="big-label"></p>
                     </div>
