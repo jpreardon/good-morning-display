@@ -155,84 +155,6 @@
                 } 
             }
 
-            function degreesToCardinal(degrees) {
-                var windDirection = "?"
-
-                if (degrees >= 0 && degrees <= 11.25) {
-                    windDirection = "N"
-                }
-
-                if (degrees > 348.75 && degrees <= 360) {
-                    windDirection = "N"
-                }
-
-                if (degrees > 11.25 && degrees <= 33.75) {
-                    windDirection = "NNE"
-                }
-
-                if (degrees > 33.75 && degrees <= 56.25) {
-                    windDirection = "NE"
-                }
-
-                if (degrees > 56.25 && degrees <= 78.75) {
-                    windDirection = "ENE"
-                }
-
-                if (degrees > 78.75 && degrees <= 101.25) {
-                    windDirection = "E"
-                }
-
-                if (degrees > 101.25 && degrees <= 123.75) {
-                    windDirection = "ESE"
-                }
-
-                if (degrees > 123.75 && degrees <= 146.25) {
-                    windDirection = "SE"
-                }
-
-                if (degrees > 146.25 && degrees <= 168.75) {
-                    windDirection = "SSE"
-                }
-
-                if (degrees > 168.75 && degrees <= 191.25) {
-                    windDirection = "S"
-                }
-
-                if (degrees > 191.25 && degrees <= 213.75) {
-                    windDirection = "SSW"
-                }
-
-                if (degrees > 213.75 && degrees <= 236.25) {
-                    windDirection = "SW"
-                }
-
-                if (degrees > 236.25 && degrees <= 258.75) {
-                    windDirection = "WSW"
-                }
-
-                if (degrees > 258.75 && degrees <= 281.25) {
-                    windDirection = "W"
-                }
-
-                if (degrees > 281.25 && degrees <= 303.75) {
-                    windDirection = "WNW"
-                }
-
-                if (degrees > 303.75 && degrees <= 326.25) {
-                    windDirection = "NW"
-                }
-
-                if (degrees > 326.25 && degrees <= 348.75) {
-                    windDirection = "NNW"
-                }
-
-                if (degrees == null) {
-                    windDirection = null
-                }
-
-                return windDirection
-            }
-
             function updateWeather() {
                 const current_condition_url = "https://api.weather.gov/stations/KNYC/observations/latest"
                 const forecast_url = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
@@ -242,8 +164,6 @@
                         $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
                         $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
                         $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
-                        /* $("#wind > div.inner > p.big-label").html("MPH " + replaceNulls(degreesToCardinal(json.properties.windDirection.value), "")) */
-                        $("#wind > div.inner > p.big-label").html("MPH")
                         $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)")
                     })
                     .fail(function ( jqxhr, textStatus, error ) {
@@ -290,7 +210,7 @@
                             <img src="wind-arrow.png" />
                         </div>
                         <p class="big-number"></p>
-                        <p class="big-label"></p>
+                        <p class="big-label">MPH</p>
                     </div>
                 </div>
             </div>

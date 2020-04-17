@@ -15,6 +15,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-17
+
+Doing some clean-up work on the wind indicator...
+
+- Delete function degreesToCardinal(degrees) and hard code wind label
+
 ### 2020-04-16
 
 Let's try getting the wind direction indicator to work as designed. I really wanted to do this with CSS only (no images). While I'm sure this is possible, it was easier for me to get an image working. A problem with this is that it depends on the size of the element staying the same. Maybe I can get around this by using an SVG instead of a PNG. Anyway, the initial version is sort of working, but needs a bit of cleanup.
