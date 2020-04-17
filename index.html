@@ -127,6 +127,10 @@
                 text-align: center;
             }
 
+            .hide {
+                display: none;
+            }
+
         </style>
         <script>
             function cToF(celsius) {
@@ -164,7 +168,11 @@
                         $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
                         $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
                         $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
-                        $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)")
+                        if (json.properties.windDirection.value == null) {
+                            $("#wind-arrow").addClass("hide")
+                        } else {
+                            $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)").removeClass("hide")
+                        }
                     })
                     .fail(function ( jqxhr, textStatus, error ) {
                         $("#temperature > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
@@ -206,7 +214,7 @@
                 </div>
                 <div id="wind">
                     <div class="inner">
-                        <div id="wind-arrow">
+                        <div id="wind-arrow" class="hide">
                             <img src="wind-arrow.png" />
                         </div>
                         <p class="big-number"></p>
