@@ -17,6 +17,9 @@ As it turns out, a major part of my problem was that the bounding box for the te
 
 The NWS data seems a bit flaky. It frequently does't report wind direction or current conditions. It seemed a bit better on Friday than Thursday, so maybe this is a temporary problem. However, I'd like to make it a bit easier to swap out the API. I'm going to abstract the data to make that easier, it should also simplify the update code.
 
+- Move current conditions get call to a promise
+- Move forecast get call to a promise
+
 ### 2020-04-17
 
 Doing some clean-up work on the wind indicator...

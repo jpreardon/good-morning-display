@@ -52,7 +52,7 @@ const getCurrentConditions = new Promise(
     function (resolve, reject) {
         var currentConditions = {}
         $.getJSON( CURRENT_CONDITION_URL ) 
-        .done(function( json ) {
+        .done( function(json) {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
             currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
             currentConditions.windSpeed = replaceNulls(mpsToMph(json.properties.windSpeed.value))
@@ -60,10 +60,28 @@ const getCurrentConditions = new Promise(
             currentConditions.relativeHumidity = json.properties.relativeHumidity.value
             resolve(currentConditions)
         })
-        .fail(function ( jqxhr, textStatus, error ) {
+        .fail( function (jqxhr, textStatus, error) {
             currentConditions.error = error
             currentConditions.textStatus = textStatus
             resolve(currentConditions)
+        })
+    }
+)
+
+const getForecast = new Promise(
+    function (resolve, reject) {
+        var forecast = []
+        $.getJSON(FORECAST_URL)
+        .done( function (json) {
+            forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
+            forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
+            forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
+            resolve(forecast)
+        })
+        .fail( function (jqxhr, textStatus, error) {
+            forecast.error = error
+            forecast.textStatus = textStatus
+            resolve(forecast)
         })
     }
 )
@@ -92,18 +110,18 @@ function updateWeather() {
         }       
     })
 
-    $.getJSON( FORECAST_URL )
-        .done(function( json ) {
-            $("#forecast > #f1-title").html(json.properties.periods[0].name)
-            $("#forecast > #f1").html(json.properties.periods[0].detailedForecast)
-            $("#forecast > #f2-title").html(json.properties.periods[1].name)
-            $("#forecast > #f2").html(json.properties.periods[1].detailedForecast)
-            $("#forecast > #f3-title").html(json.properties.periods[2].name)
-            $("#forecast > #f3").html(json.properties.periods[2].shortForecast)
-        })
-        .fail(function ( jqxhr, textStatus, error ) {
+    getForecast.then( function (forecast) {
+        if (forecast.error == undefined) {
+            $("#forecast > #f1-title").html(forecast[0].name)
+            $("#forecast > #f1").html(forecast[0].forecast)
+            $("#forecast > #f2-title").html(forecast[1].name)
+            $("#forecast > #f2").html(forecast[1].forecast)
+            $("#forecast > #f3-title").html(forecast[2].name)
+            $("#forecast > #f3").html(forecast[2].forecast)
+        } else {
             $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
-            console.log("[Forecast Error]: " + textStatus + ": " + error)
+            console.log("[Forecast Error]: " + forecast.textStatus + ": " + forecast.error)
+        }
     })
     
     $("#update-time > p").html(moment().format("HH:mm"))
