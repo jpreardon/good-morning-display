@@ -48,11 +48,25 @@
 
             #temperature {
                 border: 2px solid #ffffff;
-                height: 192px;
-                width: 192px;
+                height: 190px;
+                width: 190px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
+                position: relative;
+            }
+
+            #humidity {
+                position: absolute;
+                height: 196px;
+                width: 196px;
+                stroke: #D0021B;
+                fill-opacity: 0;
+                stroke-width: 8;
+                z-index: 10;
+                overflow: visible;
+                stroke-dasharray: 604;
+                transform: rotate(90deg) translateX(43px) translateY(151px);
             }
 
             #wind {
@@ -161,6 +175,22 @@
                 } 
             }
 
+            function mapRelativeHumidity(relativeHumidity, maxLength) {
+                // TODO: This seems so hacky, I'm going to open an issue for it #techdebt
+                
+                const step = maxLength / 100 
+    
+                if (relativeHumidity.toFixed(0) == 100 || relativeHumidity.toFixed(0) < 0 || relativeHumidity.toFixed(0) > 100) {
+                    return 0
+                } else {
+                    values=[]
+                    for (let x = maxLength; x > 0; x = x - step) {
+                        values.push(x.toFixed(0))
+                    }
+                    return values[relativeHumidity.toFixed(0)]
+                }
+            }
+
             function updateWeather() {
                 const current_condition_url = "https://api.weather.gov/stations/KNYC/observations/latest"
                 const forecast_url = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
@@ -174,6 +204,11 @@
                             $("#wind-arrow").addClass("hide")
                         } else {
                             $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)").removeClass("hide")
+                        }
+                        if (json.properties.relativeHumidity.value == null) {
+                            $("#humidity").addClass("hide")
+                        } else {
+                            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(json.properties.relativeHumidity.value, 604)).removeClass("hide")
                         }
                     })
                     .fail(function ( jqxhr, textStatus, error ) {
@@ -210,6 +245,9 @@
             <div id="current-conditions">
                 <div id="temperature">
                     <div class="inner">
+                        <svg id="humidity" class="hide">
+                            <circle cx="0" cy="44" r="96" />
+                        </svg>
                         <p class="big-number"></p>
                         <p class="big-label"></p>
                     </div>

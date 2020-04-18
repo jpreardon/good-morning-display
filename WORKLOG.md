@@ -20,6 +20,14 @@ Doing some clean-up work on the wind indicator...
 - Stop the flashing at 0º wind direction on page load/refresh and deal with nulls in wind direction gracefully
 - Set max width and height on container
 
+Working on the relative humidity indicator...
+
+Going to try [svg](https://stackoverflow.com/questions/42234855/is-it-possible-to-draw-a-partial-circle-outline-in-css-open-ring-shape) first. This [explaination about animated svgs](https://css-tricks.com/svg-line-animation-works/) was also helpful.
+
+This worked, but it seems a bit hacky the way I've implemented it. When I rotate the svg, I have to reposition it. I'm sure there's a way to do this by setting the proper origin or something. But, it seems to be working OK in Firefox. The other bit of hackyness is in the mapRelativeHumidity function. I'm pretty sure there is a purely mathmatical way to do that, simply -or- a build in function. I'm going to open an issue for this one to do a bit more research.
+
+Having said all that, I'm not sure that I'm wild about the whole relative humidity thing. It's not anywhere near as intuative as the wind direction. I'll leave it for now.
+
 ### 2020-04-16
 
 Let's try getting the wind direction indicator to work as designed. I really wanted to do this with CSS only (no images). While I'm sure this is possible, it was easier for me to get an image working. A problem with this is that it depends on the size of the element staying the same. Maybe I can get around this by using an SVG instead of a PNG. Anyway, the initial version is sort of working, but needs a bit of cleanup.
