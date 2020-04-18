@@ -4,12 +4,6 @@
 
 For this version 2 of the Good Morning display, I'm currently targeting a Raspberry Pi touch display. It's overkill for simple stuff, but one day, I might want to get more advanced. It would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
 
-## TODO
-
-- Get mockup running on raspi? (see 2020-04-12 notes), if not, what to do? Might need to make a more responsive interface.
-- Mock up cool wind/relative humidity features in HTML
-  - Start work on relative humidity
-
 ## Notes
 
 ### 2020-04-17
