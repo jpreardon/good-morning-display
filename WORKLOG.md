@@ -11,6 +11,9 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 Having another look at the humidity indicator. [Issue 12](https://github.com/jpreardon/good-morning-display/issues/12) shows how the indicator can go off center. This is due to the current conditions being 2 lines. I think there are a couple things contributing to this. First, the SVG probably shouldn't be part of the "inner" div. Second, I'm applying styling to the SVG element when I think most of the styling should be applied to the circle element within the SVG. This shoudl be fun...
 
 - Put js and css in their own files (finally) and organize into subfolders.
+- Clean up humidity svg code. Fixes #12.
+
+As it turns out, a major part of my problem was that the bounding box for the temperature was a different size than I thought it was. I was shooting for 196px when, in reality, it was 190px. Duh. I also noticed that the wind indicator was a slightly different size. I changed it to 190px as well. One day, these should become relative anyway.
 
 ### 2020-04-17
 

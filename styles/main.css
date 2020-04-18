@@ -49,21 +49,24 @@ body {
 
 #humidity {
     position: absolute;
-    height: 196px;
-    width: 196px;
+    height: 190px;
+    width: 190px;
+    z-index: 10;
+    overflow: visible;
+    transform: rotate(90deg);
+}
+
+#humidity circle  {
     stroke: #D0021B;
     fill-opacity: 0;
     stroke-width: 8;
-    z-index: 10;
-    overflow: visible;
     stroke-dasharray: 604;
-    transform: rotate(90deg) translateX(43px) translateY(151px);
 }
 
 #wind {
     border: 2px solid #ffffff;
-    height: 192px;
-    width: 192px;
+    height: 190px;
+    width: 190px;
     border-radius: 50%;
     margin-top: 12.2%;
     display: flex;
