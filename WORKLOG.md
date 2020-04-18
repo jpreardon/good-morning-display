@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-18
+
+Having another look at the humidity indicator. [Issue 12](https://github.com/jpreardon/good-morning-display/issues/12) shows how the indicator can go off center. This is due to the current conditions being 2 lines. I think there are a couple things contributing to this. First, the SVG probably shouldn't be part of the "inner" div. Second, I'm applying styling to the SVG element when I think most of the styling should be applied to the circle element within the SVG. This shoudl be fun...
+
+- Put js and css in their own files (finally) and organize into subfolders.
+
 ### 2020-04-17
 
 Doing some clean-up work on the wind indicator...

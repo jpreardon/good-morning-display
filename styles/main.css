@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    color: #ffffff;
+}
+
+#container {
+    width: 100%;
+    height: 100vh;
+    max-width: 1000px;
+    max-height: 520px;
+    overflow: auto;
+}
+
+.big-number {
+    font-weight: 100;
+    font-size: 72px;
+    line-height: 72px;
+    margin: 0;
+}
+
+.big-label {
+    font-weight: 100;
+    font-size: 16px;
+    line-height: 16px;
+    max-width: 155px;
+    margin: 0;
+}
+
+#current-conditions {
+    margin-top: 4%;
+    margin-left: 4%;
+    float: left;
+}
+
+#temperature {
+    border: 2px solid #ffffff;
+    height: 190px;
+    width: 190px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#humidity {
+    position: absolute;
+    height: 196px;
+    width: 196px;
+    stroke: #D0021B;
+    fill-opacity: 0;
+    stroke-width: 8;
+    z-index: 10;
+    overflow: visible;
+    stroke-dasharray: 604;
+    transform: rotate(90deg) translateX(43px) translateY(151px);
+}
+
+#wind {
+    border: 2px solid #ffffff;
+    height: 192px;
+    width: 192px;
+    border-radius: 50%;
+    margin-top: 12.2%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: auto;
+}
+
+#wind-arrow {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+#forecast {
+    padding-left: 4%;
+    margin-top: 4%;
+    margin-left: 28.5%;
+    padding-right: 4%;
+}
+
+p.error {
+    color: #6f6f6f;
+}
+
+#forecast p.error {
+    padding-top: 40%;
+    text-align: center;
+}
+
+#update-time {
+    margin-left: 2%;
+    margin-top: 14%;
+    width: 40px;
+    height: 15px;
+    text-align: left;
+    clear: both;
+}
+
+#update-time p {
+    color: #6f6f6f;
+    font-weight: 100;
+    font-size: 12px;
+}
+
+#forecast h2 {
+    font-weight: 100;
+    font-size: 24px;
+    margin-bottom: 16px;
+    margin-top: 32px;
+}
+
+#forecast h2:first-child {
+    margin-top: 0;
+}
+
+#forecast p {
+    font-weight: 100;
+    font-size: 16px;
+    margin: 0;
+}
+
+.inner {
+    margin: auto;
+    text-align: center;
+}
+
+.hide {
+    display: none;
+}
