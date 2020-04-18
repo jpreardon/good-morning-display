@@ -49,7 +49,7 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
 }
 
 const getCurrentConditions = new Promise(
-    function (resolve, reject) {
+    function (resolve) {
         var currentConditions = {}
         $.getJSON( CURRENT_CONDITION_URL ) 
         .done( function(json) {
@@ -69,7 +69,7 @@ const getCurrentConditions = new Promise(
 )
 
 const getForecast = new Promise(
-    function (resolve, reject) {
+    function (resolve) {
         var forecast = []
         $.getJSON(FORECAST_URL)
         .done( function (json) {
@@ -124,7 +124,8 @@ function updateWeather() {
         }
     })
     
-    $("#update-time > p").html(moment().format("HH:mm"))
+    var updateTime = new Date
+    $("#update-time > p").html(`${updateTime.getHours()}:${updateTime.getMinutes()}`)
 }
 
 $( document ).ready(function() {

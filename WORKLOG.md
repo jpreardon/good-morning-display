@@ -19,6 +19,7 @@ The NWS data seems a bit flaky. It frequently does't report wind direction or cu
 
 - Move current conditions get call to a promise
 - Move forecast get call to a promise
+- Remove moment.js reference fixes #14
 
 ### 2020-04-17
 
