@@ -1,3 +1,11 @@
+// APIs
+const CURRENT_CONDITION_URL = "https://api.weather.gov/stations/KNYC/observations/latest"
+const FORECAST_URL = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
+
+// User facing text
+const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
+const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
+
 function cToF(celsius) {
     if (celsius == null) {
         return null
@@ -40,33 +48,51 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
     }
 }
 
-function updateWeather() {
-    const current_condition_url = "https://api.weather.gov/stations/KNYC/observations/latest"
-    const forecast_url = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
-
-    $.getJSON( current_condition_url ) 
+const getCurrentConditions = new Promise(
+    function (resolve, reject) {
+        var currentConditions = {}
+        $.getJSON( CURRENT_CONDITION_URL ) 
         .done(function( json ) {
-            $("#temperature > div.inner > p.big-number").html(replaceNulls(cToF(json.properties.temperature.value)))
-            $("#temperature > div.inner > p.big-label").html(replaceNulls(json.properties.textDescription, ""))
-            $("#wind > div.inner > p.big-number").html(replaceNulls(mpsToMph(json.properties.windSpeed.value)))
-            if (json.properties.windDirection.value == null) {
-                $("#wind-arrow").addClass("hide")
-            } else {
-                $("#wind-arrow").css("transform", "rotate(" + json.properties.windDirection.value + "deg)").removeClass("hide")
-            }
-            if (json.properties.relativeHumidity.value == null) {
-                $("#humidity").addClass("hide")
-            } else {
-                $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(json.properties.relativeHumidity.value, 604)).removeClass("hide")
-            }
+            currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
+            currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
+            currentConditions.windSpeed = replaceNulls(mpsToMph(json.properties.windSpeed.value))
+            currentConditions.windDirection = json.properties.windDirection.value
+            currentConditions.relativeHumidity = json.properties.relativeHumidity.value
+            resolve(currentConditions)
         })
         .fail(function ( jqxhr, textStatus, error ) {
-            $("#temperature > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
-            $("#wind > .inner").html('<p class="error">Current conditions not available ¯\\_(ツ)_/¯</p>')
-            console.log("[Current Conditions] " + textStatus + ": " + error)
+            currentConditions.error = error
+            currentConditions.textStatus = textStatus
+            resolve(currentConditions)
+        })
+    }
+)
+
+function updateWeather() {
+
+    getCurrentConditions.then( function (conditions) { 
+        if (conditions.error == undefined) {
+            $("#temperature > div.inner > p.big-number").html(conditions.temperature)
+            $("#temperature > div.inner > p.big-label").html(conditions.conditions)
+            $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
+            if (conditions.windDirection == null) {
+                $("#wind-arrow").addClass("hide")
+            } else {
+                $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
+            }
+            if (conditions.relativeHumidity == null) {
+                $("#humidity").addClass("hide")
+            } else {
+                $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 604)).removeClass("hide")
+            }  
+        } else {
+            $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+            $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+            console.log("[Current Conditions Error]: " + conditions.textStatus + ": " + conditions.error)
+        }       
     })
 
-    $.getJSON( forecast_url )
+    $.getJSON( FORECAST_URL )
         .done(function( json ) {
             $("#forecast > #f1-title").html(json.properties.periods[0].name)
             $("#forecast > #f1").html(json.properties.periods[0].detailedForecast)
@@ -76,8 +102,8 @@ function updateWeather() {
             $("#forecast > #f3").html(json.properties.periods[2].shortForecast)
         })
         .fail(function ( jqxhr, textStatus, error ) {
-            $("#forecast").html('<p class="error">Forecast not available ¯\\_(ツ)_/¯</p>')
-            console.log("[Forecast] " + textStatus + ": " + error)
+            $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
+            console.log("[Forecast Error]: " + textStatus + ": " + error)
     })
     
     $("#update-time > p").html(moment().format("HH:mm"))
