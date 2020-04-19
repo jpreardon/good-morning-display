@@ -23,6 +23,10 @@ The NWS data seems a bit flaky. It frequently does't report wind direction or cu
 
 I used promises here, I think that's right, they are working, but not 100% as expected. I tried adding a .catch, but it always runs, even when there are no errors. I think it's good enough for now, but I there might be issues down the road. Hopefully, I'll have more experience with creating promises by then. Progress not perfection, right? I consider issue #13 fixed.
 
+As it turns out, the promises weren't working the way I thought they were. I declared them as a constant, so they worked exactly once when the page loaded, but later calls to them did nothing. Making them functions fixes the problem, duh.
+
+- Make update functions return promises
+
 ### 2020-04-17
 
 Doing some clean-up work on the wind indicator...
