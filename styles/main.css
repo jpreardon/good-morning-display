@@ -16,6 +16,10 @@ body {
     overflow: auto;
 }
 
+.settings-container {
+    padding: 32px;
+}
+
 .big-number {
     font-weight: 100;
     font-size: 72px;
@@ -139,4 +143,26 @@ p.error {
 
 .hide {
     display: none;
+}
+
+#settings * {
+    color: #6f6f6f;
+    font-weight: 100;
+    font-size: 12px;
+    margin-left: 2%;
+    display: inline;
+}
+
+h1 {
+    font-weight: 100;
+}
+
+form input {
+    display: block;
+    margin-bottom: 16px;
+    margin-top: 8px;
+}
+
+form input[type="button"] {
+    display: inline;
 }
