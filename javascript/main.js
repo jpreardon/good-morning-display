@@ -1,6 +1,9 @@
-// APIs
-const CURRENT_CONDITION_URL = "https://api.weather.gov/stations/KNYC/observations/latest"
-const FORECAST_URL = "https://api.weather.gov/gridpoints/OKX/34,33/forecast"
+// Weather data API setup
+const CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
+const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/OKX/<coordinates>/forecast"
+// These are set dynamically at runtime
+var WEATHER_STATION = ""
+var WEATHER_GRID_COORDINATES = ""
 
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
@@ -24,6 +27,11 @@ function mpsToMph(metersPerSecond) {
     }
 }
 
+/** 
+ * Replaces null values with another value 
+ * @param {string} value - The value that might contain a null.
+ * @param {string} [replacement] - What will replace a null in value. The default is "--".
+ */
 function replaceNulls(value, replacement = "--") {
     if (value == null) {
         return replacement
@@ -51,7 +59,7 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
 function getCurrentConditions() {
     return new Promise( function (resolve) {
         var currentConditions = {}
-        $.getJSON( CURRENT_CONDITION_URL ) 
+        $.getJSON( getApiEndpoint("current_conditions") ) 
         .done( function(json) {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
             currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
@@ -71,7 +79,7 @@ function getCurrentConditions() {
 function getForecast() {
     return new Promise( function (resolve) {
         var forecast = []
-        $.getJSON(FORECAST_URL)
+        $.getJSON( getApiEndpoint("forecast")  )
         .done( function (json) {
             forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
             forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
@@ -86,7 +94,26 @@ function getForecast() {
     })
 }
 
+function setUserLocationData(station, gridCoordinates) {
+    WEATHER_STATION = station
+    WEATHER_GRID_COORDINATES = gridCoordinates
+}
+
+function getApiEndpoint(name) {
+    switch (name) {
+        case "current_conditions":
+            return CURRENT_CONDITION_ENDPOINT.replace("<stationName>", WEATHER_STATION)
+        case "forecast":
+            return FORECAST_ENDPOINT.replace("<coordinates>", WEATHER_GRID_COORDINATES)
+        default:
+            return null
+    }
+}
+
 function updateWeather() {
+
+    // Set the user's location data
+    setUserLocationData("KNYC", "34,33")
 
     getCurrentConditions().then( function (conditions) { 
         if (conditions.error == undefined) {

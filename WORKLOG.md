@@ -6,6 +6,19 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-19
+
+Continuing work on the settings page. I split the issues up so I can get the basics working first. So, what are the basics? I need to do the following:
+
+- Ask user to enter station for current weather and grid coordinates for forecasts. (for now, they will need to know these two things)
+- Store that information in local browser storage
+- Use the stored information to construct the API urls
+- Have decent validation and messaging around all of the above
+
+This might turn into a multi-day project since I don't have a lot of time to devote to it.
+
+- Make weather API URLs more dynamic - #9. I might have gone overboard with the functions here, but I sort of have a plan.
+
 ### 2020-04-18
 
 Having another look at the humidity indicator. [Issue 12](https://github.com/jpreardon/good-morning-display/issues/12) shows how the indicator can go off center. This is due to the current conditions being 2 lines. I think there are a couple things contributing to this. First, the SVG probably shouldn't be part of the "inner" div. Second, I'm applying styling to the SVG element when I think most of the styling should be applied to the circle element within the SVG. This should be fun...
@@ -15,7 +28,7 @@ Having another look at the humidity indicator. [Issue 12](https://github.com/jpr
 
 As it turns out, a major part of my problem was that the bounding box for the temperature was a different size than I thought it was. I was shooting for 196px when, in reality, it was 190px. Duh. I also noticed that the wind indicator was a slightly different size. I changed it to 190px as well. One day, these should become relative anyway.
 
-The NWS data seems a bit flaky. It frequently does't report wind direction or current conditions. It seemed a bit better on Friday than Thursday, so maybe this is a temporary problem. However, I'd like to make it a bit easier to swap out the API. I'm going to abstract the data to make that easier, it should also simplify the update code.
+The NWS data seems a bit flaky. It frequently doesn't report wind direction or current conditions. It seemed a bit better on Friday than Thursday, so maybe this is a temporary problem. However, I'd like to make it a bit easier to swap out the API. I'm going to abstract the data to make that easier, it should also simplify the update code.
 
 - Move current conditions get call to a promise
 - Move forecast get call to a promise
@@ -40,11 +53,11 @@ Doing some clean-up work on the wind indicator...
 
 Working on the relative humidity indicator...
 
-Going to try [svg](https://stackoverflow.com/questions/42234855/is-it-possible-to-draw-a-partial-circle-outline-in-css-open-ring-shape) first. This [explaination about animated svgs](https://css-tricks.com/svg-line-animation-works/) was also helpful.
+Going to try [svg](https://stackoverflow.com/questions/42234855/is-it-possible-to-draw-a-partial-circle-outline-in-css-open-ring-shape) first. This [explanation about animated svgs](https://css-tricks.com/svg-line-animation-works/) was also helpful.
 
-This worked, but it seems a bit hacky the way I've implemented it. When I rotate the svg, I have to reposition it. I'm sure there's a way to do this by setting the proper origin or something. But, it seems to be working OK in Firefox. The other bit of hackyness is in the mapRelativeHumidity function. I'm pretty sure there is a purely mathmatical way to do that, simply -or- a build in function. I'm going to open an issue for this one to do a bit more research.
+This worked, but it seems a bit hacky the way I've implemented it. When I rotate the svg, I have to reposition it. I'm sure there's a way to do this by setting the proper origin or something. But, it seems to be working OK in Firefox. The other bit of hackyness is in the mapRelativeHumidity function. I'm pretty sure there is a purely mathematical way to do that, simply -or- a build in function. I'm going to open an issue for this one to do a bit more research.
 
-Having said all that, I'm not sure that I'm wild about the whole relative humidity thing. It's not anywhere near as intuative as the wind direction. I'll leave it for now.
+Having said all that, I'm not sure that I'm wild about the whole relative humidity thing. It's not anywhere near as intuitive as the wind direction. I'll leave it for now.
 
 ### 2020-04-16
 
