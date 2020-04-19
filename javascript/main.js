@@ -125,7 +125,7 @@ function updateWeather() {
     })
     
     var updateTime = new Date
-    $("#update-time > p").html(`${updateTime.getHours()}:${updateTime.getMinutes()}`)
+    $("#update-time > p").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 }
 
 $( document ).ready(function() {
