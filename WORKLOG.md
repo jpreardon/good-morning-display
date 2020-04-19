@@ -25,6 +25,11 @@ I used promises here, I think that's right, they are working, but not 100% as ex
 
 - Add settings page
 
+As it turns out, the promises weren't working the way I thought they were. I declared them as a constant, so they worked exactly once when the page loaded, but later calls to them did nothing. Making them functions fixes the problem, duh.
+
+- Make update functions return promises
+- Add padding to update time hours and minutes
+
 ### 2020-04-17
 
 Doing some clean-up work on the wind indicator...

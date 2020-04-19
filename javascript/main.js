@@ -48,8 +48,8 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
     }
 }
 
-const getCurrentConditions = new Promise(
-    function (resolve) {
+function getCurrentConditions() {
+    return new Promise( function (resolve) {
         var currentConditions = {}
         $.getJSON( CURRENT_CONDITION_URL ) 
         .done( function(json) {
@@ -65,11 +65,11 @@ const getCurrentConditions = new Promise(
             currentConditions.textStatus = textStatus
             resolve(currentConditions)
         })
-    }
-)
+    })
+}
 
-const getForecast = new Promise(
-    function (resolve) {
+function getForecast() {
+    return new Promise( function (resolve) {
         var forecast = []
         $.getJSON(FORECAST_URL)
         .done( function (json) {
@@ -83,12 +83,12 @@ const getForecast = new Promise(
             forecast.textStatus = textStatus
             resolve(forecast)
         })
-    }
-)
+    })
+}
 
 function updateWeather() {
 
-    getCurrentConditions.then( function (conditions) { 
+    getCurrentConditions().then( function (conditions) { 
         if (conditions.error == undefined) {
             $("#temperature > div.inner > p.big-number").html(conditions.temperature)
             $("#temperature > div.inner > p.big-label").html(conditions.conditions)
@@ -110,7 +110,7 @@ function updateWeather() {
         }       
     })
 
-    getForecast.then( function (forecast) {
+    getForecast().then( function (forecast) {
         if (forecast.error == undefined) {
             $("#forecast > #f1-title").html(forecast[0].name)
             $("#forecast > #f1").html(forecast[0].forecast)
@@ -125,7 +125,7 @@ function updateWeather() {
     })
     
     var updateTime = new Date
-    $("#update-time > p").html(`${updateTime.getHours()}:${updateTime.getMinutes()}`)
+    $("#update-time > p").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 }
 
 $( document ).ready(function() {
