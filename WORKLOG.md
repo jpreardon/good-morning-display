@@ -18,6 +18,7 @@ Continuing work on the settings page. I split the issues up so I can get the bas
 This might turn into a multi-day project since I don't have a lot of time to devote to it.
 
 - Make weather API URLs more dynamic - #9. I might have gone overboard with the functions here, but I sort of have a plan.
+- Store user location parameters in localstorage, add some validation. Still needs work - #9.
 
 ### 2020-04-18
 

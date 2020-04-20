@@ -94,17 +94,63 @@ function getForecast() {
     })
 }
 
-function setUserLocationData(station, gridCoordinates) {
-    WEATHER_STATION = station
-    WEATHER_GRID_COORDINATES = gridCoordinates
+function setUserLocationData(dataPoint, value) {
+    var name = ""
+    var status = ""
+    
+    switch (dataPoint) {
+        case "stationName":
+            name =  "current_conditions"
+            break
+        case "coordinates":
+            name = "forecast"
+            break
+        default:
+            status = false
+    }
+
+    validateApiEndpoint(name, value)
+        .then(function (x) { localStorage.setItem(dataPoint, value) })
+        .then(function (x) { status = true })
+        .catch(function (x) { status = false })
+        .then(function (x) { console.log(status) })
 }
+
+function getUserLocationData(dataPoint) {
+    return localStorage.getItem(dataPoint)
+}
+
+function validateApiEndpoint(name, variable) {
+    return new Promise( function (resolve, reject) {
+        var endPoint = ""
+        
+        switch (name) {
+            case "current_conditions":
+                endPoint = CURRENT_CONDITION_ENDPOINT.replace("<stationName>", variable)
+                break
+            case "forecast":
+                endPoint = FORECAST_ENDPOINT.replace("<coordinates>", variable)
+                break
+            default:
+                endPoint = "fail"
+        }
+
+        $.getJSON(endPoint)
+        .done( function (json) {
+            resolve(true)
+        })
+        .fail( function (jqxhr, textStatus, error) {
+            reject(false)
+        })
+    })
+} 
 
 function getApiEndpoint(name) {
     switch (name) {
         case "current_conditions":
-            return CURRENT_CONDITION_ENDPOINT.replace("<stationName>", WEATHER_STATION)
+            return CURRENT_CONDITION_ENDPOINT.replace("<stationName>", getUserLocationData("stationName"))
         case "forecast":
-            return FORECAST_ENDPOINT.replace("<coordinates>", WEATHER_GRID_COORDINATES)
+            return FORECAST_ENDPOINT.replace("<coordinates>", getUserLocationData("coordinates"))
         default:
             return null
     }
@@ -112,8 +158,7 @@ function getApiEndpoint(name) {
 
 function updateWeather() {
 
-    // Set the user's location data
-    setUserLocationData("KNYC", "34,33")
+    // TODO: Need to check to make sure stationName and coordinates exist in local storage. If they don't message user so they can set them.
 
     getCurrentConditions().then( function (conditions) { 
         if (conditions.error == undefined) {
