@@ -60,10 +60,10 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
 }
 
 function getCurrentConditions() {
-    return new Promise( function (resolve) {
+    return new Promise( (resolve) => {
         var currentConditions = {}
         $.getJSON( getApiEndpoint("current_conditions") ) 
-        .done( function(json) {
+        .done( (json) => {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
             currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
             currentConditions.windSpeed = replaceNulls(mpsToMph(json.properties.windSpeed.value))
@@ -71,7 +71,7 @@ function getCurrentConditions() {
             currentConditions.relativeHumidity = json.properties.relativeHumidity.value
             resolve(currentConditions)
         })
-        .fail( function (jqxhr, textStatus, error) {
+        .fail( (jqxhr, textStatus, error) => {
             currentConditions.error = error
             currentConditions.textStatus = textStatus
             resolve(currentConditions)
@@ -80,16 +80,16 @@ function getCurrentConditions() {
 }
 
 function getForecast() {
-    return new Promise( function (resolve) {
+    return new Promise( (resolve) => {
         var forecast = []
         $.getJSON( getApiEndpoint("forecast")  )
-        .done( function (json) {
+        .done( (json) => {
             forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
             forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
             forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
             resolve(forecast)
         })
-        .fail( function (jqxhr, textStatus, error) {
+        .fail( (jqxhr, textStatus, error) => {
             forecast.error = error
             forecast.textStatus = textStatus
             resolve(forecast)
@@ -98,7 +98,7 @@ function getForecast() {
 }
 
 function setUserLocationData(dataPoint, value) {
-    return new Promise( function (resolve, reject) {
+    return new Promise( (resolve, reject) => {
         var name = ""
         
         switch (dataPoint) {
@@ -144,10 +144,10 @@ function validateApiEndpoint(name, variable) {
         }
 
         $.getJSON(endPoint)
-        .done( function (json) {
+        .done( (json) => {
             resolve("Valid Endpoint")
         })
-        .fail( function (jqxhr, textStatus, error) {
+        .fail( (jqxhr, textStatus, error) => {
             reject("Invalid Endpoint")
         })
     })
@@ -172,11 +172,11 @@ function getApiEndpoint(name) {
 function storageAvailable(type) {
     var storage;
     try {
-        storage = window[type];
+        storage = window[type]
         var x = '__storage_test__';
-        storage.setItem(x, x);
-        storage.removeItem(x);
-        return true;
+        storage.setItem(x, x)
+        storage.removeItem(x)
+        return true
     }
     catch(e) {
         return e instanceof DOMException && (
@@ -190,7 +190,7 @@ function storageAvailable(type) {
             // Firefox
             e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
             // acknowledge QuotaExceededError only if there's something already stored
-            (storage && storage.length !== 0);
+            (storage && storage.length !== 0)
     }
 }
 
@@ -208,7 +208,7 @@ function updateWeather() {
         return false
     }
 
-    getCurrentConditions().then( function (conditions) { 
+    getCurrentConditions().then( (conditions) => { 
         if (conditions.error == undefined) {
             $("#temperature > div.inner > p.big-number").html(conditions.temperature)
             $("#temperature > div.inner > p.big-label").html(conditions.conditions)
@@ -230,7 +230,7 @@ function updateWeather() {
         }       
     })
 
-    getForecast().then( function (forecast) {
+    getForecast().then( (forecast) => {
         if (forecast.error == undefined) {
             $("#forecast > #f1-title").html(forecast[0].name)
             $("#forecast > #f1").html(forecast[0].forecast)
@@ -248,7 +248,7 @@ function updateWeather() {
     $("#update-time > p").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 }
 
-$(document).ready(function() {
+$(document).ready( () => {
     updateWeather()
     window.setInterval(updateWeather, 60 * 30 * 1000)
 })

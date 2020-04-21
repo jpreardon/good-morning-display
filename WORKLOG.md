@@ -12,6 +12,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 - Added a function to ensure that local storage is available.
 - Added a function to check that storage values are set in the browser
 - Fix setUserLocation function to properly validate endpoints
+- Use arrow functions consistently
 
 ### 2020-04-19
 
