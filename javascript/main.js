@@ -42,7 +42,11 @@ function replaceNulls(value, replacement = "--") {
         return value
     } 
 }
-
+/**
+ * Returns the dash-offset needed to render the relative humidity border
+ * @param {Number} relativeHumidity
+ * @param {Number} maxLength - Circumference of the circle, or length of arc
+ */
 function mapRelativeHumidity(relativeHumidity, maxLength) {
     const step = maxLength / 100 
     var mappedValue = 0
@@ -220,7 +224,7 @@ function updateWeather() {
         if (conditions.relativeHumidity == null) {
             $("#humidity").addClass("hide")
         } else {
-            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 604)).removeClass("hide")
+            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 597)).removeClass("hide")
         }  
 
     }).catch( (error) => {

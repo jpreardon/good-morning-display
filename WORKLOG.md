@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-21
+
+- Fix length of relative humidity arc. Add documentation to mapRelativeHumidity.
+
 ### 2020-04-20
 
 - Read through this: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API. 
