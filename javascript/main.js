@@ -60,7 +60,7 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
 }
 
 function getCurrentConditions() {
-    return new Promise( (resolve) => {
+    return new Promise( (resolve, reject) => {
         var currentConditions = {}
         $.getJSON( getApiEndpoint("current_conditions") ) 
         .done( (json) => {
@@ -74,7 +74,7 @@ function getCurrentConditions() {
         .fail( (jqxhr, textStatus, error) => {
             currentConditions.error = error
             currentConditions.textStatus = textStatus
-            resolve(currentConditions)
+            reject(currentConditions)
         })
     })
 }
@@ -209,25 +209,26 @@ function updateWeather() {
     }
 
     getCurrentConditions().then( (conditions) => { 
-        if (conditions.error == undefined) {
-            $("#temperature > div.inner > p.big-number").html(conditions.temperature)
-            $("#temperature > div.inner > p.big-label").html(conditions.conditions)
-            $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
-            if (conditions.windDirection == null) {
-                $("#wind-arrow").addClass("hide")
-            } else {
-                $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
-            }
-            if (conditions.relativeHumidity == null) {
-                $("#humidity").addClass("hide")
-            } else {
-                $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 604)).removeClass("hide")
-            }  
+        $("#temperature > div.inner > p.big-number").html(conditions.temperature)
+        $("#temperature > div.inner > p.big-label").html(conditions.conditions)
+        $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
+
+        if (conditions.windDirection == null) {
+            $("#wind-arrow").addClass("hide")
         } else {
-            $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
-            $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
-            console.log("[Current Conditions Error]: " + conditions.textStatus + ": " + conditions.error)
-        }       
+            $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
+        }
+
+        if (conditions.relativeHumidity == null) {
+            $("#humidity").addClass("hide")
+        } else {
+            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 604)).removeClass("hide")
+        }  
+
+    }).catch( (error) => {
+        $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+        $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+        console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
     })
 
     getForecast().then( (forecast) => {
