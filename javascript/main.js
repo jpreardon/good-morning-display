@@ -98,25 +98,25 @@ function getForecast() {
 }
 
 function setUserLocationData(dataPoint, value) {
-    var name = ""
-    var status = ""
-    
-    switch (dataPoint) {
-        case "stationName":
-            name =  "current_conditions"
-            break
-        case "coordinates":
-            name = "forecast"
-            break
-        default:
-            return false
-    }
+    return new Promise( function (resolve, reject) {
+        var name = ""
+        
+        switch (dataPoint) {
+            case "stationName":
+                name =  "current_conditions"
+                break
+            case "coordinates":
+                name = "forecast"
+                break
+            default:
+                return reject("Invalid Data Point")
+        }
 
-    validateApiEndpoint(name, value)
-        .then(function (x) { localStorage.setItem(dataPoint, value) })
-        .then(function (x) { status = true })
-        .catch(function (x) { status = false })
-        .then(function (x) { return status })
+        validateApiEndpoint(name, value)
+        .then( () => localStorage.setItem(dataPoint, value) )
+        .then( () => resolve("Success"))
+        .catch( (error) => reject(error) )
+    })   
 }
 
 function getUserLocationData(dataPoint) {
@@ -129,7 +129,7 @@ function getUserLocationData(dataPoint) {
 }
 
 function validateApiEndpoint(name, variable) {
-    return new Promise( function (resolve, reject) {
+    return new Promise( (resolve, reject) => {
         var endPoint = ""
         
         switch (name) {
@@ -145,10 +145,10 @@ function validateApiEndpoint(name, variable) {
 
         $.getJSON(endPoint)
         .done( function (json) {
-            resolve(true)
+            resolve("Valid Endpoint")
         })
         .fail( function (jqxhr, textStatus, error) {
-            reject(false)
+            reject("Invalid Endpoint")
         })
     })
 } 
