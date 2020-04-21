@@ -14,6 +14,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 - Fix setUserLocation function to properly validate endpoints
 - Use arrow functions consistently
 - Update getCurrentConditions to reject promise on fail
+- Update getForecast to reject promise on fail
 
 ### 2020-04-19
 

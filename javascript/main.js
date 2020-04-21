@@ -80,7 +80,7 @@ function getCurrentConditions() {
 }
 
 function getForecast() {
-    return new Promise( (resolve) => {
+    return new Promise( (resolve, reject) => {
         var forecast = []
         $.getJSON( getApiEndpoint("forecast")  )
         .done( (json) => {
@@ -92,7 +92,7 @@ function getForecast() {
         .fail( (jqxhr, textStatus, error) => {
             forecast.error = error
             forecast.textStatus = textStatus
-            resolve(forecast)
+            reject(forecast)
         })
     })
 }
@@ -232,17 +232,15 @@ function updateWeather() {
     })
 
     getForecast().then( (forecast) => {
-        if (forecast.error == undefined) {
-            $("#forecast > #f1-title").html(forecast[0].name)
-            $("#forecast > #f1").html(forecast[0].forecast)
-            $("#forecast > #f2-title").html(forecast[1].name)
-            $("#forecast > #f2").html(forecast[1].forecast)
-            $("#forecast > #f3-title").html(forecast[2].name)
-            $("#forecast > #f3").html(forecast[2].forecast)
-        } else {
-            $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
-            console.log("[Forecast Error]: " + forecast.textStatus + ": " + forecast.error)
-        }
+        $("#forecast > #f1-title").html(forecast[0].name)
+        $("#forecast > #f1").html(forecast[0].forecast)
+        $("#forecast > #f2-title").html(forecast[1].name)
+        $("#forecast > #f2").html(forecast[1].forecast)
+        $("#forecast > #f3-title").html(forecast[2].name)
+        $("#forecast > #f3").html(forecast[2].forecast)
+    }).catch( (error) => {
+        $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
+        console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
     })
     
     var updateTime = new Date
