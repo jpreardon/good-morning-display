@@ -1,6 +1,6 @@
 // Weather data API setup
 const CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
-const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/OKX/<coordinates>/forecast"
+const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/forecast"
 // These are set dynamically at runtime
 var WEATHER_STATION = ""
 var WEATHER_GRID_COORDINATES = ""
@@ -8,6 +8,9 @@ var WEATHER_GRID_COORDINATES = ""
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
+const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
+// This is a temporary message, remove ASAP
+const ERR_NO_LOCATION_DATA = "No location data is set. Open console and set it!!! :P"
 
 function cToF(celsius) {
     if (celsius == null) {
@@ -106,18 +109,23 @@ function setUserLocationData(dataPoint, value) {
             name = "forecast"
             break
         default:
-            status = false
+            return false
     }
 
     validateApiEndpoint(name, value)
         .then(function (x) { localStorage.setItem(dataPoint, value) })
         .then(function (x) { status = true })
         .catch(function (x) { status = false })
-        .then(function (x) { console.log(status) })
+        .then(function (x) { return status })
 }
 
 function getUserLocationData(dataPoint) {
-    return localStorage.getItem(dataPoint)
+    var returnData = localStorage.getItem(dataPoint)
+    if (returnData == null) {
+        return false
+    } else {
+        return returnData
+    }
 }
 
 function validateApiEndpoint(name, variable) {
@@ -156,9 +164,49 @@ function getApiEndpoint(name) {
     }
 }
 
+/** 
+ * Check if local storage is available 
+ * @param {string} type - Can be localStorage or sessionStorage.
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API} for source
+ */
+function storageAvailable(type) {
+    var storage;
+    try {
+        storage = window[type];
+        var x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
 function updateWeather() {
 
-    // TODO: Need to check to make sure stationName and coordinates exist in local storage. If they don't message user so they can set them.
+    // Check to see if local storage is available at all
+    if (storageAvailable("localStorage") == false) {
+        alert(ERR_NO_LOCAL_STORAGE)
+        return false
+    }
+
+    // TODO: This is temporary, it should redirect to the settings page once that exists
+    if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
+        alert(ERR_NO_LOCATION_DATA)
+        return false
+    }
 
     getCurrentConditions().then( function (conditions) { 
         if (conditions.error == undefined) {
@@ -200,7 +248,7 @@ function updateWeather() {
     $("#update-time > p").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 }
 
-$( document ).ready(function() {
+$(document).ready(function() {
     updateWeather()
     window.setInterval(updateWeather, 60 * 30 * 1000)
 })

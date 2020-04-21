@@ -6,6 +6,14 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-20
+
+Read through this: https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+
+OKX
+34,33
+KNYC
+
 ### 2020-04-19
 
 Continuing work on the settings page. I split the issues up so I can get the basics working first. So, what are the basics? I need to do the following:
