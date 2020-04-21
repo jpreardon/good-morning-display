@@ -44,19 +44,17 @@ function replaceNulls(value, replacement = "--") {
 }
 
 function mapRelativeHumidity(relativeHumidity, maxLength) {
-    // TODO: This seems so hacky, I'm going to open an issue for it #techdebt
-    
     const step = maxLength / 100 
+    var mappedValue = 0
 
-    if (relativeHumidity.toFixed(0) == 100 || relativeHumidity.toFixed(0) < 0 || relativeHumidity.toFixed(0) > 100) {
-        return 0
+    if (relativeHumidity.toFixed(0) < 0) {
+        mappedValue = maxLength
+    } else if (relativeHumidity.toFixed(0) > 100) {
+        mappedValue = 0
     } else {
-        values=[]
-        for (let x = maxLength; x > 0; x = x - step) {
-            values.push(x.toFixed(0))
-        }
-        return values[relativeHumidity.toFixed(0)]
+        mappedValue = maxLength - (relativeHumidity * step)
     }
+    return mappedValue.toFixed(0)
 }
 
 function getCurrentConditions() {

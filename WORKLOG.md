@@ -15,6 +15,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 - Use arrow functions consistently
 - Update getCurrentConditions to reject promise on fail
 - Update getForecast to reject promise on fail
+- Simplified mapRelativeHumidity function. Fixes #10
 
 ### 2020-04-19
 
