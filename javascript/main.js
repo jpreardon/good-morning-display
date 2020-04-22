@@ -312,12 +312,10 @@ function updateWeather() {
 $(document).ready( () => {
     var path = window.location.pathname
 
-    if (path.substring(path.length - 10) == "index.html") {
+    if (path.substring(path.length - 13) == "settings.html") {
+        loadFormFromLocalStorage()
+    } else {
         updateWeather()
         window.setInterval(updateWeather, 60 * 30 * 1000)
-    } else if (path.substring(path.length - 13) == "settings.html") {
-        loadFormFromLocalStorage()
     }
-
-    
 })
