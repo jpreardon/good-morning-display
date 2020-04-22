@@ -9,8 +9,6 @@ var WEATHER_GRID_COORDINATES = ""
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
 const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
-// This is a temporary message, remove ASAP
-const ERR_NO_LOCATION_DATA = "No location data is set. Open console and set it!!! :P"
 
 function cToF(celsius) {
     if (celsius == null) {
@@ -228,11 +226,13 @@ function saveLatLon() {
             $.getJSON(observationStationsURL)
                 .done( (stations) => {
                     stationIdentifier = stations.features[0].properties.stationIdentifier
-                    setUserLocationData("stationName", stationIdentifier)
+                    Promise.all([
+                        setUserLocationData("stationName", stationIdentifier),
+                        setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
+                        setUserLocationData("lat", latitude),
+                        setUserLocationData("lon", longitude)
+                    ]).then(() => {window.location = "index.html"})
                 })
-            setUserLocationData("coordinates", `${office}/${gridX},${gridY}`)
-            setUserLocationData("lat", latitude)
-            setUserLocationData("lon", longitude)
         })
     
 }
@@ -265,10 +265,9 @@ function updateWeather() {
         return false
     }
 
-    // TODO: This is temporary, it should redirect to the settings page once that exists
+    // Redirect to the settings page if station and coordinates don't exist
     if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
-        alert(ERR_NO_LOCATION_DATA)
-        return false
+        window.location = "settings.html"
     }
 
     getCurrentConditions().then( (conditions) => { 

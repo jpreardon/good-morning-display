@@ -10,6 +10,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 - Stop settings page from updating weather
 - Show current settings on load
+- Add some redirects around settings to make it less user hostile
 
 ### 2020-04-21
 

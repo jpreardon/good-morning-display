@@ -170,4 +170,18 @@ form input[type="button"] {
     font-size: 12px;
     margin-left: 24px;
     cursor: pointer;
+    text-decoration: underline;
+}
+
+p.body-text {
+    max-width: 30rem;
+    font-size: 15px;
+}
+
+p.body-text:last-of-type {
+    margin-bottom: 2rem;
+}
+
+p.body-text a, p.body-text a:visited {
+    color: inherit;
 }
