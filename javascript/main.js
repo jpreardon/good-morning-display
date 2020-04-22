@@ -110,14 +110,25 @@ function setUserLocationData(dataPoint, value) {
             case "coordinates":
                 name = "forecast"
                 break
+            case "lat":
+                name = "lat"
+                break
+            case "lon":
+                name = "lon"
+                break
             default:
                 return reject("Invalid Data Point")
         }
 
-        validateApiEndpoint(name, value)
-        .then( () => localStorage.setItem(dataPoint, value) )
-        .then( () => resolve("Success"))
-        .catch( (error) => reject(error) )
+        if (name == "lat" || name == "lon") {
+            localStorage.setItem(dataPoint, value)
+            resolve("Success")
+        } else {
+            validateApiEndpoint(name, value)
+            .then( () => localStorage.setItem(dataPoint, value) )
+            .then( () => resolve("Success"))
+            .catch( (error) => reject(error) )
+        }
     })   
 }
 
@@ -218,19 +229,32 @@ function saveLatLon() {
                 .done( (stations) => {
                     stationIdentifier = stations.features[0].properties.stationIdentifier
                     setUserLocationData("stationName", stationIdentifier)
-                    console.log(stationIdentifier)
                 })
             setUserLocationData("coordinates", `${office}/${gridX},${gridY}`)
-            console.log(`${office}/${gridX},${gridY}`)
+            setUserLocationData("lat", latitude)
+            setUserLocationData("lon", longitude)
         })
     
 }
 
 function getLocation() {
     navigator.geolocation.getCurrentPosition( (pos) => {
-        document.getElementById("lat").value = pos.coords.latitude
-        document.getElementById("lon").value = pos.coords.longitude
+        populateSettingsForm(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4))
     })
+}
+
+function populateSettingsForm(lat, lon) {
+    document.getElementById("lat").value = lat
+    document.getElementById("lon").value = lon
+}
+
+function loadFormFromLocalStorage() {
+    if (getUserLocationData("lat") && getUserLocationData("lon")) {
+        populateSettingsForm(
+            getUserLocationData("lat"),
+            getUserLocationData("lon")
+        )
+    }
 }
 
 function updateWeather() {
@@ -289,10 +313,12 @@ function updateWeather() {
 $(document).ready( () => {
     var path = window.location.pathname
 
-    // Update weather only on index page
     if (path.substring(path.length - 10) == "index.html") {
         updateWeather()
         window.setInterval(updateWeather, 60 * 30 * 1000)
+    } else if (path.substring(path.length - 13) == "settings.html") {
+        loadFormFromLocalStorage()
     }
+
     
 })
