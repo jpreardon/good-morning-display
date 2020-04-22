@@ -287,6 +287,12 @@ function updateWeather() {
 }
 
 $(document).ready( () => {
-    updateWeather()
-    window.setInterval(updateWeather, 60 * 30 * 1000)
+    var path = window.location.pathname
+
+    // Update weather only on index page
+    if (path.substring(path.length - 10) == "index.html") {
+        updateWeather()
+        window.setInterval(updateWeather, 60 * 30 * 1000)
+    }
+    
 })
