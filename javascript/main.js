@@ -196,6 +196,43 @@ function storageAvailable(type) {
     }
 }
 
+function saveLatLon() {
+    const latitude = document.getElementById("lat").value
+    const longitude = document.getElementById("lon").value
+
+    var forecastURL = ""
+    var observationStationsURL = ""
+    var office = ""
+    var gridX = ""
+    var gridY = ""
+    var stationIdentifier = ""
+
+    $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
+        .done( (points) => {
+            forecastURL = points.properties.forecast
+            observationStationsURL = points.properties.observationStations
+            office = points.properties.cwa
+            gridX = points.properties.gridX
+            gridY = points.properties.gridY
+            $.getJSON(observationStationsURL)
+                .done( (stations) => {
+                    stationIdentifier = stations.features[0].properties.stationIdentifier
+                    setUserLocationData("stationName", stationIdentifier)
+                    console.log(stationIdentifier)
+                })
+            setUserLocationData("coordinates", `${office}/${gridX},${gridY}`)
+            console.log(`${office}/${gridX},${gridY}`)
+        })
+    
+}
+
+function getLocation() {
+    navigator.geolocation.getCurrentPosition( (pos) => {
+        document.getElementById("lat").value = pos.coords.latitude
+        document.getElementById("lon").value = pos.coords.longitude
+    })
+}
+
 function updateWeather() {
 
     // Check to see if local storage is available at all

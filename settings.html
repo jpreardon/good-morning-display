@@ -14,13 +14,17 @@
             <h1>Settings</h1>
 
             <form>
-                <label for="lat">Lattitude</label>
+                <label for="lat">Latitude</label> <a class="helper-link" onclick="getLocation()">get location</a>
                 <input id="lat" type="text">
-                <label for="long">Longtitude</label>
-                <input id="long" type="text">
-                <input type="button" value="Save">
+                <label for="lon">Longitude</label>
+                <input id="lon" type="text">
+                <input type="button" value="Save" onclick="saveLatLon()">
                 <input type="button" value="Cancel">
             </form>
+
+            <div id="settings">
+                
+            </div>
         </div>
     </body>
 </html>

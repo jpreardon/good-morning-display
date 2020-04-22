@@ -165,3 +165,9 @@ form input {
 form input[type="button"] {
     display: inline;
 }
+
+.helper-link {
+    font-size: 12px;
+    margin-left: 24px;
+    cursor: pointer;
+}

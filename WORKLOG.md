@@ -9,6 +9,16 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 ### 2020-04-21
 
 - Fix length of relative humidity arc. Add documentation to mapRelativeHumidity.
+- Get form working in a slightly user hostile way - #9
+
+I got the form working and I can set the needed location data with lat/long manually, or by fetching it from the browser. Side note, my browser provides location to an almost creepy level of accuracy.
+
+To wrap this up, the settings form should:
+
+- Show current setting on load
+- Do validation and error checking
+- Allow one to pick their station from a list
+- Look nicer
 
 ### 2020-04-20
 
