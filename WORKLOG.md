@@ -17,6 +17,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 - Add some redirects around settings to make it less user hostile
 - Fix if statement in updateWeather function so it doesn't fail on other servers
 - Allow one to pick their station from a list
+- A couple minor styling updates
 
 ### 2020-04-21
 
