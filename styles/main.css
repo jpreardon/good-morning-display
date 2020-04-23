@@ -103,21 +103,6 @@ p.error {
     text-align: center;
 }
 
-#update-time {
-    margin-left: 2%;
-    margin-top: 14%;
-    width: 40px;
-    height: 15px;
-    text-align: left;
-    clear: both;
-}
-
-#update-time p {
-    color: #6f6f6f;
-    font-weight: 100;
-    font-size: 12px;
-}
-
 #forecast h2 {
     font-weight: 100;
     font-size: 24px;
@@ -190,10 +175,40 @@ p.body-text a, p.body-text a:visited {
     margin-bottom: .5rem;
 }
 
+div#settings {
+    clear: left;
+    margin-top: 100px;
+}
+
 #settings * {
     color: #6f6f6f;
     font-weight: 100;
     font-size: 12px;
     margin-left: 2%;
     display: inline;
+}
+
+#settings-gear g {
+    fill: #6f6f6f;
+}
+
+svg#settings-gear {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+}
+
+/* #update-time {
+    margin-left: 2%;
+    margin-top: 14%;
+    width: 40px;
+    height: 15px;
+    text-align: left;
+    clear: both;
+} */
+
+#update-time p {
+    color: #6f6f6f;
+    font-weight: 100;
+    font-size: 12px;
 }

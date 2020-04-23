@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-23
+
+- Some settings icon stylings - #20
+
 ### 2020-04-22
 
 - Stop settings page from updating weather
