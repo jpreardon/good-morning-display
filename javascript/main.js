@@ -223,29 +223,70 @@ function saveLatLon() {
             office = points.properties.cwa
             gridX = points.properties.gridX
             gridY = points.properties.gridY
-            $.getJSON(observationStationsURL)
-                .done( (stations) => {
-                    stationIdentifier = stations.features[0].properties.stationIdentifier
-                    Promise.all([
-                        setUserLocationData("stationName", stationIdentifier),
-                        setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
-                        setUserLocationData("lat", latitude),
-                        setUserLocationData("lon", longitude)
-                    ]).then(() => {window.location = "index.html"})
-                })
+            stationIdentifier = $("input[name='stationId']:checked").val()
+
+            Promise.all([
+                setUserLocationData("stationName", stationIdentifier),
+                setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
+                setUserLocationData("lat", latitude),
+                setUserLocationData("lon", longitude)
+            ]).then(() => {window.location = "index.html"})
         })
     
 }
 
-function getLocation() {
-    navigator.geolocation.getCurrentPosition( (pos) => {
-        populateSettingsForm(pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4))
+function generateStationList(latitude, longitude, selectedStationId = null) {
+    $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
+        .done( (points) => {
+            $.getJSON(points.properties.observationStations)
+                .done( (stations) => {
+                    document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
+                    for (let i = 0; i < 5; i++) {
+                        var stationId = stations.features[i].properties.stationIdentifier
+                        var stationName = stations.features[i].properties.name
+                        var checked = ""
+                        
+                        if (!selectedStationId == null) {
+                            if (i == 0 ) {
+                                checked = "checked"
+                            }
+                        } else {
+                            if (selectedStationId == stationId) {
+                                checked = "checked"
+                            } 
+                        }
+
+                        
+
+                        var radioButton = "<div>"
+                        radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
+                        radioButton += `<label for="${stationId}">${stationName}</label>`
+                        radioButton += "</div>"
+                        document.getElementById("station-radio-group").innerHTML += radioButton
+                    }
+                })
+        })
+}
+
+function getLatLon() {
+    return new Promise( (resolve, reject) => {
+        navigator.geolocation.getCurrentPosition( (pos) => {
+            resolve([pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4)])
+        }, (error) => { reject(error)} )
     })
+}
+
+function getLocation() {
+    getLatLon()
+        .then((latLon) => populateSettingsForm(latLon[0], latLon[1]))
+        .then((latLon) => generateStationList(latLon[0], latLon[1]))
+        .catch((error) => console.log(error.message))
 }
 
 function populateSettingsForm(lat, lon) {
     document.getElementById("lat").value = lat
     document.getElementById("lon").value = lon
+    return [lat,lon]
 }
 
 function loadFormFromLocalStorage() {
@@ -253,6 +294,11 @@ function loadFormFromLocalStorage() {
         populateSettingsForm(
             getUserLocationData("lat"),
             getUserLocationData("lon")
+        )
+        generateStationList(
+            getUserLocationData("lat"),
+            getUserLocationData("lon"),
+            getUserLocationData("stationName")
         )
     }
 }

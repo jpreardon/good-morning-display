@@ -156,10 +156,14 @@ h1 {
     font-weight: 100;
 }
 
-form input {
+form input[type=text]{
     display: block;
     margin-bottom: 16px;
     margin-top: 8px;
+}
+
+form label {
+    display: inline-block;
 }
 
 form input[type="button"] {
@@ -184,4 +188,12 @@ p.body-text:last-of-type {
 
 p.body-text a, p.body-text a:visited {
     color: inherit;
+}
+
+#station-radio-group {
+    margin-bottom: 2rem;
+}
+
+#station-radio-group div {
+    margin-bottom: .5rem;
 }
