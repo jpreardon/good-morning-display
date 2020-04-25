@@ -15,6 +15,10 @@ That was way harder than it needed to be. I messed around with SVGs for a while 
 - Add pointer cursor to buttons
 - Replace pixel based font sizing and margins with rems for paragraphs and form - #18
 
+[This](https://css-tricks.com/scale-svg/) was helpful for further understanding of the viewBox attribute on SVGs.
+
+- Set temperature and humidity circle sizes with rems (wind arrow is broken) - #18
+
 ### 2020-04-23
 
 - Some settings icon stylings - #20

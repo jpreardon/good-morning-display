@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
+* {
+    font-size: 16px;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -22,14 +26,12 @@ body {
 }
 
 .big-number {
-    font-size: 72px;
-    line-height: 72px;
+    font-size: 3rem;
+    line-height: 3rem;
     margin: 0;
 }
 
 .big-label {
-    font-size: 16px;
-    line-height: 16px;
     max-width: 155px;
     margin: 0;
 }
@@ -42,8 +44,8 @@ body {
 
 #temperature {
     border: 2px solid #ffffff;
-    height: 190px;
-    width: 190px;
+    height: 9rem;
+    width: 9rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -52,8 +54,6 @@ body {
 
 #humidity {
     position: absolute;
-    height: 190px;
-    width: 190px;
     z-index: 10;
     overflow: visible;
     transform: rotate(90deg);
@@ -62,14 +62,15 @@ body {
 #humidity circle  {
     stroke: #D0021B;
     fill-opacity: 0;
-    stroke-width: 8;
-    stroke-dasharray: 604;
+    stroke-opacity: 1;
+    stroke-width: .2rem;
+    stroke-dasharray: 314;
 }
 
 #wind {
     border: 2px solid #ffffff;
-    height: 190px;
-    width: 190px;
+    height: 9rem;
+    width: 9rem;
     border-radius: 50%;
     margin-top: 12.2%;
     display: flex;

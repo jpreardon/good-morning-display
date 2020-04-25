@@ -330,7 +330,7 @@ function updateWeather() {
         if (conditions.relativeHumidity == null) {
             $("#humidity").addClass("hide")
         } else {
-            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 597)).removeClass("hide")
+            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 314)).removeClass("hide")
         }  
 
     }).catch( (error) => {
