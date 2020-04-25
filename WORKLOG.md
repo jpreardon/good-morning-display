@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-24
+
+- Finish adding settings icon fixes #20
+
+That was way harder than it needed to be. I messed around with SVGs for a while before I gave up and went with a PNG. However, in the end, I don't think the image was causing my problem anyway. Bah
+
 ### 2020-04-23
 
 - Some settings icon stylings - #20

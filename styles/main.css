@@ -203,39 +203,25 @@ p.body-text a, p.body-text a:visited {
 }
 
 div#settings {
-    clear: left;
-    margin-top: 100px;
-}
-
-#settings * {
-    color: #6f6f6f;
-    font-weight: 100;
-    font-size: 12px;
-    margin-left: 2%;
-    display: inline;
-}
-
-#settings-gear g {
-    fill: #6f6f6f;
-}
-
-svg#settings-gear {
-    width: 16px;
-    height: 16px;
-    display: inline-block;
-}
-
-/* #update-time {
-    margin-left: 2%;
     margin-top: 14%;
-    width: 40px;
-    height: 15px;
-    text-align: left;
-    clear: both;
-} */
+    box-sizing: border-box;
+    height: 16px;
+}
 
-#update-time p {
+#settings a {
+    text-decoration: none;
+    height: 16px;
+}
+
+#settings img {
+    height: 16px;
+    width: 16px;
+}
+
+#update-time {
     color: #6f6f6f;
     font-weight: 100;
     font-size: 12px;
+    margin-left: .3rem;
+    vertical-align: text-top;
 }
