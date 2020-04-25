@@ -6,6 +6,8 @@ body {
     padding: 0;
     background-color: #000000;
     color: #ffffff;
+    font-weight: 100;
+    box-sizing: border-box;
 }
 
 #container {
@@ -20,14 +22,12 @@ body {
 }
 
 .big-number {
-    font-weight: 100;
     font-size: 72px;
     line-height: 72px;
     margin: 0;
 }
 
 .big-label {
-    font-weight: 100;
     font-size: 16px;
     line-height: 16px;
     max-width: 155px;
@@ -104,20 +104,13 @@ p.error {
 }
 
 #forecast h2 {
-    font-weight: 100;
-    font-size: 24px;
-    margin-bottom: 16px;
-    margin-top: 32px;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    margin-top: 2rem;
 }
 
 #forecast h2:first-child {
     margin-top: 0;
-}
-
-#forecast p {
-    font-weight: 100;
-    font-size: 16px;
-    margin: 0;
 }
 
 .inner {
@@ -129,19 +122,15 @@ p.error {
     display: none;
 }
 
-h1 {
-    font-weight: 100;
-}
-
 form input[type=text]{
     display: block;
-    margin-bottom: 16px;
-    margin-top: 8px;
+    margin-bottom: 1rem;
+    margin-top: .5rem;
     background-color:#000000;
-    padding: 4px 8px;
+    padding: .25rem .5rem;
     color: #ffffff;
     border: 1px solid #ffffff;
-    font-size: 14px;
+    font-size: small;
 }
 
 form input[type=radio]{
@@ -150,9 +139,9 @@ form input[type=radio]{
 }
 
 form input[type=button] {
-    padding: 8px 16px;
-    margin-right: 8px;
-    font-size: 14px;
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    font-size: small;
     display: inline;
     cursor: pointer;
 }
@@ -174,15 +163,14 @@ form label {
 }
 
 .helper-link {
-    font-size: 12px;
-    margin-left: 24px;
+    font-size: smaller;
+    margin-left: 4rem;
     cursor: pointer;
     text-decoration: underline;
 }
 
 p.body-text {
     max-width: 30rem;
-    font-size: 15px;
 }
 
 p.body-text:last-of-type {
@@ -219,7 +207,6 @@ div#settings {
 
 #update-time {
     color: #6f6f6f;
-    font-weight: 100;
     font-size: 12px;
     margin-left: .3rem;
     vertical-align: text-top;

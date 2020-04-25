@@ -13,10 +13,13 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 That was way harder than it needed to be. I messed around with SVGs for a while before I gave up and went with a PNG. However, in the end, I don't think the image was causing my problem anyway. Bah
 
 - Add pointer cursor to buttons
+- Replace pixel based font sizing and margins with rems for paragraphs and form - #18
 
 ### 2020-04-23
 
 - Some settings icon stylings - #20
+
+Getting to work on a smaller screen size. Reading through the rudiments on [Every Layout](https://every-layout.dev/) just drove home what I kind of knew already: I shouldn't have been using pixels for layout. Hey, I had to start somewhere. I'll start by changing the font sizing to rems.
 
 ### 2020-04-22
 
