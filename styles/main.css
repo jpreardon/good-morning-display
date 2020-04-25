@@ -146,12 +146,15 @@ form input[type=text]{
 
 form input[type=radio]{
     margin-right: 1rem;
+    cursor: pointer;
 }
 
 form input[type=button] {
     padding: 8px 16px;
     margin-right: 8px;
     font-size: 14px;
+    display: inline;
+    cursor: pointer;
 }
 
 form input[type=button].primary {
@@ -168,10 +171,6 @@ form input[type=button].secondary {
 
 form label {
     display: inline-block;
-}
-
-form input[type="button"] {
-    display: inline;
 }
 
 .helper-link {
