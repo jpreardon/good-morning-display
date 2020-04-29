@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2020-04-29
+
+Ok, I've been goofing around with this on and off for a couple days now, time to get it wrapped up (for now) so I can move on to bigger and better things.
+
+- Update design to include mobile phone screen sizes.
+
 ### 2020-04-24
 
 - Finish adding settings icon fixes #20
