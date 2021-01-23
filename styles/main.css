@@ -217,7 +217,7 @@ div#settings {
 /* Hacked up responsive stylings below... */
 
 /* Narrow layout */
-@media (max-width: 379px) {
+@media (orientation: portrait) {
     #current-conditions {
         display: flex;
     }
@@ -231,7 +231,7 @@ div#settings {
 }
 
 /* Wide layout */
-@media (min-width: 380px) {
+@media (orientation: landscape) {
     #current-conditions {
         float: left;
     }
