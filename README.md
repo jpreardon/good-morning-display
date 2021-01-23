@@ -6,4 +6,4 @@ Version 2 is currently in progress here, see my ongoing notes in the [worklog](W
 
 ![good morning display screenshot](docs/screenshot.png)
 
-Copyright (c) 2013-20 John P. Reardon Licensed under the MIT license.
+Copyright (c) 2013-21 John P. Reardon Licensed under the MIT license.
