@@ -88,6 +88,10 @@ body {
     z-index: -1;
 }
 
+#wind-arrow img {
+    width: 100%;
+}
+
 #forecast {
     padding-left: 4%;
     margin-top: 4%;
