@@ -14,6 +14,7 @@ It's a cold day, and I'm thinking about doing something. Why not dust off the ol
 - Introduce a really basic responsive layout #18
 - Add iPhone full screen code #18
 - Change media query to orientation rather than width #18
+- Add Apple Touch icon. Consolidate designs in one sketch file. Remove wind arrow sketch file. Fixes #18
 
 ### 2020-04-29
 
