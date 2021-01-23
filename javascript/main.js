@@ -19,11 +19,11 @@ function cToF(celsius) {
     }
 }
 
-function mpsToMph(metersPerSecond) {
-    if (metersPerSecond == null) {
+function KphToMph(KilometersPerHour) {
+    if (KilometersPerHour == null) {
         return null
     } else {
-        milesPerHour = metersPerSecond * 2.236936
+        milesPerHour = KilometersPerHour * 0.6213712
         return milesPerHour.toFixed(1)
     }
 }
@@ -66,7 +66,7 @@ function getCurrentConditions() {
         .done( (json) => {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
             currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
-            currentConditions.windSpeed = replaceNulls(mpsToMph(json.properties.windSpeed.value))
+            currentConditions.windSpeed = replaceNulls(KphToMph(json.properties.windSpeed.value))
             currentConditions.windDirection = json.properties.windDirection.value
             currentConditions.relativeHumidity = json.properties.relativeHumidity.value
             resolve(currentConditions)
