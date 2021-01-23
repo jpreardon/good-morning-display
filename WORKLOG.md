@@ -12,6 +12,7 @@ It's a cold day, and I'm thinking about doing something. Why not dust off the ol
 
 - Fix wind direction indicator
 - Introduce a really basic responsive layout #18
+- Add iPhone full screen code #18
 
 ### 2020-04-29
 
