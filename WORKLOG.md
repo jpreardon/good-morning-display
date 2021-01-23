@@ -16,10 +16,11 @@ It's a cold day, and I'm thinking about doing something. Why not dust off the ol
 - Change media query to orientation rather than width #18
 - Add Apple Touch icon. Consolidate designs in one sketch file. Remove wind arrow sketch file. Fixes #18
 
-Fix a couple issues:
+Fix a few issues:
 
 - Change wind speed conversion from meters per second to km per hour. Fixes #22
 - Add credit for gear icon. Fixes #21 
+- Add automatic reload from server. Fixes #15
 
 ### 2020-04-29
 

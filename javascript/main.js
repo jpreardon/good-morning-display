@@ -1,9 +1,13 @@
 // Weather data API setup
 const CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
 const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/forecast"
+const REFRESH_INTERVAL_MINUTES = 10
+const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
+
 // These are set dynamically at runtime
 var WEATHER_STATION = ""
 var WEATHER_GRID_COORDINATES = ""
+var LAST_PAGE_RELOAD = ""
 
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
@@ -316,6 +320,13 @@ function updateWeather() {
         window.location = "settings.html"
     }
 
+    // If the page reload interval has lapsed, reload the page from server
+    if ( (Date.now() - LAST_PAGE_RELOAD) > (PAGE_RELOAD_INTERVAL_MINUTES * 60 * 1000) ) {
+        window.location.reload()
+        LAST_PAGE_RELOAD = Date.now()
+        return 
+    }
+
     getCurrentConditions().then( (conditions) => { 
         $("#temperature > div.inner > p.big-number").html(conditions.temperature)
         $("#temperature > div.inner > p.big-label").html(conditions.conditions)
@@ -353,6 +364,7 @@ function updateWeather() {
     
     var updateTime = new Date
     $("#update-time").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
+
 }
 
 $(document).ready( () => {
@@ -361,7 +373,8 @@ $(document).ready( () => {
     if (path.substring(path.length - 13) == "settings.html") {
         loadFormFromLocalStorage()
     } else {
+        LAST_PAGE_RELOAD = Date.now()
         updateWeather()
-        window.setInterval(updateWeather, 60 * 30 * 1000)
+        window.setInterval(updateWeather, REFRESH_INTERVAL_MINUTES * 60 * 1000)
     }
 })
