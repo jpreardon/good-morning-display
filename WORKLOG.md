@@ -11,6 +11,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 It's a cold day, and I'm thinking about doing something. Why not dust off the old dashboard project. As much as I'd like to start fresh (yet again), I'll resurrect what is here. Luckily, I found this branch I had been working on. It looks like I must have lost interest after I screwed up the wind direction arrow. I'll try to fix that first...
 
 - Fix wind direction indicator
+- Introduce a really basic responsive layout #18
 
 ### 2020-04-29
 

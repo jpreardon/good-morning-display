@@ -39,8 +39,7 @@ body {
 #current-conditions {
     margin-top: 4%;
     margin-left: 4%;
-    float: left;
-}
+} 
 
 #temperature {
     border: 2px solid #ffffff;
@@ -72,7 +71,6 @@ body {
     height: 9rem;
     width: 9rem;
     border-radius: 50%;
-    margin-top: 12.2%;
     display: flex;
     align-items: center;
     position: relative;
@@ -95,7 +93,6 @@ body {
 #forecast {
     padding-left: 4%;
     margin-top: 4%;
-    margin-left: 28.5%;
     padding-right: 4%;
 }
 
@@ -195,7 +192,7 @@ p.body-text a, p.body-text a:visited {
 }
 
 div#settings {
-    margin-top: 14%;
+    margin-left: 4%;
     box-sizing: border-box;
     height: 16px;
 }
@@ -215,4 +212,36 @@ div#settings {
     font-size: 12px;
     margin-left: .3rem;
     vertical-align: text-top;
+}
+
+/* Hacked up responsive stylings below... */
+
+/* Narrow layout */
+@media (max-width: 379px) {
+    #current-conditions {
+        display: flex;
+    }
+    #wind {
+        margin-left: 8%;
+    }   
+
+    div#settings {
+        margin-top: 14%;
+    }
+}
+
+/* Wide layout */
+@media (min-width: 380px) {
+    #current-conditions {
+        float: left;
+    }
+    
+    #wind {
+        margin-top: 12.2%;
+    }
+
+    #forecast {
+        margin-left: 28.5%;
+    }
+
 }
