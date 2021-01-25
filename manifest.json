@@ -1,0 +1,8 @@
+{
+    "name": "Good Morning Display II",
+    "short_name": "GMD2",
+    "lang": "en-US",
+    "start_url": "https://jpreardon.com/gmd/index.html",
+    "scope": "/",
+    "display": "standalone"
+}
