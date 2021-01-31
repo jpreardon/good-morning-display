@@ -1,13 +1,14 @@
 // Weather data API setup
 const CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
 const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/forecast"
-const REFRESH_INTERVAL_MINUTES = 10
+const REFRESH_INTERVAL_MINUTES = 30
 const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
 
 // These are set dynamically at runtime
 var WEATHER_STATION = ""
 var WEATHER_GRID_COORDINATES = ""
 var LAST_PAGE_RELOAD = ""
+var LAST_REFRESH = ""
 
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
@@ -309,17 +310,6 @@ function loadFormFromLocalStorage() {
 
 function updateWeather() {
 
-    // Check to see if local storage is available at all
-    if (storageAvailable("localStorage") == false) {
-        alert(ERR_NO_LOCAL_STORAGE)
-        return false
-    }
-
-    // Redirect to the settings page if station and coordinates don't exist
-    if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
-        window.location = "settings.html"
-    }
-
     // If the page reload interval has lapsed, reload the page from server
     if ( (Date.now() - LAST_PAGE_RELOAD) > (PAGE_RELOAD_INTERVAL_MINUTES * 60 * 1000) ) {
         window.location.reload()
@@ -327,44 +317,60 @@ function updateWeather() {
         return 
     }
 
-    getCurrentConditions().then( (conditions) => { 
-        $("#temperature > div.inner > p.big-number").html(conditions.temperature)
-        $("#temperature > div.inner > p.big-label").html(conditions.conditions)
-        $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
+    // If the refresh time has lapsed, refresh the data
+    if ( (Date.now() - LAST_REFRESH) > (REFRESH_INTERVAL_MINUTES * 60 * 1000)) {
 
-        if (conditions.windDirection == null) {
-            $("#wind-arrow").addClass("hide")
-        } else {
-            $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
+        // Check to see if local storage is available at all
+        if (storageAvailable("localStorage") == false) {
+            alert(ERR_NO_LOCAL_STORAGE)
+            return false
         }
 
-        if (conditions.relativeHumidity == null) {
-            $("#humidity").addClass("hide")
-        } else {
-            $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 314)).removeClass("hide")
-        }  
+        // Redirect to the settings page if station and coordinates don't exist
+        if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
+            window.location = "settings.html"
+        }
 
-    }).catch( (error) => {
-        $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
-        $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
-        console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
-    })
-
-    getForecast().then( (forecast) => {
-        $("#forecast > #f1-title").html(forecast[0].name)
-        $("#forecast > #f1").html(forecast[0].forecast)
-        $("#forecast > #f2-title").html(forecast[1].name)
-        $("#forecast > #f2").html(forecast[1].forecast)
-        $("#forecast > #f3-title").html(forecast[2].name)
-        $("#forecast > #f3").html(forecast[2].forecast)
-    }).catch( (error) => {
-        $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
-        console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
-    })
+        getCurrentConditions().then( (conditions) => { 
+            $("#temperature > div.inner > p.big-number").html(conditions.temperature)
+            $("#temperature > div.inner > p.big-label").html(conditions.conditions)
+            $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
     
-    var updateTime = new Date
-    $("#update-time").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
+            if (conditions.windDirection == null) {
+                $("#wind-arrow").addClass("hide")
+            } else {
+                $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
+            }
+    
+            if (conditions.relativeHumidity == null) {
+                $("#humidity").addClass("hide")
+            } else {
+                $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 314)).removeClass("hide")
+            }  
+    
+        }).catch( (error) => {
+            $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+            $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+            console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
+        })
+    
+        getForecast().then( (forecast) => {
+            $("#forecast > #f1-title").html(forecast[0].name)
+            $("#forecast > #f1").html(forecast[0].forecast)
+            $("#forecast > #f2-title").html(forecast[1].name)
+            $("#forecast > #f2").html(forecast[1].forecast)
+            $("#forecast > #f3-title").html(forecast[2].name)
+            $("#forecast > #f3").html(forecast[2].forecast)
+        }).catch( (error) => {
+            $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
+            console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
+        })
+        
+        var updateTime = new Date
+        $("#update-time").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 
+        LAST_REFRESH = Date.now()
+    }
 }
 
 $(document).ready( () => {
@@ -375,6 +381,6 @@ $(document).ready( () => {
     } else {
         LAST_PAGE_RELOAD = Date.now()
         updateWeather()
-        window.setInterval(updateWeather, REFRESH_INTERVAL_MINUTES * 60 * 1000)
+        window.setInterval(updateWeather, 1000)
     }
 })

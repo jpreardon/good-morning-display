@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-01-30
+
+Keep track of last refresh time in order to wake up faster from device sleep mode.
+
 ### 2021-01-24
 
 Add manifest.json for web app mode
