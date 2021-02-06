@@ -60,26 +60,24 @@
                 return new Promise( (resolve, reject) => {
                     $.getJSON( STATION_STATUS_URL ) 
                     .done( (json) => {
-                        json.data.stations.forEach(station => {
-                            if ( station.station_id == id) {
-                                var returnVal = `This station is <strong>${station.station_status}</strong> `
+                        var station = json.data.stations.find(station => station.station_id == id)
 
-                                if ( station.is_renting == 1 && station.is_returning == 1 )  {
-                                    returnVal += "and renting and accepting returns.<br>"
-                                } else if ( station.is_renting == 1 && station.is_returning == 0 ) {
-                                    returnVal += "and renting but not accepting returns.<br>"
-                                } else if ( station.is_renting == 0 && station.is_returning == 0 ) {
-                                    returnVal += "but not renting or accepting returns.<br>"
-                                } else if ( station.is_renting == 0 && station.is_returning == 1 ) {
-                                    returnVal += "but not renting, however, they'll accept returns.<br>"
-                                }
+                        var returnVal = `This station is <strong>${station.station_status}</strong> `
 
-                                returnVal += `Bikes: ${station.num_bikes_available}<br>`
-                                returnVal += `eBikes: ${station.num_ebikes_available}<br>`
-                                returnVal += `Docks: ${station.num_docks_available}<br>`
-                                document.getElementById("station-info").innerHTML = returnVal
-                            }
-                        })                  
+                        if ( station.is_renting == 1 && station.is_returning == 1 )  {
+                            returnVal += "and renting and accepting returns.<br>"
+                        } else if ( station.is_renting == 1 && station.is_returning == 0 ) {
+                            returnVal += "and renting but not accepting returns.<br>"
+                        } else if ( station.is_renting == 0 && station.is_returning == 0 ) {
+                            returnVal += "but not renting or accepting returns.<br>"
+                        } else if ( station.is_renting == 0 && station.is_returning == 1 ) {
+                            returnVal += "but not renting, however, they'll accept returns.<br>"
+                        }
+
+                        returnVal += `Bikes: ${station.num_bikes_available}<br>`
+                        returnVal += `eBikes: ${station.num_ebikes_available}<br>`
+                        returnVal += `Docks: ${station.num_docks_available}<br>`
+                        document.getElementById("station-info").innerHTML = returnVal                 
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
