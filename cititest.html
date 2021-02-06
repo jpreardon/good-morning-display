@@ -59,28 +59,22 @@
                 })
             }
 
-            function getStationInformation(id) {
+            function getStationInformation(collection) {
                 return new Promise( (resolve, reject) => {
                     $.getJSON( STATION_STATUS_URL ) 
                     .done( (json) => {
-                        var station = json.data.stations.find(station => station.station_id == id)
-
-                        var returnVal = `This station is <strong>${station.station_status}</strong> `
-
-                        if ( station.is_renting == 1 && station.is_returning == 1 )  {
-                            returnVal += "and renting and accepting returns.<br>"
-                        } else if ( station.is_renting == 1 && station.is_returning == 0 ) {
-                            returnVal += "and renting but not accepting returns.<br>"
-                        } else if ( station.is_renting == 0 && station.is_returning == 0 ) {
-                            returnVal += "but not renting or accepting returns.<br>"
-                        } else if ( station.is_renting == 0 && station.is_returning == 1 ) {
-                            returnVal += "but not renting, however, they'll accept returns.<br>"
+                        var returnVal = ""
+                        for (let item of collection) {
+                            var station = json.data.stations.find(station => station.station_id == item.value)
+                            returnVal += `<strong>${item.innerHTML}</strong><br>`
+                            returnVal += `Renting: ${station.is_renting}<br>`
+                            returnVal += `Returning: ${station.is_returning}<br>`
+                            returnVal += `Bikes: ${station.num_bikes_available}<br>`
+                            returnVal += `eBikes: ${station.num_ebikes_available}<br>`
+                            returnVal += `Docks: ${station.num_docks_available}<br><br>`
                         }
 
-                        returnVal += `Bikes: ${station.num_bikes_available}<br>`
-                        returnVal += `eBikes: ${station.num_ebikes_available}<br>`
-                        returnVal += `Docks: ${station.num_docks_available}<br>`
-                        document.getElementById("station-info").innerHTML = returnVal                 
+                        document.getElementById("station-info").innerHTML = returnVal                                         
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
@@ -98,13 +92,13 @@
         <div id="container" class="settings-container">
             <h1>CITIBike Test</h1>
             <p>Let's get the Citibike data hooked up</p>
-            <form>
-                <select id="station-list" onchange="getStationInformation(this.selectedOptions[0].value)" aria-placeholder="select station">
-                    <option>select a station...</option>
-                </select>
-                <div>
-                    <p id="station-info"></p>
-                </div>
-            </form>
+            <select id="station-list" aria-placeholder="select station" multiple>
+                <option>select a station...</option>
+            </select>
+            <br>
+            <button onclick="getStationInformation(document.getElementById('station-list').selectedOptions)">Get it!</button>
+            <div>
+                <p id="station-info"></p>
+            </div>
         </div>
 </html>
