@@ -11,15 +11,86 @@
         <meta name="apple-mobile-web-app-title" content="GMD2">
         <meta name="msapplication-starturl" content="https://jpreardon.com/gmd/index.html">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link href="styles/main.css" rel="stylesheet">
+        <!--- <link href="styles/main.css" rel="stylesheet"> --->
         <style>
-            #station-info {
-                font-size: xx-large;
+            body {
+                background-color: black;
+                font-family: sans-serif;
+                color: white;
+            }
+
+            #timer {
+                margin-top: 1rem;
+                color: silver;
+            }
+
+            .station-block {
+                display: inline flow-root;
+                width: 20rem;
+                height: 12rem;
+                margin: 1rem;
+                border: 1px solid silver;
+                border-radius: 3px;
+            }
+
+            .station-name {
+                background-color: white;
+                color: black;
+                margin-top: 0;
+                font-size: large;
+                padding: 1rem;
+            }
+
+            .available {
+                background-color: green;
+                color: white;
+            }
+
+            .unavailable {
+                background-color: red;
+                color: white;
+            }
+
+            .numblock {
+                display: inline flow-root;
+                width: 33%;
+            }
+
+            .numblock p {
+                padding-left: 1rem;
+            }
+
+            .bike-number {
+                font-size: 4rem;
+                margin-top: 0;
+            }
+
+            #settings {
+                margin-top: 2rem;
             }
 
             select {
                 width: 250px;
+                height: 150px;
             }
+
+            #settings div {
+                display: inline flow-root;
+            }
+
+            .vertical-buttons button {
+                display: block;
+                margin: 1rem;
+            }
+
+            #settings .button-bar {
+                display: block;
+            }
+
+            .hidden {
+                display: none;
+            }
+
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
@@ -74,19 +145,41 @@
                 return new Promise( (resolve, reject) => {
                     $.getJSON( STATION_STATUS_URL ) 
                     .done( (json) => {
-                        var returnVal = ""
                         for (let item of collection) {
+                            // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
+                            var returnVal = ""
                             var station = json.data.stations.find(station => station.station_id == item.value)
-                            returnVal += `<strong>${item.innerHTML}</strong><br>`
-                            //returnVal += `Renting: ${station.is_renting}<br>`
-                            //returnVal += `Returning: ${station.is_returning}<br>`
-                            returnVal += `Bikes: ${station.num_bikes_available}<br>`
-                            returnVal += `eBikes: ${station.num_ebikes_available}<br>`
-                            //returnVal += `Docks: ${station.num_docks_available}<br><br>`
-                            returnVal += "<br>"
-                        }
 
-                        document.getElementById("station-info").innerHTML = returnVal                                         
+                            if (station.is_renting == 0) {
+                                returnVal += `<p class="station-name unavailable">${item.innerHTML}</p>`
+                            } else if ((station.num_bikes_available - station.num_ebikes_available) > 2) {    
+                                returnVal += `<p class="station-name available">${item.innerHTML}</p>`
+                            } else {
+                                returnVal += `<p class="station-name">${item.innerHTML}</p>`
+                            }
+                            returnVal += '<div class="numblock">'
+                            returnVal += '<p class="bike-label">Bikes</p>'
+                            returnVal += `<p class="bike-number">${station.num_bikes_available - station.num_ebikes_available}</p>`
+                            returnVal += '</div>'
+                            returnVal += '<div class="numblock">'
+                            returnVal += `<p class="bike-label">eBikes</p>`
+                            returnVal += `<p class="bike-number">${station.num_ebikes_available}</p>`
+                            returnVal += '</div>'
+                            returnVal += '<div class="numblock">'
+                            returnVal += `<p class="bike-label">Docks</p>`
+                            returnVal += `<p class="bike-number">${station.num_docks_available}</p>`
+                            returnVal += '</div>'
+
+                            if ( document.getElementById(station.station_id) ) {
+                                document.getElementById(station.station_id).innerHTML = returnVal
+                            } else {
+                                var stationBlock = document.createElement("div")
+                                stationBlock.setAttribute("id", station.station_id)
+                                stationBlock.setAttribute("class", "station-block")
+                                stationBlock.innerHTML = returnVal
+                                document.getElementById("station-info").appendChild(stationBlock)
+                            }
+                        }                                      
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
@@ -185,6 +278,15 @@
                     getStationInformation(document.getElementById("selected-stations").options)
                     LAST_UPDATE_TIME = Date.now()
                 }
+                document.getElementById("timer").innerHTML = (UPDATE_INTERVAL_SECONDS - ((Date.now() - LAST_UPDATE_TIME) / 1000)).toFixed(0)
+            }
+
+            function toggleSettingsDisplay() {
+                if (document.getElementById("settings").getAttribute("class") == "hidden") {
+                    document.getElementById("settings").setAttribute("class", null)
+                } else {
+                    document.getElementById("settings").setAttribute("class", "hidden")
+                }
             }
 
             $(document).ready( () => {
@@ -199,14 +301,28 @@
         <div id="container" class="settings-container">
             <h1>CITIBike Test</h1>
             <p>Let's get the Citibike data hooked up</p>
-            <div>
-                <p id="station-info"></p>
+            <div id="station-info">
+                
             </div>
-            <select id="station-list" multiple></select>
-            <button onclick="addStations()">&gt;</button>
-            <button onclick="removeStations()">&lt;</button>
-            <select id="selected-stations" multiple></select>
-            <br>
-            <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
+            <button onclick="toggleSettingsDisplay()">settings</button>
+            <div id="settings" class="hidden">
+                <div>
+                    <select id="station-list" multiple></select>
+                </div>
+                <div class="vertical-buttons">
+                    <button onclick="addStations()">&gt;</button>
+                    <button onclick="removeStations()">&lt;</button>
+                </div>
+                <div>
+                    <select id="selected-stations" multiple></select>
+                </div>
+                <div class="button-bar">
+                    <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
+                </div>
+            </div>
+            <div id="timer">
+
+            </div>
+            
         </div>
 </html>

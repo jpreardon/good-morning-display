@@ -8,11 +8,14 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ### 2021-02-07
 
-Everybody needs goals. Today, I want to get a standalone version of this page running.
+Everybody needs goals. Today, I wanted to get a standalone version of this page running.
 
 - I'm tired of choosing my stations while testing, so first order of business is to save that locally.
 - Create a page that shows a bunch of station data
-- Idea: Show a spark line of recent history at each station
+
+In addition to these, I did some basic styling. I think it's working fine. Since it's snowing today, it is hard to tell if anything is updating, so I'll need ot monitor tomorrow.
+
+Pretty much everything I did today needs to be refactored. Since it all needs to be integrated into the larger display with weather and such, I'm OK with that. A lot of that other code needs to get refactored as well.
 
 ### 2021-02-06
 
