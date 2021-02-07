@@ -91,6 +91,17 @@
                 display: none;
             }
 
+            #timer {
+                width: 100%;
+                height: 2px;
+                transition: all 1s linear;
+                background-color: silver;
+            }
+
+            .settings-button {
+                margin-top: 2rem;
+            }
+
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
@@ -278,7 +289,10 @@
                     getStationInformation(document.getElementById("selected-stations").options)
                     LAST_UPDATE_TIME = Date.now()
                 }
-                document.getElementById("timer").innerHTML = (UPDATE_INTERVAL_SECONDS - ((Date.now() - LAST_UPDATE_TIME) / 1000)).toFixed(0)
+
+                var timeLeft = (UPDATE_INTERVAL_SECONDS - ((Date.now() - LAST_UPDATE_TIME) / 1000)).toFixed(0)
+
+                document.getElementById("timer").style.width = `${(timeLeft / UPDATE_INTERVAL_SECONDS) * 100}%`
             }
 
             function toggleSettingsDisplay() {
@@ -304,7 +318,10 @@
             <div id="station-info">
                 
             </div>
-            <button onclick="toggleSettingsDisplay()">settings</button>
+            <div id="timer">
+
+            </div>
+            <button class="settings-button" onclick="toggleSettingsDisplay()">settings</button>
             <div id="settings" class="hidden">
                 <div>
                     <select id="station-list" multiple></select>
@@ -320,9 +337,5 @@
                     <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
                 </div>
             </div>
-            <div id="timer">
-
-            </div>
-            
         </div>
 </html>
