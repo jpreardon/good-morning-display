@@ -25,10 +25,13 @@
         <script>
             const STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
             const STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
-            var stationlist = []
+            const UPDATE_INTERVAL_SECONDS = 60
+            var STATIONS_LOADED = false
+            var LAST_UPDATE_TIME = 0
 
             function getStationList() {
                 var time = Date.now()
+                var stationlist = []
                 return new Promise( (resolve, reject) => {
                     $.getJSON( STATION_INFO_URL ) 
                     .done( (json) => {
@@ -57,8 +60,9 @@
                         })
                         document.getElementById("station-list").innerHTML = optionValues
 
+                        STATIONS_LOADED = true
                         resolve("success")
-                        getStations()
+                        
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
@@ -175,8 +179,17 @@
 
             }
 
+            function updateDisplay() {
+                if (STATIONS_LOADED && (Date.now() - LAST_UPDATE_TIME) > (UPDATE_INTERVAL_SECONDS * 1000)) {
+                    getStations()
+                    getStationInformation(document.getElementById("selected-stations").options)
+                    LAST_UPDATE_TIME = Date.now()
+                }
+            }
+
             $(document).ready( () => {
                 getStationList()
+                setInterval(updateDisplay, 1000)
             })
             
         </script>
@@ -186,14 +199,14 @@
         <div id="container" class="settings-container">
             <h1>CITIBike Test</h1>
             <p>Let's get the Citibike data hooked up</p>
+            <div>
+                <p id="station-info"></p>
+            </div>
             <select id="station-list" multiple></select>
             <button onclick="addStations()">&gt;</button>
             <button onclick="removeStations()">&lt;</button>
             <select id="selected-stations" multiple></select>
             <br>
             <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
-            <div>
-                <p id="station-info"></p>
-            </div>
         </div>
 </html>
