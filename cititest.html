@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Good Morning Display II - CITIBike Test</title>
+        <link rel="shortcut icon" href="/images/apple-touch-icon.png" />
         <link rel="manifest" href="manifest.json">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,6 +15,10 @@
         <style>
             #station-info {
                 font-size: xx-large;
+            }
+
+            select {
+                width: 250px;
             }
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -52,6 +57,8 @@
                         })
                         document.getElementById("station-list").innerHTML = optionValues
 
+                        resolve("success")
+                        getStations()
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
@@ -67,11 +74,12 @@
                         for (let item of collection) {
                             var station = json.data.stations.find(station => station.station_id == item.value)
                             returnVal += `<strong>${item.innerHTML}</strong><br>`
-                            returnVal += `Renting: ${station.is_renting}<br>`
-                            returnVal += `Returning: ${station.is_returning}<br>`
+                            //returnVal += `Renting: ${station.is_renting}<br>`
+                            //returnVal += `Returning: ${station.is_returning}<br>`
                             returnVal += `Bikes: ${station.num_bikes_available}<br>`
                             returnVal += `eBikes: ${station.num_ebikes_available}<br>`
-                            returnVal += `Docks: ${station.num_docks_available}<br><br>`
+                            //returnVal += `Docks: ${station.num_docks_available}<br><br>`
+                            returnVal += "<br>"
                         }
 
                         document.getElementById("station-info").innerHTML = returnVal                                         
@@ -82,9 +90,95 @@
                 })
             }
 
+            function addStations() {
+                station_list = document.getElementById("station-list") 
+                selected_stations =  document.getElementById("selected-stations")
+                myItems = []
+
+                // Collect items to move
+                for (let item of station_list.selectedOptions) {
+                    myItems.push(item)
+                }
+
+                // Move items
+                myItems.forEach(item => {
+                    selected_stations.options[selected_stations.options.length] = station_list.removeChild(station_list.options[item.index])
+                })
+            }
+
+            function removeStations() {
+                station_list = document.getElementById("station-list") 
+                selected_stations =  document.getElementById("selected-stations")
+                myItems = []
+
+                // Collect items to move
+                for (let item of selected_stations.selectedOptions) {
+                    myItems.push(item)
+                }
+
+                // Move items
+                myItems.forEach(item => {
+                    station_list.options[station_list.options.length] = selected_stations.removeChild(selected_stations.options[item.index])
+                })
+            }
+
+            function saveStations() {
+                var stationIds = []
+                var stationIdsJSON = ""
+
+                // Put each of the list's values in an array
+                for (let station of document.getElementById("selected-stations").options) {
+                    stationIds.push(station.value)
+                }
+                
+                // Create a JSON string of the array
+                stationIdsJSON = JSON.stringify(stationIds)
+            
+                // Save the JSON to local storage
+                localStorage.setItem("bikeStations", stationIdsJSON)
+            }
+
+            function getStations() {
+                var stationIds = []
+                var stationIdsJSON = ""
+                var stations = []
+
+                // Get JSON from local storage
+                stationIdsJSON = localStorage.getItem("bikeStations")
+
+                // Convert to an array
+                stationIds = JSON.parse(stationIdsJSON)
+
+                // Get the name for each of the IDs
+                stationIds.forEach(id => {
+                    for (let station of document.getElementById("station-list").options) {
+                        if (station.value == id) {
+                            stations.push([id, station.innerText])
+                        }
+                    }   
+                })
+
+                // Add an option to the selected stations list for each of the stations
+                stations.forEach(station => {
+                    var opt = document.createElement("option")
+                    opt.value = station[0]
+                    opt.text = station[1]
+                    document.getElementById("selected-stations").add(opt)
+                })
+
+                // Remove those options from the station list
+                for (let station of document.getElementById("station-list").options) {
+                    if (stationIds.includes(station.value)) {
+                        document.getElementById("station-list").removeChild(station)
+                    }
+                }
+
+            }
+
             $(document).ready( () => {
                 getStationList()
             })
+            
         </script>
     </head>
 
@@ -92,11 +186,12 @@
         <div id="container" class="settings-container">
             <h1>CITIBike Test</h1>
             <p>Let's get the Citibike data hooked up</p>
-            <select id="station-list" aria-placeholder="select station" multiple>
-                <option>select a station...</option>
-            </select>
+            <select id="station-list" multiple></select>
+            <button onclick="addStations()">&gt;</button>
+            <button onclick="removeStations()">&lt;</button>
+            <select id="selected-stations" multiple></select>
             <br>
-            <button onclick="getStationInformation(document.getElementById('station-list').selectedOptions)">Get it!</button>
+            <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
             <div>
                 <p id="station-info"></p>
             </div>

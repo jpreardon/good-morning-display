@@ -6,6 +6,22 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-07
+
+Everybody needs goals. Today, I want to get a standalone version of this page running.
+
+- I'm tired of choosing my stations while testing, so first order of business is to save that locally.
+- Create a page that shows a bunch of station data
+- Idea: Show a spark line of recent history at each station
+
+### 2021-02-06
+
+Continue experimenting with the citibike data. It's working pretty good, but I've put no thought into how this will integrate into the rest of the display.
+
+### 2021-02-02
+
+Experimenting with the Citibike data
+
 ### 2021-01-30
 
 Keep track of last refresh time in order to wake up faster from device sleep mode.
