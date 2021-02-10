@@ -25,7 +25,7 @@
             }
 
             .station-block {
-                display: inline flow-root;
+                display: inline-block;
                 width: 20rem;
                 height: 12rem;
                 margin: 1rem;
@@ -53,7 +53,7 @@
             }
 
             .numblock {
-                display: inline flow-root;
+                display: inline-block;
                 width: 33%;
             }
 
@@ -70,13 +70,13 @@
                 margin-top: 2rem;
             }
 
+            #twin-list-picker {
+                display: flex;
+            }
+
             select {
                 width: 250px;
                 height: 150px;
-            }
-
-            #settings div {
-                display: inline flow-root;
             }
 
             .vertical-buttons button {
@@ -86,6 +86,7 @@
 
             #settings .button-bar {
                 display: block;
+                margin-top: 1rem;
             }
 
             .hidden {
@@ -324,15 +325,17 @@
             </div>
             <button class="settings-button" onclick="toggleSettingsDisplay()">settings</button>
             <div id="settings" class="hidden">
-                <div>
-                    <select id="station-list" multiple></select>
-                </div>
-                <div class="vertical-buttons">
-                    <button onclick="addStations()">&gt;</button>
-                    <button onclick="removeStations()">&lt;</button>
-                </div>
-                <div>
-                    <select id="selected-stations" multiple></select>
+                <div id="twin-list-picker">
+                    <div>
+                        <select id="station-list" multiple></select>
+                    </div>
+                    <div class="vertical-buttons">
+                        <button onclick="addStations()">&gt;</button>
+                        <button onclick="removeStations()">&lt;</button>
+                    </div>
+                    <div>
+                        <select id="selected-stations" multiple></select>
+                    </div>
                 </div>
                 <div class="button-bar">
                     <button onclick="saveStations(document.getElementById('selected-stations').options)">Save Stations</button>
