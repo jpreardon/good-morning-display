@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-10
+
+Add a narrow layout.
+
 ### 2021-02-07
 
 Everybody needs goals. Today, I wanted to get a standalone version of this page running.
