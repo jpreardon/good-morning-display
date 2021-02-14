@@ -120,19 +120,24 @@ p.error {
     display: none;
 }
 
+input[type=checkbox] {
+    margin-bottom: 1rem;
+    margin-right: 0.5rem;
+}
+
 form input[type=text]{
     display: block;
     margin-bottom: 1rem;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
     background-color:#000000;
-    padding: .25rem .5rem;
+    padding: 0.25rem 0.5rem;
     color: #ffffff;
     border: 1px solid #ffffff;
     font-size: small;
 }
 
 form input[type=radio]{
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     cursor: pointer;
 }
 
@@ -170,10 +175,6 @@ form label {
 
 p.body-text {
     max-width: 30rem;
-}
-
-p.body-text:last-of-type {
-    margin-bottom: 2rem;
 }
 
 p.body-text a, p.body-text a:visited {

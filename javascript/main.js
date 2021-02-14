@@ -448,6 +448,12 @@ function loadBikeSettingsForm() {
                 }
             }
 
+            // Set the show bikes checkbox
+            if (localStorage.getItem("showBikes") == "true") {
+                document.getElementById("show-bikes").checked = true
+            } else {
+                document.getElementById("show-bikes").checked = false
+            }
             
 
         })
@@ -513,6 +519,13 @@ function saveStations() {
 
     // Save the JSON to local storage
     localStorage.setItem("bikeStations", stationIdsJSON)
+
+    // Save the show bikes option
+    if (document.getElementById("show-bikes").checked) {
+        localStorage.setItem("showBikes", "true")
+    } else {
+        localStorage.setItem("showBikes", "false")
+    }
 }
 
 /** 
@@ -690,7 +703,11 @@ function updateDisplay() {
         LAST_PAGE_RELOAD = Date.now()
     } else {
         updateWeather()
-        updateBikes()
+
+        // Only get bike info if we need to
+        if (localStorage.getItem("showBikes") == "true") {
+            updateBikes()
+        }
     }
     
 }
@@ -706,9 +723,17 @@ $(document).ready( () => {
     if (path.substring(path.length - 13) == "settings.html") {
         loadFormFromLocalStorage()
     } else {
+
+        if (localStorage.getItem("showBikes") == "true") {
+            document.getElementById("bikestatus").classList.remove("hide")
+            // Only get bike info if we need to
+            getBikeStationList()
+        } else {
+            document.getElementById("forecast").classList.remove("hide")
+        }
+
         LAST_PAGE_RELOAD = Date.now()
         updateWeather()
-        getBikeStationList()
         window.setInterval(updateDisplay, 1000)
     }
 })

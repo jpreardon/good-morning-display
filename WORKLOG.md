@@ -16,6 +16,8 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 - [X] Move bike fetch and display code over to main.js
 - [X] Add comments to all functions. Label constants with weather/bike prefixes. 
 - [X] Rework settings page to include bike station settings
+- [X] Add an option to replace forecast with bike info
+- [ ] Delete Cititest file
 
 ### 2021-02-13
 
