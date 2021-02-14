@@ -6,6 +6,15 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-13
+
+Thoughts/goals: I've been watching the citibike test stuff for a week. It works well, so I think it's time to integrate it into the main page. Some things need to happen before that, and I'd like to refactor a bit:
+
+- Drop JQuery dependency in favor of fetch()
+- Work up a design that includes the citibike data (should probably go ahead and add transit to the design too)
+- Combine everything into one screen.
+- Include Citibike data on the settings page.
+
 ### 2021-02-10
 
 Add a narrow layout.

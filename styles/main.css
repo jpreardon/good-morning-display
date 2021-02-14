@@ -214,6 +214,59 @@ div#settings {
     vertical-align: text-top;
 }
 
+/* Bikin' */
+
+#bikestatus {
+    /* copied from forecast */
+    padding-left: 24%;
+    margin-top: 4%;
+    padding-right: 4%;
+}
+
+.bike-station {
+    border-bottom: 1px solid gray;
+    margin-bottom: 1rem;
+    width: 90%;
+}
+
+.bike-station:last-child {
+    border: 0;
+}
+
+.bike-station-name {
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.bike-number {
+    display: inline-block;
+    width: 29%;
+    padding-left: 3%;
+}
+
+.bike-number p {
+    display: inline-block;
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0.4rem 0rem;
+}
+
+.available-bikes::before {
+    content: url(/images/bike.svg);
+    margin-right: 0.2rem;
+}
+
+.available-ebikes::before {
+    content: url(/images/ebike.svg);
+    margin-right: 0.2rem;
+}
+
+.available-docks::before {
+    content: url(/images/dock.svg);
+    margin-right: 0.2rem;
+}
+
 /* Hacked up responsive stylings below... */
 
 /* Narrow layout */
@@ -227,6 +280,14 @@ div#settings {
 
     div#settings {
         margin-top: 14%;
+    }
+
+    #bikestatus {
+        padding-left: 4%;
+    }
+
+    .bike-station {
+        width: 100%;
     }
 }
 

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Good Morning Display II</title>
+        <link rel="manifest" href="manifest.json">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="GMD2">
+        <meta name="apple-mobile-web-app-title" content="GMD2">
+        <meta name="msapplication-starturl" content="https://jpreardon.com/gmd/index.html">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="styles/main.css" rel="stylesheet">
+        <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+        <style>
+            #wind-arrow {
+                transform: rotate(90deg);
+            }
+            #humidity {
+                stroke-dashoffset: 200;
+            }
+        </style>
+
+    </head>
+    <body>
+        <div id="container">
+            <div id="current-conditions">
+                <div id="temperature">
+                    <svg id="humidity" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50" />
+                    </svg>
+                    <div class="inner">
+                        <p class="big-number">28º</p>
+                        <p class="big-label"></p>
+                    </div>
+                </div>
+                <div id="wind">
+                    <div id="wind-arrow">
+                        <img src="images/wind-arrow.png" />
+                    </div>
+                    <div class="inner">
+                        <p class="big-number">13.8</p>
+                        <p class="big-label">MPH</p>
+                    </div>
+                </div>
+            </div>
+            <div id="bikestatus">
+                <div class="bike-station">
+                    <p class="bike-station-name">Bulova Ave & Brooklyn Queens Expressway W</p>
+                    <div class="bike-number">
+                        <p class="available-bikes">7</p>
+                    </div>
+                    <div class="bike-number">
+                        <p class="available-ebikes">7</p>
+                    </div>
+                    <div class="bike-number">
+                        <p class="available-docks">102</p>
+                    </div> 
+                </div>
+                <div class="bike-station">
+                    <p class="bike-station-name">Bulova Ave & Brooklyn Queens Expressway W</p>
+                    <div class="bike-number">
+                        <p class="available-bikes">17</p>
+                    </div>
+                    <div class="bike-number">
+                        <p class="available-ebikes">3</p>
+                    </div>
+                    <div class="bike-number">
+                        <p class="available-docks">0</p>
+                    </div> 
+                </div>
+            </div>
+            <div id="forecast" style="display:none;">
+                <h2 id="f1-title">This Afternoon</h2>
+                <p id="f1">A chance of snow and a chance of sleet. Cloudy, with a high near 30. Wind chill values as low as 20. Northeast wind around 9 mph. Chance of precipitation is 40%.</p>
+
+                <h2 id="f2-title">Tonight</h2>
+                <p id="f2">Sleet likely and freezing rain likely. Cloudy. Low around 26, with temperatures rising to around 30 overnight. Wind chill values as low as 19. Northeast wind around 10 mph. Chance of precipitation is 60%. New snow accumulation of less than half an inch possible. Little or no ice accumulation expected.</p>
+
+                <h2 id="f3-title">Sunday</h2>
+                <p id="f3">Chance Freezing Rain then Cloudy</p>
+            </div>
+            <div id="settings">
+                <a href="settings.html">
+                    <img src="images/gear.png">
+                </a>
+                <span id="update-time">
+                </span>
+            </div>
+        </div>
+    </body>
+</html>
