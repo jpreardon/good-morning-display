@@ -250,17 +250,17 @@ div#settings {
 }
 
 .available-bikes::before {
-    content: url(/images/bike.svg);
+    content: url(../images/bike.svg);
     margin-right: 0.2rem;
 }
 
 .available-ebikes::before {
-    content: url(/images/ebike.svg);
+    content: url(../images/ebike.svg);
     margin-right: 0.2rem;
 }
 
 .available-docks::before {
-    content: url(/images/dock.svg);
+    content: url(../images/dock.svg);
     margin-right: 0.2rem;
 }
 
@@ -295,7 +295,7 @@ div#settings {
     }
 
     #bikestatus {
-        padding-left: 4%;
+        margin-left: 4%;
     }
 
     .bike-station {

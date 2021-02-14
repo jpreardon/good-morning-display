@@ -18,7 +18,8 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 - [X] Rework settings page to include bike station settings
 - [X] Add an option to replace forecast with bike info
 - [X] Delete Cititest file and update README
-- [ ] Merge feature branch with master
+- [X] Merge feature branch with master
+- [X] Fix svg paths in production and padding in portrait mode
 
 ### 2021-02-13
 
