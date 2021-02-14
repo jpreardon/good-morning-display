@@ -1,23 +1,25 @@
-// Weather data API setup
-const CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
-const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/forecast"
-const REFRESH_INTERVAL_MINUTES = 30
+// Overall Setup
 const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
 
-// Citibike data API setup
+// Weather data API Setup
+const WEATHER_CURRENT_CONDITION_ENDPOINT = "https://api.weather.gov/stations/<stationName>/observations/latest"
+const WEATHER_FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/forecast"
+const WEATHER_UPDATE_INTERVAL_SECONDS = 30
+
+// Citibike data API Setup
 const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
 const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
 const BIKE_UPDATE_INTERVAL_SECONDS = 60
+
+// Runtime Globals
+var WEATHER_STATION = ""
+var WEATHER_GRID_COORDINATES = ""
+var WEATHER_LAST_UPDATE_TIME = 0
 var BIKE_STATION_LIST = []
 var BIKE_SELECTED_STATIONS = []
 var BIKE_STATIONS_LOADED = false
 var BIKE_LAST_UPDATE_TIME = 0
-
-// These are set dynamically at runtime
-var WEATHER_STATION = ""
-var WEATHER_GRID_COORDINATES = ""
 var LAST_PAGE_RELOAD = ""
-var LAST_REFRESH = ""
 
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
@@ -25,6 +27,10 @@ const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
 const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 
+/** 
+ * Converts Celsius to Fahrenheit 
+ * @param {number} celsius - Reading in celsius.
+ */
 function cToF(celsius) {
     if (celsius == null) {
         return null
@@ -34,6 +40,10 @@ function cToF(celsius) {
     }
 }
 
+/** 
+ * Converts Kilometers per hour to Miles per hour 
+ * @param {number} KilometersPerHour - Speed in KPH.
+ */
 function KphToMph(KilometersPerHour) {
     if (KilometersPerHour == null) {
         return null
@@ -55,6 +65,7 @@ function replaceNulls(value, replacement = "--") {
         return value
     } 
 }
+
 /**
  * Returns the dash-offset needed to render the relative humidity border
  * @param {Number} relativeHumidity
@@ -74,7 +85,11 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
     return mappedValue.toFixed(0)
 }
 
+/**
+ * Fetches current weather conditions from server
+ */
 function getCurrentConditions() {
+    // TODO: Remove JQuery dependency 
     return new Promise( (resolve, reject) => {
         var currentConditions = {}
         $.getJSON( getApiEndpoint("current_conditions") ) 
@@ -94,7 +109,11 @@ function getCurrentConditions() {
     })
 }
 
+/**
+ * Fetches current weather forecast from server
+ */
 function getForecast() {
+    // TODO: Remove JQuery dependency 
     return new Promise( (resolve, reject) => {
         var forecast = []
         $.getJSON( getApiEndpoint("forecast")  )
@@ -112,7 +131,14 @@ function getForecast() {
     })
 }
 
+/**
+ * Saves location data to local storage. If coordinates or a station name are being set, it validates the URL
+ * @param {String} dataPoint - The user setting name to store
+ * @param {String} value - The value of the user setting to store
+ */
 function setUserLocationData(dataPoint, value) {
+    // TODO: This function is kind of funky, refactor
+    // TODO: Remove JQuery dependency
     return new Promise( (resolve, reject) => {
         var name = ""
         
@@ -145,6 +171,10 @@ function setUserLocationData(dataPoint, value) {
     })   
 }
 
+/**
+ * Retrieves location data from local storage
+ * @param {String} dataPoint - The user setting name to get
+ */
 function getUserLocationData(dataPoint) {
     var returnData = localStorage.getItem(dataPoint)
     if (returnData == null) {
@@ -154,16 +184,22 @@ function getUserLocationData(dataPoint) {
     }
 }
 
+/**
+ * Validates an endpoint to ensure that it works
+ * @param {String} name - The name of the endpoint
+ * @param {String} variable - The user value to validate
+ */
 function validateApiEndpoint(name, variable) {
+    // TODO: Remove JQuery dependency
     return new Promise( (resolve, reject) => {
         var endPoint = ""
         
         switch (name) {
             case "current_conditions":
-                endPoint = CURRENT_CONDITION_ENDPOINT.replace("<stationName>", variable)
+                endPoint = WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", variable)
                 break
             case "forecast":
-                endPoint = FORECAST_ENDPOINT.replace("<coordinates>", variable)
+                endPoint = WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", variable)
                 break
             default:
                 endPoint = "fail"
@@ -179,12 +215,16 @@ function validateApiEndpoint(name, variable) {
     })
 } 
 
+/**
+ * Returns a full endpoint URL given the name
+ * @param {String} name - The name of the endpoint
+ */
 function getApiEndpoint(name) {
     switch (name) {
         case "current_conditions":
-            return CURRENT_CONDITION_ENDPOINT.replace("<stationName>", getUserLocationData("stationName"))
+            return WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", getUserLocationData("stationName"))
         case "forecast":
-            return FORECAST_ENDPOINT.replace("<coordinates>", getUserLocationData("coordinates"))
+            return WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", getUserLocationData("coordinates"))
         default:
             return null
     }
@@ -220,6 +260,9 @@ function storageAvailable(type) {
     }
 }
 
+/** 
+ * Sets all location data based on the lat/lon in the settings form
+ */
 function saveLatLon() {
     const latitude = document.getElementById("lat").value
     const longitude = document.getElementById("lon").value
@@ -231,6 +274,7 @@ function saveLatLon() {
     var gridY = ""
     var stationIdentifier = ""
 
+    // TODO: Remove JQuery dependency
     $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
         .done( (points) => {
             forecastURL = points.properties.forecast
@@ -250,7 +294,14 @@ function saveLatLon() {
     
 }
 
+/** 
+ * Create a list of stations for a given lat/lon in the settings form
+ * @param {Number} latitude - Latitude to lookup
+ * @param {Number} longitude - Longitude to lookup
+ * @param {Number} selectedStationId - Optional station to select in the form
+ */
 function generateStationList(latitude, longitude, selectedStationId = null) {
+    // TODO: Remove JQuery dependency
     $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
         .done( (points) => {
             $.getJSON(points.properties.observationStations)
@@ -283,6 +334,9 @@ function generateStationList(latitude, longitude, selectedStationId = null) {
         })
 }
 
+/** 
+ * Return lat/lon based on user's location
+ */
 function getLatLon() {
     return new Promise( (resolve, reject) => {
         navigator.geolocation.getCurrentPosition( (pos) => {
@@ -291,6 +345,9 @@ function getLatLon() {
     })
 }
 
+/** 
+ * Kicks off the population of the settings form with user location data
+ */
 function getLocation() {
     getLatLon()
         .then((latLon) => populateSettingsForm(latLon[0], latLon[1]))
@@ -298,12 +355,20 @@ function getLocation() {
         .catch((error) => console.log(error.message))
 }
 
+/** 
+ * Populates the settings form with location data
+ * @param {Number} latitude - Latitude to populate
+ * @param {Number} longitude - Longitude to populate
+ */
 function populateSettingsForm(lat, lon) {
     document.getElementById("lat").value = lat
     document.getElementById("lon").value = lon
     return [lat,lon]
 }
 
+/** 
+ * Populates the settings form
+ */
 function loadFormFromLocalStorage() {
     if (getUserLocationData("lat") && getUserLocationData("lon")) {
         populateSettingsForm(
@@ -318,17 +383,12 @@ function loadFormFromLocalStorage() {
     }
 }
 
+/** 
+ * Where the magic happens, for the weather. Updates the display.
+ */
 function updateWeather() {
-
-    // If the page reload interval has lapsed, reload the page from server
-    if ( (Date.now() - LAST_PAGE_RELOAD) > (PAGE_RELOAD_INTERVAL_MINUTES * 60 * 1000) ) {
-        window.location.reload()
-        LAST_PAGE_RELOAD = Date.now()
-        return 
-    }
-
     // If the refresh time has lapsed, refresh the data
-    if ( (Date.now() - LAST_REFRESH) > (REFRESH_INTERVAL_MINUTES * 60 * 1000)) {
+    if ( (Date.now() - WEATHER_LAST_UPDATE_TIME) > (WEATHER_UPDATE_INTERVAL_SECONDS * 60 * 1000)) {
 
         // Check to see if local storage is available at all
         if (storageAvailable("localStorage") == false) {
@@ -379,7 +439,7 @@ function updateWeather() {
         var updateTime = new Date
         $("#update-time").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
 
-        LAST_REFRESH = Date.now()
+        WEATHER_LAST_UPDATE_TIME = Date.now()
     }
 }
 
@@ -410,6 +470,9 @@ function getBikeStationList() {
     })
 }
 
+/** 
+ * Gets the selected list of Bike Stations
+ */
 function getStations() {
     var stationIds = []
     var stationIdsJSON = ""
@@ -428,6 +491,9 @@ function getStations() {
 
 }
 
+/** 
+ * Where the magic happens for the bike information. Updates the display
+ */
 function getStationInformation() {
     return new Promise( (resolve, reject) => {
         $.getJSON( BIKE_STATION_STATUS_URL ) 
@@ -465,29 +531,43 @@ function getStationInformation() {
     })
 }
 
+/** 
+ * Kicks off the display update for bikes
+ */
 function updateBikes() {
 
-    // This really updates the display, if conditions are met
+    // Updates the display, if conditions are met
     if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
         getStations()
         getStationInformation()
         BIKE_LAST_UPDATE_TIME = Date.now()
     }
 
-    // Reset time
-    var timeLeft = (BIKE_UPDATE_INTERVAL_SECONDS - ((Date.now() - BIKE_LAST_UPDATE_TIME) / 1000)).toFixed(0)
-
 }
 
 
 // OVERALL UPDATE CODE BELOW -- It's all about the timing
 
+/** 
+ * Kicks off the display update for everything. Will reload from server once in a while
+ */
 function updateDisplay() {
-    updateWeather()
-    updateBikes()
+    // If the page reload interval has lapsed, reload the page from server
+    if ( (Date.now() - LAST_PAGE_RELOAD) > (PAGE_RELOAD_INTERVAL_MINUTES * 60 * 1000) ) {
+        window.location.reload()
+        LAST_PAGE_RELOAD = Date.now()
+    } else {
+        updateWeather()
+        updateBikes()
+    }
+    
 }
 
 
+/** 
+ * Kicks off everything
+ */
+// TODO: Remove JQuery dependency
 $(document).ready( () => {
     var path = window.location.pathname
 

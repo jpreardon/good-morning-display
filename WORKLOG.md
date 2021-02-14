@@ -12,10 +12,9 @@ Happy Valentine's Day!!! 💖
 
 Continuing with yesterday's work. I looked at what it was going to take to incorporate the hacky js code I did to get the Citibike POC (more like a POS) up and running and decided it would be better to start that on a new day... Today is that day.
 
-TODO:
-
 - [X] Refactor bike fetch and display code so it doesn't rely on the settings select boxes being on the same page
 - [X] Move bike fetch and display code over to main.js
+- [X] Add comments to all functions. Label constants with weather/bike prefixes. 
 - [ ] Rework settings page to include bike station settings
 
 ### 2021-02-13
