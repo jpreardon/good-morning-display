@@ -17,7 +17,8 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 - [X] Add comments to all functions. Label constants with weather/bike prefixes. 
 - [X] Rework settings page to include bike station settings
 - [X] Add an option to replace forecast with bike info
-- [ ] Delete Cititest file
+- [X] Delete Cititest file and update README
+- [ ] Merge feature branch with master
 
 ### 2021-02-13
 

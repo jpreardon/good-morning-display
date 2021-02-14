@@ -215,8 +215,7 @@ div#settings {
 /* Bikin' */
 
 #bikestatus {
-    /* copied from forecast */
-    padding-left: 24%;
+    margin-left: 28.5%;
     margin-top: 4%;
     padding-right: 4%;
 }
