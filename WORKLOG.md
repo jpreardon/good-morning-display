@@ -6,14 +6,25 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-14
+
+Happy Valentine's Day!!! 💖
+
+Continuing with yesterday's work. I looked at what it was going to take to incorporate the hacky js code I did to get the Citibike POC (more like a POS) up and running and decided it would be better to start that on a new day... Today is that day.
+
+TODO:
+
+- [] Refactor bike fetch and display code so it doesn't rely on the settings select boxes being on the same page
+- [] Move bike fetch and display code over to main.js
+- [] Rework settings page to include bike station settings
+
 ### 2021-02-13
 
-Thoughts/goals: I've been watching the citibike test stuff for a week. It works well, so I think it's time to integrate it into the main page. Some things need to happen before that, and I'd like to refactor a bit:
+Thoughts/goals: I've been watching the citibike test stuff for a week. It works well, so I think it's time to integrate it into the main page.
 
-- Drop JQuery dependency in favor of fetch()
-- Work up a design that includes the citibike data (should probably go ahead and add transit to the design too)
-- Combine everything into one screen.
-- Include Citibike data on the settings page.
+- [X] Add citibike styles to the main stylesheet
+- [X] Work up a design that includes the citibike data
+- [X] Preliminary work to add bike info
 
 ### 2021-02-10
 

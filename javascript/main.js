@@ -4,6 +4,12 @@ const FORECAST_ENDPOINT = "https://api.weather.gov/gridpoints/<coordinates>/fore
 const REFRESH_INTERVAL_MINUTES = 30
 const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
 
+// Citibike data API setup
+const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
+const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
+const BIKE_UPDATE_INTERVAL_SECONDS = 60
+var STATIONS_LOADED = false
+
 // These are set dynamically at runtime
 var WEATHER_STATION = ""
 var WEATHER_GRID_COORDINATES = ""
@@ -14,6 +20,7 @@ var LAST_REFRESH = ""
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
 const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
+const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 
 function cToF(celsius) {
     if (celsius == null) {
