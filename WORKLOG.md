@@ -14,9 +14,9 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 
 TODO:
 
-- [] Refactor bike fetch and display code so it doesn't rely on the settings select boxes being on the same page
-- [] Move bike fetch and display code over to main.js
-- [] Rework settings page to include bike station settings
+- [ ] Refactor bike fetch and display code so it doesn't rely on the settings select boxes being on the same page
+- [ ] Move bike fetch and display code over to main.js
+- [ ] Rework settings page to include bike station settings
 
 ### 2021-02-13
 
