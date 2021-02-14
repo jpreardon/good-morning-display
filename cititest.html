@@ -153,25 +153,28 @@
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script>
-            const STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
-            const STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
-            const UPDATE_INTERVAL_SECONDS = 60
-            var STATIONS_LOADED = false
-            var LAST_UPDATE_TIME = 0
+            const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
+            const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
+            const BIKE_UPDATE_INTERVAL_SECONDS = 60
+            var BIKE_STATION_LIST = []
+            var BIKE_SELECTED_STATIONS = []
+            var BIKE_STATIONS_LOADED = false
+            var BIKE_LAST_UPDATE_TIME = 0
 
             function getStationList() {
                 var time = Date.now()
-                var stationlist = []
+                BIKE_STATION_LIST = []
                 return new Promise( (resolve, reject) => {
-                    $.getJSON( STATION_INFO_URL ) 
+                    $.getJSON( BIKE_STATION_INFO_URL ) 
                     .done( (json) => {
                         
                         json.data.stations.forEach(station => {
-                            stationlist.push( {name: station.name, id: station.station_id} )
+                            BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
                         });
 
                         // Sort here
-                        stationlist.sort(function (a, b) {
+                        // TODO: Need this on the settings page, was removed on main.js
+                        BIKE_STATION_LIST.sort(function (a, b) {
                             var nameA = a.name.toUpperCase()
                             var nameB = b.name.toUpperCase()
                             if ( nameA < nameB ) {
@@ -184,14 +187,16 @@
                             return 0
                         })
 
-                        var optionValues = ""
+                        BIKE_STATIONS_LOADED = true
+                        resolve("success") 
+
+                        // TODO: This bit can live on the settings page, I think
+                        /* var optionValues = ""
                         stationlist.forEach(station => {
                             optionValues += `<option value="${station.id}">${station.name}</option>`
                         })
                         document.getElementById("station-list").innerHTML = optionValues
-
-                        STATIONS_LOADED = true
-                        resolve("success")
+                        */
                         
                     })
                     .fail( (jqxhr, textStatus, error) => {
@@ -200,22 +205,19 @@
                 })
             }
 
-            function getStationInformation(collection) {
+            // TODO: This is where the magic happens, need to move to main.js in some form. Looks like it can just be moved wholesale
+            function getStationInformation() {
                 return new Promise( (resolve, reject) => {
-                    $.getJSON( STATION_STATUS_URL ) 
+                    $.getJSON( BIKE_STATION_STATUS_URL ) 
                     .done( (json) => {
-                        for (let item of collection) {
+                        //for (let item of collection) {
+                        BIKE_SELECTED_STATIONS.forEach(selectedStation => {
                             // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
                             var returnVal = ""
-                            var station = json.data.stations.find(station => station.station_id == item.value)
+                            var station = json.data.stations.find(station => station.station_id == selectedStation[0])
 
-                            if (station.is_renting == 0) {
-                                returnVal += `<p class="station-name unavailable">${item.innerHTML}</p>`
-                            } else if ((station.num_bikes_available - station.num_ebikes_available) > 2) {    
-                                returnVal += `<p class="station-name available">${item.innerHTML}</p>`
-                            } else {
-                                returnVal += `<p class="station-name">${item.innerHTML}</p>`
-                            }
+                            // TODO: The HTML needs to change a bit here for the new design
+                            returnVal += `<p class="station-name">${selectedStation[1]}</p>`
                             returnVal += '<div class="numblock">'
                             returnVal += '<p class="bike-label">Bikes</p>'
                             returnVal += `<p class="bike-number">${station.num_bikes_available - station.num_ebikes_available}</p>`
@@ -228,7 +230,7 @@
                             returnVal += `<p class="bike-label">Docks</p>`
                             returnVal += `<p class="bike-number">${station.num_docks_available}</p>`
                             returnVal += '</div>'
-
+                            
                             if ( document.getElementById(station.station_id) ) {
                                 document.getElementById(station.station_id).innerHTML = returnVal
                             } else {
@@ -238,7 +240,7 @@
                                 stationBlock.innerHTML = returnVal
                                 document.getElementById("station-info").appendChild(stationBlock)
                             }
-                        }                                      
+                        })                                     
                     })
                     .fail( (jqxhr, textStatus, error) => {
                         console.log(textStatus)
@@ -246,6 +248,7 @@
                 })
             }
 
+            // TODO: This needs to become part of the settings page
             function addStations() {
                 station_list = document.getElementById("station-list") 
                 selected_stations =  document.getElementById("selected-stations")
@@ -262,6 +265,7 @@
                 })
             }
 
+            // TODO: This needs to become part of the settings page
             function removeStations() {
                 station_list = document.getElementById("station-list") 
                 selected_stations =  document.getElementById("selected-stations")
@@ -278,6 +282,7 @@
                 })
             }
 
+            // TODO: This needs to become part of the settings page
             function saveStations() {
                 var stationIds = []
                 var stationIdsJSON = ""
@@ -294,10 +299,11 @@
                 localStorage.setItem("bikeStations", stationIdsJSON)
             }
 
+            // TODO: Move parts of this to main.js
             function getStations() {
                 var stationIds = []
                 var stationIdsJSON = ""
-                var stations = []
+                BIKE_SELECTED_STATIONS = []
 
                 // Get JSON from local storage
                 stationIdsJSON = localStorage.getItem("bikeStations")
@@ -307,15 +313,12 @@
 
                 // Get the name for each of the IDs
                 stationIds.forEach(id => {
-                    for (let station of document.getElementById("station-list").options) {
-                        if (station.value == id) {
-                            stations.push([id, station.innerText])
-                        }
-                    }   
+                    BIKE_SELECTED_STATIONS.push([id, BIKE_STATION_LIST.find(station => station.id == id).name]) 
                 })
 
                 // Add an option to the selected stations list for each of the stations
-                stations.forEach(station => {
+                // TODO: Shouldn't need this business in main.js
+                /* stations.forEach(station => {
                     var opt = document.createElement("option")
                     opt.value = station[0]
                     opt.text = station[1]
@@ -323,26 +326,34 @@
                 })
 
                 // Remove those options from the station list
+                // TODO: Shouldn't need this in main.js
                 for (let station of document.getElementById("station-list").options) {
                     if (stationIds.includes(station.value)) {
                         document.getElementById("station-list").removeChild(station)
                     }
-                }
+                } */
 
             }
 
+            // TODO: Move parts of this to main.js
             function updateDisplay() {
-                if (STATIONS_LOADED && (Date.now() - LAST_UPDATE_TIME) > (UPDATE_INTERVAL_SECONDS * 1000)) {
+
+                // This really updates the display, if conditions are met
+                if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
                     getStations()
-                    getStationInformation(document.getElementById("selected-stations").options)
-                    LAST_UPDATE_TIME = Date.now()
+                    // getStationInformation(document.getElementById("selected-stations").options)
+                    getStationInformation()
+                    BIKE_LAST_UPDATE_TIME = Date.now()
                 }
 
-                var timeLeft = (UPDATE_INTERVAL_SECONDS - ((Date.now() - LAST_UPDATE_TIME) / 1000)).toFixed(0)
+                // Reset time
+                var timeLeft = (BIKE_UPDATE_INTERVAL_SECONDS - ((Date.now() - BIKE_LAST_UPDATE_TIME) / 1000)).toFixed(0)
 
-                document.getElementById("timer").style.width = `${(timeLeft / UPDATE_INTERVAL_SECONDS) * 100}%`
+                // Update the timer display. We might leave this behind, for now anyway
+                document.getElementById("timer").style.width = `${(timeLeft / BIKE_UPDATE_INTERVAL_SECONDS) * 100}%`
             }
 
+            // Don't bring this over to main.js, settings will be on their own page    
             function toggleSettingsDisplay() {
                 if (document.getElementById("settings").getAttribute("class") == "hidden") {
                     document.getElementById("settings").setAttribute("class", null)
@@ -351,6 +362,7 @@
                 }
             }
 
+            // Whatever is here, need to move to the ready() function in main.js    
             $(document).ready( () => {
                 getStationList()
                 setInterval(updateDisplay, 1000)

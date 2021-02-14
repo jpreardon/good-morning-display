@@ -8,7 +8,10 @@ const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
 const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_information.json"
 const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
 const BIKE_UPDATE_INTERVAL_SECONDS = 60
-var STATIONS_LOADED = false
+var BIKE_STATION_LIST = []
+var BIKE_SELECTED_STATIONS = []
+var BIKE_STATIONS_LOADED = false
+var BIKE_LAST_UPDATE_TIME = 0
 
 // These are set dynamically at runtime
 var WEATHER_STATION = ""
@@ -380,6 +383,111 @@ function updateWeather() {
     }
 }
 
+// BIKE CODE BELOW
+
+/** 
+ * Gets the full list of Bike Stations (IDs and Names)
+ */
+function getBikeStationList() {
+    var time = Date.now()
+    BIKE_STATION_LIST = []
+    return new Promise( (resolve, reject) => {
+        // TODO: Remove JQuery Dependency
+        $.getJSON( BIKE_STATION_INFO_URL ) 
+        .done( (json) => {
+            
+            json.data.stations.forEach(station => {
+                BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
+            });
+
+            BIKE_STATIONS_LOADED = true
+            resolve("success") 
+            
+        })
+        .fail( (jqxhr, textStatus, error) => {
+            console.log(textStatus)
+        })
+    })
+}
+
+function getStations() {
+    var stationIds = []
+    var stationIdsJSON = ""
+    BIKE_SELECTED_STATIONS = []
+
+    // Get JSON from local storage
+    stationIdsJSON = localStorage.getItem("bikeStations")
+
+    // Convert to an array
+    stationIds = JSON.parse(stationIdsJSON)
+
+    // Get the name for each of the IDs
+    stationIds.forEach(id => {
+        BIKE_SELECTED_STATIONS.push([id, BIKE_STATION_LIST.find(station => station.id == id).name]) 
+    })
+
+}
+
+function getStationInformation() {
+    return new Promise( (resolve, reject) => {
+        $.getJSON( BIKE_STATION_STATUS_URL ) 
+        .done( (json) => {
+            BIKE_SELECTED_STATIONS.forEach(selectedStation => {
+                // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
+                var returnVal = ""
+                var station = json.data.stations.find(station => station.station_id == selectedStation[0])
+
+                returnVal += `<p class="bike-station-name">${selectedStation[1]}</p>`
+                returnVal += '<div class="bike-number">'
+                returnVal += `<p class="available-bikes">${station.num_bikes_available - station.num_ebikes_available}</p>`
+                returnVal += '</div>'
+                returnVal += '<div class="bike-number">'
+                returnVal += `<p class="available-ebikes">${station.num_ebikes_available}</p>`
+                returnVal += '</div>'
+                returnVal += '<div class="bike-number">'
+                returnVal += `<p class="available-docks">${station.num_docks_available}</p>`
+                returnVal += '</div>'
+                
+                if ( document.getElementById(station.station_id) ) {
+                    document.getElementById(station.station_id).innerHTML = returnVal
+                } else {
+                    var stationBlock = document.createElement("div")
+                    stationBlock.setAttribute("id", station.station_id)
+                    stationBlock.setAttribute("class", "bike-station")
+                    stationBlock.innerHTML = returnVal
+                    document.getElementById("bikestatus").appendChild(stationBlock)
+                }
+            })                                     
+        })
+        .fail( (jqxhr, textStatus, error) => {
+            console.log(textStatus)
+        })
+    })
+}
+
+function updateBikes() {
+
+    // This really updates the display, if conditions are met
+    if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
+        getStations()
+        getStationInformation()
+        BIKE_LAST_UPDATE_TIME = Date.now()
+    }
+
+    // Reset time
+    var timeLeft = (BIKE_UPDATE_INTERVAL_SECONDS - ((Date.now() - BIKE_LAST_UPDATE_TIME) / 1000)).toFixed(0)
+
+}
+
+
+// OVERALL UPDATE CODE BELOW -- It's all about the timing
+
+function updateDisplay() {
+    updateWeather()
+    updateBikes()
+}
+
+
 $(document).ready( () => {
     var path = window.location.pathname
 
@@ -388,6 +496,7 @@ $(document).ready( () => {
     } else {
         LAST_PAGE_RELOAD = Date.now()
         updateWeather()
-        window.setInterval(updateWeather, 1000)
+        getBikeStationList()
+        window.setInterval(updateDisplay, 1000)
     }
 })
