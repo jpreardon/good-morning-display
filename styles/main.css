@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
-* {
-    /* font-size: 16px; */
-}
-
 body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
@@ -143,6 +139,7 @@ form input[type=radio]{
 form input[type=button] {
     padding: .5rem 1rem;
     margin-right: .5rem;
+    margin-top: 1rem;
     font-size: small;
     display: inline;
     cursor: pointer;
@@ -266,6 +263,21 @@ div#settings {
     content: url(/images/dock.svg);
     margin-right: 0.2rem;
 }
+
+#twin-list-picker {
+    display: flex;
+}
+
+#twin-list-picker select {
+    width: 250px;
+    height: 150px;
+}
+
+.vertical-buttons button {
+    display: block;
+    margin: 1rem;
+}
+
 
 /* Hacked up responsive stylings below... */
 

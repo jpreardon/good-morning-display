@@ -292,6 +292,8 @@ function saveLatLon() {
             ]).then(() => {window.location = "index.html"})
         })
     
+    // TODO: This is such a hack, clean this mess up!
+    saveStations()
 }
 
 /** 
@@ -381,6 +383,136 @@ function loadFormFromLocalStorage() {
             getUserLocationData("stationName")
         )
     }
+
+    // Load the bike form
+    loadBikeSettingsForm()
+}
+
+/** 
+ * Populates the bike part of the settings form
+ */
+// TODO: This needs to be cleaned up and made part of the main settings form loader
+function loadBikeSettingsForm() {
+    var time = Date.now()
+    BIKE_STATION_LIST = []
+    return new Promise( (resolve, reject) => {
+        // TODO: Remove JQuery dependency
+        $.getJSON( BIKE_STATION_INFO_URL ) 
+        .done( (json) => {
+            
+            json.data.stations.forEach(station => {
+                BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
+            });
+
+            // Sort here
+            // TODO: Need this on the settings page, was removed on main.js
+            BIKE_STATION_LIST.sort(function (a, b) {
+                var nameA = a.name.toUpperCase()
+                var nameB = b.name.toUpperCase()
+                if ( nameA < nameB ) {
+                    return -1
+                }
+                if ( nameA > nameB ) {
+                    return 1
+                }
+
+                return 0
+            })
+
+            // Add an option to the selected stations list for each of the stations
+            BIKE_STATION_LIST.forEach(station => {
+                var opt = document.createElement("option")
+                opt.value = station.id
+                opt.text = station.name
+                document.getElementById("station-list").add(opt)
+            })
+
+
+
+            // Load the selected stations
+            getStations()
+
+            BIKE_SELECTED_STATIONS.forEach(station => {
+                var opt = document.createElement("option")
+                opt.value = station[0]
+                opt.text = station[1]
+                document.getElementById("selected-stations").add(opt)
+            })
+
+            
+
+            // Remove those options from the station list
+            for (let station of document.getElementById("station-list").options) {
+                if (BIKE_SELECTED_STATIONS.flat().includes(station.value)) {
+                    document.getElementById("station-list").removeChild(station)
+                }
+            }
+
+            
+
+        })
+        .fail( (jqxhr, textStatus, error) => {
+            console.log(textStatus)
+        })
+    })
+}
+
+/** 
+ * Adds stations to selected stations form and removes them from the main list
+ */
+function addStations() {
+    station_list = document.getElementById("station-list") 
+    selected_stations =  document.getElementById("selected-stations")
+    myItems = []
+
+    // Collect items to move
+    for (let item of station_list.selectedOptions) {
+        myItems.push(item)
+    }
+
+    // Move items
+    myItems.forEach(item => {
+        selected_stations.options[selected_stations.options.length] = station_list.removeChild(station_list.options[item.index])
+    })
+}
+
+/** 
+ * Removes stations from the selected stations form and adds them to the main list
+ */
+// TODO: This just adds them back to the bottom of the list, maybe a resort is in order
+function removeStations() {
+    station_list = document.getElementById("station-list") 
+    selected_stations =  document.getElementById("selected-stations")
+    myItems = []
+
+    // Collect items to move
+    for (let item of selected_stations.selectedOptions) {
+        myItems.push(item)
+    }
+
+    // Move items
+    myItems.forEach(item => {
+        station_list.options[station_list.options.length] = selected_stations.removeChild(selected_stations.options[item.index])
+    })
+}
+
+/** 
+ * Saves selected stations to local storage
+ */
+function saveStations() {
+    var stationIds = []
+    var stationIdsJSON = ""
+
+    // Put each of the list's values in an array
+    for (let station of document.getElementById("selected-stations").options) {
+        stationIds.push(station.value)
+    }
+    
+    // Create a JSON string of the array
+    stationIdsJSON = JSON.stringify(stationIds)
+
+    // Save the JSON to local storage
+    localStorage.setItem("bikeStations", stationIdsJSON)
 }
 
 /** 
