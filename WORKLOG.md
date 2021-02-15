@@ -21,10 +21,11 @@ Also, much trial and error. But, I seem to be getting solid arrival times at a l
 Now, lets try to clean it up a bit:
 
 - [X] Deal with fetch errors
+- [ ] Limit to next several trains in either direction
 - [ ] Order the list properly
-- [ ] >0 minutes should be labeled as "arriving"
+- [X] >0 minutes should be labeled as "arriving"
 - [X] Get proper destinations from feed (or something) rather than hard coding
-- [ ] Minimalistic styling
+- [X] Minimalistic styling
 
 Might merge this test page back into master so I can keep an eye on it for a week or so. I don't want to do to much work on it outside of the rest of the display though. I made that mistake with the bike information and it took me a while to get it merged back in, and it's a bit of a mess at the moment.
 

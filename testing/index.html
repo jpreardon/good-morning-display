@@ -4,15 +4,13 @@
         <script type="text/javascript" src="protobuf.js"></script>
         <script type="text/javascript" src="complexes.js"></script>
         <script type="text/javascript" src="destinationComplex.js"></script>
-
         <script>
-            //const path = require('path')
-            //const fetch = require('node-fetch')
             const ProtoBuf = protobuf
+
             // TODO: This is here for testing only
             var feedme
 
-            // Grab the destination information
+            arrivalArray = []
 
             //const API_KEY = require('./api-key')
             const API_KEY = localStorage.getItem("mta-api-key")
@@ -54,10 +52,10 @@
                     })
                     .then(res => res.arrayBuffer())
                     .then(body => {
-                        //const buf = Buffer.from(body)
                         const buf = new Uint8Array(body)
                         const feed = FeedMessage.decode(buf)
                         feedme = feed
+                        arrivals = []
                         for (const message of feed.entity) {
                             // Only look at tripUpdates
                             if (message.tripUpdate) {
@@ -69,16 +67,62 @@
                                         arrivalDiff = arrivalTime - Date.now()
                                         destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
                                         destinationName = complexes[destinationComplex[destinationId]].name
-                                        document.getElementById("arrivals").innerHTML += `${message.tripUpdate.trip.routeId} ${destinationName} - ${(arrivalDiff / 60 / 1000).toFixed(0)} minutes<br>`
+                                        arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":destinationName, "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
                                     }
                                 }
                             }
                         }
+                        return arrivals
+                    }).then(arrivals => {
+                        arrivals.forEach(arrival => { 
+                            html = '<div class="train">'
+                            html += `<p class="line">${arrival.line}</p>`
+                            html += `<p class="destination">${arrival.destination}</p>`
+                            html += `<p class="time">${arrival.minutes <= 0 ? "ARRIVING" : arrival.minutes + " min"}</p>`    
+                            html += '</div>'
+                            document.getElementById("arrivals").innerHTML += html
+                        })
                     })
                 }
             })
+
             
         </script>
+        <style>
+            
+            body {
+                font-family: sans-serif;
+                background-color: black;
+                color: white;
+            }
+
+            #arrivals {
+                width: 100%;
+            }
+
+            .train {
+                margin: 0.5rem 1rem;
+                border: 1px solid white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 3px;
+            }            
+
+            .line, .destination, .time {
+                display: inline-block;
+            }
+
+            .line {
+                font-weight: bold;
+            }
+
+            .destination {
+                margin-left: 0.75rem;
+            }
+
+            .time {
+                float: right;
+            }
+        </style>
     </head>
     <body>
         <h1>MTA Test</h1>
