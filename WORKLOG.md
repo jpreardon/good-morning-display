@@ -12,10 +12,28 @@ Today, I'd like to get at least some basic MTA information coming back. If only 
 
 Honestly, the whole protobuf thing is over my head. I managed to cobble together something that kind of works in the browser by looking at these other files/projects:
 
+- https://github.com/ericandrewlewis/mta-realtime-subway-departures (and the associated destination mapping files)
 - https://gist.github.com/rolyatmax/360e74faf53c1875e4a1519d44f9c170
 - https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/index.js
 
 Also, much trial and error. But, I seem to be getting solid arrival times at a local stop. Woohoo!
+
+Now, lets try to clean it up a bit:
+
+- [X] Deal with fetch errors
+- [ ] Order the list properly
+- [ ] >0 minutes should be labeled as "arriving"
+- [X] Get proper destinations from feed (or something) rather than hard coding
+- [ ] Minimalistic styling
+
+Might merge this test page back into master so I can keep an eye on it for a week or so. I don't want to do to much work on it outside of the rest of the display though. I made that mistake with the bike information and it took me a while to get it merged back in, and it's a bit of a mess at the moment.
+
+The MTA Static Data is sometimes hard to find (for me anyway). Here are some links to CSVs.
+
+- http://web.mta.info/developers/data/nyct/subway/StationComplexes.csv
+- http://web.mta.info/developers/data/nyct/subway/Stations.csv
+- http://web.mta.info/developers/developer-data-terms.html#data
+- https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/destinationLocationToComplexIdMap.json (I couldn't find this anywhere in the MTA data, unless I tried to put it together from the tripupdates)
 
 ### 2021-02-14
 

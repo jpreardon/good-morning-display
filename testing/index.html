@@ -2,11 +2,17 @@
     <head>
         <title>MTA Test</title>
         <script type="text/javascript" src="protobuf.js"></script>
+        <script type="text/javascript" src="complexes.js"></script>
+        <script type="text/javascript" src="destinationComplex.js"></script>
+
         <script>
             //const path = require('path')
             //const fetch = require('node-fetch')
             const ProtoBuf = protobuf
-            var arrivals =""
+            // TODO: This is here for testing only
+            var feedme
+
+            // Grab the destination information
 
             //const API_KEY = require('./api-key')
             const API_KEY = localStorage.getItem("mta-api-key")
@@ -39,11 +45,19 @@
                 for (const feedID of FEED_IDS) {
                     const url = `${API_URL}${feedID}`
                     fetch(url, { headers: { 'x-api-key': API_KEY } })
+                    .then(res => {
+                        if (res.ok) {
+                            return res
+                        } else {
+                            throw new Error(res.status)
+                        }
+                    })
                     .then(res => res.arrayBuffer())
                     .then(body => {
                         //const buf = Buffer.from(body)
                         const buf = new Uint8Array(body)
                         const feed = FeedMessage.decode(buf)
+                        feedme = feed
                         for (const message of feed.entity) {
                             // Only look at tripUpdates
                             if (message.tripUpdate) {
@@ -53,8 +67,9 @@
                                         // Figure out number of minutes
                                         arrivalTime = new Date(stopUpdate.arrival.time * 1000)
                                         arrivalDiff = arrivalTime - Date.now()
-                                        direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1, stopUpdate.stopId.length) == "N" ? "Manhattan" : "Coney Island"
-                                        document.getElementById("arrivals").innerHTML += `${message.tripUpdate.trip.routeId} ${direction}: ${(arrivalDiff / 60 / 1000).toFixed(0)} minutes<br>`
+                                        destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
+                                        destinationName = complexes[destinationComplex[destinationId]].name
+                                        document.getElementById("arrivals").innerHTML += `${message.tripUpdate.trip.routeId} ${destinationName} - ${(arrivalDiff / 60 / 1000).toFixed(0)} minutes<br>`
                                     }
                                 }
                             }
@@ -62,8 +77,6 @@
                     })
                 }
             })
-
-            
             
         </script>
     </head>
