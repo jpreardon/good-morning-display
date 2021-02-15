@@ -6,12 +6,14 @@
             //const path = require('path')
             //const fetch = require('node-fetch')
             const ProtoBuf = protobuf
-            var feedme
+            var arrivals =""
 
             //const API_KEY = require('./api-key')
-            const API_KEY = " "
+            const API_KEY = localStorage.getItem("mta-api-key")
 
             const API_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F'
+
+            const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
 
             /* const FEED_IDS = [
                 'gtfs-ace',
@@ -26,6 +28,7 @@
             ] */
 
             const FEED_IDS = [
+                'gtfs-nqrw',
                 'gtfs-bdfm'
             ]
 
@@ -41,9 +44,20 @@
                         //const buf = Buffer.from(body)
                         const buf = new Uint8Array(body)
                         const feed = FeedMessage.decode(buf)
-                        feedme = feed
                         for (const message of feed.entity) {
-                            console.log(message)
+                            // Only look at tripUpdates
+                            if (message.tripUpdate) {
+                                // Loop through the stopTimeUpdates and only show those for the station we care about
+                                for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
+                                    if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == STATION_ID) {
+                                        // Figure out number of minutes
+                                        arrivalTime = new Date(stopUpdate.arrival.time * 1000)
+                                        arrivalDiff = arrivalTime - Date.now()
+                                        direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1, stopUpdate.stopId.length) == "N" ? "Manhattan" : "Coney Island"
+                                        document.getElementById("arrivals").innerHTML += `${message.tripUpdate.trip.routeId} ${direction}: ${(arrivalDiff / 60 / 1000).toFixed(0)} minutes<br>`
+                                    }
+                                }
+                            }
                         }
                     })
                 }
@@ -55,6 +69,8 @@
     </head>
     <body>
         <h1>MTA Test</h1>
-        <p>testing...</p>
+        <div id="arrivals">
+
+        </div>
     </body>
 </html>

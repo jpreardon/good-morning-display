@@ -6,6 +6,17 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-15
+
+Today, I'd like to get at least some basic MTA information coming back. If only it was as easy at the bike information...
+
+Honestly, the whole protobuf thing is over my head. I managed to cobble together something that kind of works in the browser by looking at these other files/projects:
+
+- https://gist.github.com/rolyatmax/360e74faf53c1875e4a1519d44f9c170
+- https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/index.js
+
+Also, much trial and error. But, I seem to be getting solid arrival times at a local stop. Woohoo!
+
 ### 2021-02-14
 
 Happy Valentine's Day!!! 💖
