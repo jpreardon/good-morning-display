@@ -21,6 +21,8 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 - [X] Merge feature branch with master
 - [X] Fix svg paths in production and padding in portrait mode
 
+Moving on to the subway, that's going to require some experimentation...
+
 ### 2021-02-13
 
 Thoughts/goals: I've been watching the citibike test stuff for a week. It works well, so I think it's time to integrate it into the main page.
