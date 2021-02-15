@@ -26,7 +26,8 @@ Now, lets try to clean it up a bit:
 - [X] >0 minutes should be labeled as "arriving"
 - [X] Get proper destinations from feed (or something) rather than hard coding
 - [X] Minimalistic styling
-- [ ] Auto refresh!
+- [X] Auto refresh!
+- [ ] Merge with master
 
 Might merge this test page back into master so I can keep an eye on it for a week or so. I don't want to do to much work on it outside of the rest of the display though. I made that mistake with the bike information and it took me a while to get it merged back in, and it's a bit of a mess at the moment.
 

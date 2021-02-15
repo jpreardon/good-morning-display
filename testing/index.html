@@ -7,14 +7,7 @@
         <script type="text/javascript" src="api-key.js"></script>
         <script>
             const ProtoBuf = protobuf
-
-            // TODO: This is here for testing only
-            var feedme
-
-            arrivalArray = []
-
             const API_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F'
-
             const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
 
             /* const FEED_IDS = [
@@ -35,68 +28,86 @@
             ]
 
             const protoBufDef = "nyct-subway.proto.txt"
-            ProtoBuf.load(protoBufDef, (error, root) => {
-                if (error) throw error
-                const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
-                for (const feedID of FEED_IDS) {
-                    const url = `${API_URL}${feedID}`
-                    fetch(url, { headers: { 'x-api-key': API_KEY } })
-                    .then(res => {
-                        if (res.ok) {
-                            return res
-                        } else {
-                            throw new Error(res.status)
-                        }
-                    })
-                    .then(res => res.arrayBuffer())
-                    .then(body => {
-                        const buf = new Uint8Array(body)
-                        const feed = FeedMessage.decode(buf)
-                        feedme = feed
-                        arrivals = []
-                        for (const message of feed.entity) {
-                            // Only look at tripUpdates
-                            if (message.tripUpdate) {
-                                // Loop through the stopTimeUpdates and only show those for the station we care about
-                                for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
-                                    if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == STATION_ID) {
-                                        // Figure out number of minutes
-                                        arrivalTime = new Date(stopUpdate.arrival.time * 1000)
-                                        arrivalDiff = arrivalTime - Date.now()
-                                        destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
-                                        destinationName = complexes[destinationComplex[destinationId]].name
-                                        arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":destinationName, "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
+            function updateArrivals() {    
+                ProtoBuf.load(protoBufDef, (error, root) => {
+                    // TODO: The next three variables are a hack to combine multiple lines, a promise might be better here
+                    numFeeds = FEED_IDS.length
+                    iteration = 0
+                    arrivals = []
+                    if (error) throw error
+                    const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
+                    for (const feedID of FEED_IDS) {
+                        const url = `${API_URL}${feedID}`
+                        fetch(url, { headers: { 'x-api-key': API_KEY } })
+                        .then(res => {
+                            if (res.ok) {
+                                return res
+                            } else {
+                                throw new Error(res.status)
+                            }
+                        })
+                        .then(res => res.arrayBuffer())
+                        .then(body => {
+                            const buf = new Uint8Array(body)
+                            const feed = FeedMessage.decode(buf)
+                            for (const message of feed.entity) {
+                                // Only look at tripUpdates
+                                if (message.tripUpdate) {
+                                    // Loop through the stopTimeUpdates and only show those for the station we care about
+                                    for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
+                                        if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == STATION_ID) {
+                                            // Figure out number of minutes
+                                            arrivalTime = new Date(stopUpdate.arrival.time * 1000)
+                                            arrivalDiff = arrivalTime - Date.now()
+                                            destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
+                                            destinationName = complexes[destinationComplex[destinationId]].name
+                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":destinationName, "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
+                                        }
                                     }
                                 }
                             }
-                        }
-                        return arrivals
-                    }).then(arrivals => {
+                            iteration++
+                        }).then(() => {
+                            
+                            // Only populate the HTML once all of the feeds have been checked
+                            if (iteration == numFeeds) {
+                                // Sort array
+                                arrivals.sort((a, b) => {
+                                    return Number(a.minutes) - Number(b.minutes)
+                                })
 
-                        // Sort array
-                        arrivals.sort((a, b) => {
-                            return a.minutes.toFixed - b.minutes.toFixed
+                                // Remove all but the first 8 arrivals
+                                arrivals.splice(8)
+
+                                // Fill it up the HTML
+                                html = ""
+                                arrivals.forEach(arrival => { 
+                                    html += '<div class="train">'
+                                    html += `<p class="line">${arrival.line}</p>`
+                                    html += `<p class="destination">${arrival.destination}</p>`
+                                    html += `<p class="time">${arrival.minutes <= 0 ? "ARRIVING" : arrival.minutes + " min"}</p>`    
+                                    html += '</div>'
+                                })
+                                document.getElementById("arrivals").innerHTML = html
+                                }
                         })
+                    }
+                })
+            }
 
-                        // Remove all but the first 6 arrivals
-                        arrivals.splice(6)
-
-                        // Fill it up the HTML
-                        html = ""
-                        arrivals.forEach(arrival => { 
-                            html += '<div class="train">'
-                            html += `<p class="line">${arrival.line}</p>`
-                            html += `<p class="destination">${arrival.destination}</p>`
-                            html += `<p class="time">${arrival.minutes <= 0 ? "ARRIVING" : arrival.minutes + " min"}</p>`    
-                            html += '</div>'
-                            document.getElementById("arrivals").innerHTML += html
-                        })
-                        document.getElementById("arrivals").innerHTML = html
-                    })
+            function ready(fn) {
+                if (document.readyState !== 'loading') {
+                    fn();
+                } else {
+                    document.addEventListener('DOMContentLoaded', fn);
                 }
+            }
+
+            ready( () => {
+                updateArrivals()
+                window.setInterval(updateArrivals, 1000 * 30)
             })
 
-            
         </script>
         <style>
             
