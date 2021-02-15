@@ -18,6 +18,13 @@ Honestly, the whole protobuf thing is over my head. I managed to cobble together
 
 Also, much trial and error. But, I seem to be getting solid arrival times at a local stop. Woohoo!
 
+The MTA Static Data is sometimes hard to find (for me anyway). Here are some links to CSVs.
+
+- http://web.mta.info/developers/data/nyct/subway/StationComplexes.csv
+- http://web.mta.info/developers/data/nyct/subway/Stations.csv
+- http://web.mta.info/developers/developer-data-terms.html#data
+- https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/destinationLocationToComplexIdMap.json (I couldn't find this anywhere in the MTA data, unless I tried to put it together from the tripupdates)
+
 Now, lets try to clean it up a bit:
 
 - [X] Deal with fetch errors
@@ -27,16 +34,9 @@ Now, lets try to clean it up a bit:
 - [X] Get proper destinations from feed (or something) rather than hard coding
 - [X] Minimalistic styling
 - [X] Auto refresh!
-- [ ] Merge with master
+- [X] Merge with master
 
-Might merge this test page back into master so I can keep an eye on it for a week or so. I don't want to do to much work on it outside of the rest of the display though. I made that mistake with the bike information and it took me a while to get it merged back in, and it's a bit of a mess at the moment.
-
-The MTA Static Data is sometimes hard to find (for me anyway). Here are some links to CSVs.
-
-- http://web.mta.info/developers/data/nyct/subway/StationComplexes.csv
-- http://web.mta.info/developers/data/nyct/subway/Stations.csv
-- http://web.mta.info/developers/developer-data-terms.html#data
-- https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/destinationLocationToComplexIdMap.json (I couldn't find this anywhere in the MTA data, unless I tried to put it together from the tripupdates)
+Leaving the MTA stuff in the "testing" directory for now. I'll watch it for a few days before trying to put it on the main display page.
 
 ### 2021-02-14
 
