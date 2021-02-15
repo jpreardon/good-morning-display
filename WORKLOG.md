@@ -21,6 +21,8 @@ Continuing with yesterday's work. I looked at what it was going to take to incor
 - [X] Merge feature branch with master
 - [X] Fix svg paths in production and padding in portrait mode
 
+[Loris Bettazza](https://github.com/Pustur) sent a pull request to remove the jQuery dependencies. Awesome! Reviewed and merged.
+
 Moving on to the subway, that's going to require some experimentation...
 
 ### 2021-02-13
