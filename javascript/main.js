@@ -89,11 +89,19 @@ function mapRelativeHumidity(relativeHumidity, maxLength) {
  * Fetches current weather conditions from server
  */
 function getCurrentConditions() {
-    // TODO: Remove JQuery dependency 
     return new Promise( (resolve, reject) => {
         var currentConditions = {}
-        $.getJSON( getApiEndpoint("current_conditions") ) 
-        .done( (json) => {
+        fetch( getApiEndpoint("current_conditions") ) 
+        .then( (res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                currentConditions.error = new Error(res.status)
+                currentConditions.textStatus = res.statusText
+                reject(currentConditions)
+            }
+        })
+        .then( (json) => {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
             currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
             currentConditions.windSpeed = replaceNulls(KphToMph(json.properties.windSpeed.value))
@@ -101,9 +109,9 @@ function getCurrentConditions() {
             currentConditions.relativeHumidity = json.properties.relativeHumidity.value
             resolve(currentConditions)
         })
-        .fail( (jqxhr, textStatus, error) => {
+        .catch( (error) => {
             currentConditions.error = error
-            currentConditions.textStatus = textStatus
+            currentConditions.textStatus = error.message
             reject(currentConditions)
         })
     })
@@ -113,19 +121,27 @@ function getCurrentConditions() {
  * Fetches current weather forecast from server
  */
 function getForecast() {
-    // TODO: Remove JQuery dependency 
     return new Promise( (resolve, reject) => {
         var forecast = []
-        $.getJSON( getApiEndpoint("forecast")  )
-        .done( (json) => {
+        fetch( getApiEndpoint("forecast")  )
+        .then( (res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                forecast.error = new Error(res.status)
+                forecast.textStatus = res.statusText
+                reject(forecast)
+            }
+        })
+        .then( (json) => {
             forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
             forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
             forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
             resolve(forecast)
         })
-        .fail( (jqxhr, textStatus, error) => {
+        .catch( (error) => {
             forecast.error = error
-            forecast.textStatus = textStatus
+            forecast.textStatus = error.message
             reject(forecast)
         })
     })
@@ -138,7 +154,6 @@ function getForecast() {
  */
 function setUserLocationData(dataPoint, value) {
     // TODO: This function is kind of funky, refactor
-    // TODO: Remove JQuery dependency
     return new Promise( (resolve, reject) => {
         var name = ""
         
@@ -190,7 +205,6 @@ function getUserLocationData(dataPoint) {
  * @param {String} variable - The user value to validate
  */
 function validateApiEndpoint(name, variable) {
-    // TODO: Remove JQuery dependency
     return new Promise( (resolve, reject) => {
         var endPoint = ""
         
@@ -205,11 +219,15 @@ function validateApiEndpoint(name, variable) {
                 endPoint = "fail"
         }
 
-        $.getJSON(endPoint)
-        .done( (json) => {
-            resolve("Valid Endpoint")
+        fetch(endPoint)
+        .then( (res) => {
+            if (res.ok) {
+                resolve("Valid Endpoint")
+            } else {
+                reject("Invalid Endpoint")
+            }
         })
-        .fail( (jqxhr, textStatus, error) => {
+        .catch( () => {
             reject("Invalid Endpoint")
         })
     })
@@ -274,15 +292,16 @@ function saveLatLon() {
     var gridY = ""
     var stationIdentifier = ""
 
-    // TODO: Remove JQuery dependency
-    $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
-        .done( (points) => {
+    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
+        .then( (res) => res.json())
+        .then( (points) => {
             forecastURL = points.properties.forecast
             observationStationsURL = points.properties.observationStations
             office = points.properties.cwa
             gridX = points.properties.gridX
             gridY = points.properties.gridY
-            stationIdentifier = $("input[name='stationId']:checked").val()
+            var checkedStation = document.querySelector("input[name='stationId']:checked")
+            stationIdentifier = checkedStation ? checkedStation.value : ''
 
             Promise.all([
                 setUserLocationData("stationName", stationIdentifier),
@@ -303,11 +322,12 @@ function saveLatLon() {
  * @param {Number} selectedStationId - Optional station to select in the form
  */
 function generateStationList(latitude, longitude, selectedStationId = null) {
-    // TODO: Remove JQuery dependency
-    $.getJSON(`https://api.weather.gov/points/${latitude},${longitude}`)
-        .done( (points) => {
-            $.getJSON(points.properties.observationStations)
-                .done( (stations) => {
+    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
+        .then( (res) => res.json())
+        .then( (points) => {
+            fetch(points.properties.observationStations)
+                .then( (response) => response.json())
+                .then( (stations) => {
                     document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
                     for (let i = 0; i < 5; i++) {
                         var stationId = stations.features[i].properties.stationIdentifier
@@ -396,9 +416,15 @@ function loadBikeSettingsForm() {
     var time = Date.now()
     BIKE_STATION_LIST = []
     return new Promise( (resolve, reject) => {
-        // TODO: Remove JQuery dependency
-        $.getJSON( BIKE_STATION_INFO_URL ) 
-        .done( (json) => {
+        fetch( BIKE_STATION_INFO_URL ) 
+        .then( (res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                throw new Error(res.status);
+            }
+        })
+        .then( (json) => {
             
             json.data.stations.forEach(station => {
                 BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
@@ -457,8 +483,8 @@ function loadBikeSettingsForm() {
             
 
         })
-        .fail( (jqxhr, textStatus, error) => {
-            console.log(textStatus)
+        .catch( (error) => {
+            console.log(error)
         })
     })
 }
@@ -547,42 +573,44 @@ function updateWeather() {
         }
 
         getCurrentConditions().then( (conditions) => { 
-            $("#temperature > div.inner > p.big-number").html(conditions.temperature)
-            $("#temperature > div.inner > p.big-label").html(conditions.conditions)
-            $("#wind > div.inner > p.big-number").html(conditions.windSpeed)
+            document.querySelector("#temperature > div.inner > p.big-number").innerHTML = conditions.temperature
+            document.querySelector("#temperature > div.inner > p.big-label").innerHTML = conditions.conditions
+            document.querySelector("#wind > div.inner > p.big-number").innerHTML = conditions.windSpeed
     
             if (conditions.windDirection == null) {
-                $("#wind-arrow").addClass("hide")
+                document.querySelector("#wind-arrow").classList.add("hide")
             } else {
-                $("#wind-arrow").css("transform", "rotate(" + conditions.windDirection + "deg)").removeClass("hide")
+                document.querySelector("#wind-arrow").style.transform = "rotate(" + conditions.windDirection + "deg)"
+                document.querySelector("#wind-arrow").classList.remove("hide")
             }
     
             if (conditions.relativeHumidity == null) {
-                $("#humidity").addClass("hide")
+                document.querySelector("#humidity").classList.add("hide")
             } else {
-                $("#humidity").css("stroke-dashoffset", mapRelativeHumidity(conditions.relativeHumidity, 314)).removeClass("hide")
+                document.querySelector("#humidity").style.strokeDashoffset = mapRelativeHumidity(conditions.relativeHumidity, 314)
+                document.querySelector("#humidity").classList.remove("hide")
             }  
     
         }).catch( (error) => {
-            $("#temperature > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
-            $("#wind > .inner").html(`<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`)
+            document.querySelector("#temperature > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
+            document.querySelector("#wind > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
             console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
         })
     
         getForecast().then( (forecast) => {
-            $("#forecast > #f1-title").html(forecast[0].name)
-            $("#forecast > #f1").html(forecast[0].forecast)
-            $("#forecast > #f2-title").html(forecast[1].name)
-            $("#forecast > #f2").html(forecast[1].forecast)
-            $("#forecast > #f3-title").html(forecast[2].name)
-            $("#forecast > #f3").html(forecast[2].forecast)
+            document.querySelector("#forecast > #f1-title").innerHTML = forecast[0].name
+            document.querySelector("#forecast > #f1").innerHTML = forecast[0].forecast
+            document.querySelector("#forecast > #f2-title").innerHTML = forecast[1].name
+            document.querySelector("#forecast > #f2").innerHTML = forecast[1].forecast
+            document.querySelector("#forecast > #f3-title").innerHTML = forecast[2].name
+            document.querySelector("#forecast > #f3").innerHTML = forecast[2].forecast
         }).catch( (error) => {
-            $("#forecast").html(`<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`)
+            document.querySelector("#forecast").innerHTML = `<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`
             console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
         })
         
         var updateTime = new Date
-        $("#update-time").html(`${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`)
+        document.querySelector("#update-time").innerHTML = `${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`
 
         WEATHER_LAST_UPDATE_TIME = Date.now()
     }
@@ -597,9 +625,15 @@ function getBikeStationList() {
     var time = Date.now()
     BIKE_STATION_LIST = []
     return new Promise( (resolve, reject) => {
-        // TODO: Remove JQuery Dependency
-        $.getJSON( BIKE_STATION_INFO_URL ) 
-        .done( (json) => {
+        fetch( BIKE_STATION_INFO_URL ) 
+        .then( (res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                throw new Error(res.status);
+            }
+        })
+        .then( (json) => {
             
             json.data.stations.forEach(station => {
                 BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
@@ -609,8 +643,8 @@ function getBikeStationList() {
             resolve("success") 
             
         })
-        .fail( (jqxhr, textStatus, error) => {
-            console.log(textStatus)
+        .catch( (error) => {
+            console.log(error)
         })
     })
 }
@@ -641,8 +675,15 @@ function getStations() {
  */
 function getStationInformation() {
     return new Promise( (resolve, reject) => {
-        $.getJSON( BIKE_STATION_STATUS_URL ) 
-        .done( (json) => {
+        fetch( BIKE_STATION_STATUS_URL ) 
+        .then( (res) => {
+            if (res.ok) {
+                return res.json()
+            } else {
+                throw new Error(res.status);
+            }
+        })
+        .then( (json) => {
             BIKE_SELECTED_STATIONS.forEach(selectedStation => {
                 // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
                 var returnVal = ""
@@ -670,8 +711,8 @@ function getStationInformation() {
                 }
             })                                     
         })
-        .fail( (jqxhr, textStatus, error) => {
-            console.log(textStatus)
+        .catch( (error) => {
+            console.log(error)
         })
     })
 }
@@ -712,12 +753,22 @@ function updateDisplay() {
     
 }
 
+/** 
+ * Replacement for JQuery's ready function
+ */
+function ready(fn) {
+    if (document.readyState !== 'loading') {
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+}
+
 
 /** 
  * Kicks off everything
  */
-// TODO: Remove JQuery dependency
-$(document).ready( () => {
+ready( () => {
     var path = window.location.pathname
 
     if (path.substring(path.length - 13) == "settings.html") {
