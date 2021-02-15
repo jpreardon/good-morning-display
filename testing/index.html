@@ -4,6 +4,7 @@
         <script type="text/javascript" src="protobuf.js"></script>
         <script type="text/javascript" src="complexes.js"></script>
         <script type="text/javascript" src="destinationComplex.js"></script>
+        <script type="text/javascript" src="api-key.js"></script>
         <script>
             const ProtoBuf = protobuf
 
@@ -11,9 +12,6 @@
             var feedme
 
             arrivalArray = []
-
-            //const API_KEY = require('./api-key')
-            const API_KEY = localStorage.getItem("mta-api-key")
 
             const API_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F'
 
@@ -74,14 +72,26 @@
                         }
                         return arrivals
                     }).then(arrivals => {
+
+                        // Sort array
+                        arrivals.sort((a, b) => {
+                            return a.minutes.toFixed - b.minutes.toFixed
+                        })
+
+                        // Remove all but the first 6 arrivals
+                        arrivals.splice(6)
+
+                        // Fill it up the HTML
+                        html = ""
                         arrivals.forEach(arrival => { 
-                            html = '<div class="train">'
+                            html += '<div class="train">'
                             html += `<p class="line">${arrival.line}</p>`
                             html += `<p class="destination">${arrival.destination}</p>`
                             html += `<p class="time">${arrival.minutes <= 0 ? "ARRIVING" : arrival.minutes + " min"}</p>`    
                             html += '</div>'
                             document.getElementById("arrivals").innerHTML += html
                         })
+                        document.getElementById("arrivals").innerHTML = html
                     })
                 }
             })
@@ -94,6 +104,7 @@
                 font-family: sans-serif;
                 background-color: black;
                 color: white;
+                margin: 1rem;
             }
 
             #arrivals {
@@ -101,7 +112,7 @@
             }
 
             .train {
-                margin: 0.5rem 1rem;
+                margin: 0.5rem 0;
                 border: 1px solid white;
                 padding: 0.25rem 0.75rem;
                 border-radius: 3px;
