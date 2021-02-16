@@ -5,11 +5,15 @@
         <script type="text/javascript" src="protobuf.js"></script>
         <script type="text/javascript" src="complexes.js"></script>
         <script type="text/javascript" src="destinationComplex.js"></script>
+        <script type="text/javascript" src="stations.js"></script>
         <script type="text/javascript" src="api-key.js"></script>
         <script>
             const ProtoBuf = protobuf
             const API_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F'
             const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
+            
+            // TODO: For testing only, remove
+            var feedme
 
             /* const FEED_IDS = [
                 'gtfs-ace',
@@ -51,6 +55,7 @@
                         .then(body => {
                             const buf = new Uint8Array(body)
                             const feed = FeedMessage.decode(buf)
+                            feedme = feed
                             for (const message of feed.entity) {
                                 // Only look at tripUpdates
                                 if (message.tripUpdate) {
@@ -86,7 +91,12 @@
                                     html += '<div class="train">'
                                     html += `<p class="line">${arrival.line}</p>`
                                     html += `<p class="destination">${arrival.destination}</p>`
-                                    html += `<p class="time">${arrival.minutes <= 0 ? "ARRIVING" : arrival.minutes + " min"}</p>`    
+                                    if (arrival.minutes <= 0) {
+                                        html += '<p class="time arriving">ARRIVING</p>'
+                                    } else {
+                                        html += `<p class="time">${arrival.minutes} min</p>`
+                                    }
+                                        
                                     html += '</div>'
                                 })
                                 document.getElementById("arrivals").innerHTML = html
@@ -94,6 +104,12 @@
                         })
                     }
                 })
+            }
+
+            function updateStopName(gtfsStopId) {
+                var station = stations.find(me => me["GTFS Stop ID"] == gtfsStopId)
+                document.getElementById("stop-name").innerHTML = `${station["Stop Name"]} - ${station["Daytime Routes"].join(", ")} - ${station["Line"]} (${station["Division"]})`
+                
             }
 
             function ready(fn) {
@@ -106,6 +122,7 @@
 
             ready( () => {
                 updateArrivals()
+                updateStopName(STATION_ID)
                 window.setInterval(updateArrivals, 1000 * 30)
             })
 
@@ -145,10 +162,25 @@
             .time {
                 float: right;
             }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            #stop-name {
+                font-size: 1rem;
+                color: gray;
+            }
+
+            .arriving {
+                color: red;
+            }
+
         </style>
     </head>
     <body>
         <h1>MTA Test</h1>
+        <h2 id="stop-name"></h2>
         <div id="arrivals">
 
         </div>
