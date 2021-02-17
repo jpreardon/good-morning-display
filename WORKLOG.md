@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-16
+
+As expected, I saw a couple problems today, let's fix those up...
+
+- Add function to catch undefined destination errors. Fixes #32
+
 ### 2021-02-15
 
 Today, I'd like to get at least some basic MTA information coming back. If only it was as easy at the bike information...

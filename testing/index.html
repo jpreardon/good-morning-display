@@ -32,6 +32,15 @@
                 'gtfs-bdfm'
             ]
 
+            function getDestinationName(destinationCode) {
+                try {
+                    return complexes[destinationComplex[destinationCode]].name
+                } catch (error) {
+                    console.error(error)
+                    return destinationCode
+                }
+            }
+
             const protoBufDef = "nyct-subway.proto.txt"
             function updateArrivals() {    
                 ProtoBuf.load(protoBufDef, (error, root) => {
@@ -66,8 +75,7 @@
                                             arrivalTime = new Date(stopUpdate.arrival.time * 1000)
                                             arrivalDiff = arrivalTime - Date.now()
                                             destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
-                                            destinationName = complexes[destinationComplex[destinationId]].name
-                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":destinationName, "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
+                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(destinationId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
                                         }
                                     }
                                 }
