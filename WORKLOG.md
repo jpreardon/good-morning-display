@@ -12,6 +12,7 @@ As expected, I saw a couple problems today, let's fix those up...
 
 - Add function to catch undefined destination errors. Fixes #32
 - Change mapping for "BPK" to Bedford Park Blvd. Fixes #33
+- Add MTA line colors, to make it pretty. I promise, this is the last bit of styling I'll do for now.
 
 ### 2021-02-15
 
