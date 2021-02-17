@@ -11,6 +11,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 As expected, I saw a couple problems today, let's fix those up...
 
 - Add function to catch undefined destination errors. Fixes #32
+- Change mapping for "BPK" to Bedford Park Blvd. Fixes #33
 
 ### 2021-02-15
 
