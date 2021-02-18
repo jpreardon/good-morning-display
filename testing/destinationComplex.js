@@ -48,5 +48,6 @@ destinationComplex = {
   "CHU": "243",
   "BRD": "107",
   "TNV": "522",
-  "STG": "501"
+  "STG": "501",
+  "KBG": "212"
 }

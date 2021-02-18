@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-17
+
+- Add KBG to destinationComplex.js for Kingsbridge Rd. headsign. Fixes #35
+
 ### 2021-02-16
 
 As expected, I saw a couple problems today, let's fix those up...
