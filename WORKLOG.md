@@ -10,6 +10,29 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 - Add KBG to destinationComplex.js for Kingsbridge Rd. headsign. Fixes #35
 
+ I'm not super confident about the destination mappings. I'd like to simplify it somehow, so some research is in order...
+
+ So... trips.txt can give me every possible (scheduled) destination (headsign) for each line. But, it doesn't give the three letter destination code :(
+
+There's supposed to be historical data (http://web.mta.info/developers/MTA-Subway-Time-historical-data.html), but is says "no such bucket". [This page](http://web.mta.info/developers/data/archives.html) does have some old archives, however, I wonder if I'd just be better off starting with the destination complex data I have and looping through it. I started doing this yesterday, but I threw it all away (stupidly).
+
+I'm forking mta-realtime-subway-departures so I can make a data cleaning app. The destinations there are right more often than not. But there are some holes in the data. This would be so much easier if someone from the MTA made this available. I asked on the groups. But in the meantime, I'll forge ahead.
+
+Here are the stations unaccounted for in the mapping. I need to check in the morning since there are a couple others I know about that aren't on this list.
+
+DEL | E | S | undefined | undefined  => Delancy
+PPK | FS | S | undefined | undefined => Prospect Park
+161 | D | N | undefined | undefined => 161 ST
+125 | D | N | undefined | undefined => 125th St
+MYR | M | N | undefined | undefined => Myrtle Ave
+137 | 1 | N | undefined | undefined => 137 St. City College
+DYK | 1 | S | undefined | undefined => Dyckman St.
+TSQ | 3 | S | undefined | undefined => Times Sq.
+MOT | 4 | S | undefined | undefined => ???
+180 | 5 | S | undefined | undefined => E 180 St
+QBP | 7 | S | undefined | undefined => Queensboro Plaza
+
+
 ### 2021-02-16
 
 As expected, I saw a couple problems today, let's fix those up...
