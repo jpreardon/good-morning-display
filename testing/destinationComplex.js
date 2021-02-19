@@ -49,5 +49,5 @@ destinationComplex = {
   "BRD": "107",
   "TNV": "522",
   "STG": "501",
-  "KBG": "212"
+  "KGB": "212"
 }

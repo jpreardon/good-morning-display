@@ -6,6 +6,36 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-18
+
+Looked for undefined destinations at the end of the evening rush (plus its snowing--service changes) and got a few more undefined destinations. Showing the complete list here for completeness:
+
+DEL | E | S | undefined | undefined  => Delancy (233)
+PPK | FS | S | undefined | undefined => Prospect Park (42)
+161 | D | N | undefined | undefined => 161 ST (219)
+125 | D | N | undefined | undefined => 125th St (153)
+MYR | M | N | undefined | undefined => Myrtle Ave (97)
+137 | 1 | N | undefined | undefined => 137 St. City College (305)
+DYK | 1 | S | undefined | undefined => Dyckman St. (299)
+TSQ | 3 | S | undefined | undefined => Times Sq. (317)
+MOT | 4 | S | undefined | undefined => ?
+180 | 5 | S | undefined | undefined => E 180 St (426)
+QBP | 7 | S | undefined | undefined => Queensboro Plaza (461)
+BUR | 4 | N | undefined | undefined => Burnside Ave (384)
+177 | 6 | N | ? | undefined
+3AB | 6 | N | undefined | undefined => 3av 138 st (377)
+WPT | 7 | N | undefined | undefined => Mets Willits Point (448)
+111 | 7 | N | undefined | undefined => 111 St (449)
+GHW | 5 | N | undefined | undefined => Gun Hill Road West? (421)
+KGB => Kingsbridge Rd. (212)
+
+Plus 1 correction: "BPK" Bedford Park Blvd => (211)
+
+I updated destinationLocationToComplexIdMap.json in my fork of the MTA destinations project. I'll see if there are any more undefined stations in the morning and maybe on Saturday before submitting a pull request.
+
+Update the code for Kingsbridge Road, again. Fixes #35.
+
+
 ### 2021-02-17
 
 - Add KBG to destinationComplex.js for Kingsbridge Rd. headsign. Fixes #35
