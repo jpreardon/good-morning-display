@@ -37,6 +37,9 @@ I updated destinationLocationToComplexIdMap.json in my fork of the MTA destinati
 - Find station names in stations file rather than complexes. Fixes #34.
 - Add latest destination location mappings.
 
+I submitted a pull request for my changes, to the destination mapping, we'll see if they take it.
+
+Now, after messing around with the data a bit, I might go in a different direction for the destination information. It looks like the stopTimeUpdate array is a pretty reliable source for the last stop (duh). If I use that, I don't have to keep a mapping file maintained. I think I'll work on a utility to convert the stations.csv to json and change my code to use the last stop as the destination rather than the destination location code.
 
 ### 2021-02-17
 
