@@ -1,4 +1,5 @@
 // Taken from here (thank you!): https://github.com/ericandrewlewis/mta-realtime-subway-departures/blob/master/destinationLocationToComplexIdMap.json
+// Some additions have been made by me.
 
 destinationComplex = {
   "145": "151",
@@ -49,5 +50,21 @@ destinationComplex = {
   "BRD": "107",
   "TNV": "522",
   "STG": "501",
+  "DEL": "233",
+  "PPK": "42",
+  "161": "219",
+  "125": "153",
+  "MYR": "97",
+  "137": "305",
+  "DYK": "299",
+  "TSQ": "317",
+  "MOT": "?",
+  "180": "426",
+  "QBP": "461",
+  "BUR": "384",
+  "3AB": "377",
+  "WPT": "448",
+  "111": "449",
+  "GHW": "421",
   "KGB": "212"
 }

@@ -33,7 +33,9 @@ Plus 1 correction: "BPK" Bedford Park Blvd => (211)
 
 I updated destinationLocationToComplexIdMap.json in my fork of the MTA destinations project. I'll see if there are any more undefined stations in the morning and maybe on Saturday before submitting a pull request.
 
-Update the code for Kingsbridge Road, again. Fixes #35.
+- Update the code for Kingsbridge Road, again. Fixes #35.
+- Find station names in stations file rather than complexes. Fixes #34.
+- Add latest destination location mappings.
 
 
 ### 2021-02-17
