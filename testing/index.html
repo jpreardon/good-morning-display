@@ -36,7 +36,7 @@
 
             function getDestinationName(destinationCode) {
                 try {
-                    return complexes[destinationComplex[destinationCode]].name
+                    return stations.find(sta => sta["Station ID"] == destinationComplex[destinationCode])["Stop Name"]
                 } catch (error) {
                     console.error(error)
                     return destinationCode
