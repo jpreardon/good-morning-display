@@ -34,13 +34,8 @@
                 'gtfs-bdfm'
             ]
 
-            function getDestinationName(destinationCode) {
-                try {
-                    return stations.find(sta => sta["Station ID"] == destinationComplex[destinationCode])["Stop Name"]
-                } catch (error) {
-                    console.error(error)
-                    return destinationCode
-                }
+            function getDestinationName(gtfsStopId) {
+                return stations.find(sta => sta["GTFS Stop ID"] == gtfsStopId)["Stop Name"]
             }
 
             const protoBufDef = "nyct-subway.proto.txt"
@@ -70,14 +65,18 @@
                             for (const message of feed.entity) {
                                 // Only look at tripUpdates
                                 if (message.tripUpdate) {
+                                    // Need to grab the (possible) last stop here, might use it later if it this tripUpate matches our station
+                                    if (message.tripUpdate.stopTimeUpdate.length > 0) {
+                                        lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
+                                        lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
+                                    }
                                     // Loop through the stopTimeUpdates and only show those for the station we care about
                                     for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
                                         if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == STATION_ID) {
                                             // Figure out number of minutes
                                             arrivalTime = new Date(stopUpdate.arrival.time * 1000)
                                             arrivalDiff = arrivalTime - Date.now()
-                                            destinationId = message.tripUpdate.trip[".nyctTripDescriptor"].trainId.split("/")[1]
-                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(destinationId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
+                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0) })
                                         }
                                     }
                                 }

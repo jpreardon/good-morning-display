@@ -6,6 +6,14 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-19
+
+Let's try to stop using the destination locations in favor of the last stop.
+
+- Get destination from stop time update. Fixes #37
+
+I was kind of bummed to "throw away" the work of cleaning up the destinations file. However, having that destination file got me to a running thing faster. However, my work in cleaning up that file made me more familiar with the data and led to a better solution. Plus, I made a pull request on it, maybe someone will get some benefit from it if it gets merged.
+
 ### 2021-02-18
 
 Looked for undefined destinations at the end of the evening rush (plus its snowing--service changes) and got a few more undefined destinations. Showing the complete list here for completeness:
