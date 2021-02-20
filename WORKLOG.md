@@ -10,6 +10,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 - Don't display trains that are on unscheduled tracks. Fixes #38
 
+Today, I want to create and start using my own station information. I don't need everything in the csv file, and I'd like the values to be a little easier to use (no spaces).
+
+- Create create-mta-station-json package. Fixes #36
+
 ### 2021-02-19
 
 Let's try to stop using the destination locations in favor of the last stop.

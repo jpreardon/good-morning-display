@@ -1,0 +1,17 @@
+{
+  "name": "create-mta-station-json",
+  "version": "1.0.0",
+  "description": "This is a simple package that converts the MTA's [stations.csv](http://web.mta.info/developers/data/nyct/subway/Stations.csv) to a json file. Note that the json only contains the fields needed for the [GMD](https://github.com/jpreardon/good-morning-display) project, it also renames the keys so there are no spaces (personal preference).",
+  "main": "createStationsJson.js",
+  "dependencies": {
+    "csv-parse": "^4.15.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "create-stations": "node createStationsJson.js"
+  },
+  "author": "John P. Reardon (http://jpreardon.com)",
+  "license": "MIT",
+  "keywords": []
+}
