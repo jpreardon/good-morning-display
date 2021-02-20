@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-20
+
+- Don't display trains that are on unscheduled tracks. Fixes #38
+
 ### 2021-02-19
 
 Let's try to stop using the destination locations in favor of the last stop.
