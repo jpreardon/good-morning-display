@@ -5,15 +5,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <script type="text/javascript" src="protobuf.js"></script>
-        <script type="text/javascript" src="complexes.js"></script>
-        <script type="text/javascript" src="destinationComplex.js"></script>
-        <script type="text/javascript" src="stations.js"></script>
         <script type="text/javascript" src="api-key.js"></script>
         <script>
             const ProtoBuf = protobuf
             const API_URL = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F'
             const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
-            
+            var stations = [] // This will hold all of the station information
+
             // TODO: For testing only, remove
             var feedme
 
@@ -35,7 +33,7 @@
             ]
 
             function getDestinationName(gtfsStopId) {
-                return stations.find(sta => sta["GTFS Stop ID"] == gtfsStopId)["Stop Name"]
+                return stations.find(sta => sta.gtfs_stop_id == gtfsStopId).stop_name
             }
 
             const protoBufDef = "nyct-subway.proto.txt"
@@ -121,8 +119,8 @@
             }
 
             function updateStopName(gtfsStopId) {
-                var station = stations.find(me => me["GTFS Stop ID"] == gtfsStopId)
-                document.getElementById("stop-name").innerHTML = `${station["Stop Name"]} - ${station["Daytime Routes"].join(", ")} - ${station["Line"]} (${station["Division"]})`
+                var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
+                document.getElementById("stop-name").innerHTML = `${station.stop_name} - ${station.daytime_routes.join(", ")}`
                 
             }
 
@@ -135,9 +133,17 @@
             }
 
             ready( () => {
-                updateArrivals()
-                updateStopName(STATION_ID)
-                window.setInterval(updateArrivals, 1000 * 30)
+                // Get station information and load display
+                fetch("./stations.json")
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(json => {
+                        stations = json
+                        updateArrivals()
+                        updateStopName(STATION_ID)
+                        window.setInterval(updateArrivals, 1000 * 30)
+                    })
             })
 
         </script>

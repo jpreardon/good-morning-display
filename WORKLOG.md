@@ -14,6 +14,10 @@ Today, I want to create and start using my own station information. I don't need
 
 - Create create-mta-station-json package. Fixes #36
 
+Now that I have my very own stations.json file, time to use it!
+
+- Use new stations.json file. Relates to #24
+
 ### 2021-02-19
 
 Let's try to stop using the destination locations in favor of the last stop.
