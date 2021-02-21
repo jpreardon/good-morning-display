@@ -1,6 +1,7 @@
 const STATION_JSON_PATH = "./stations.json"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
 const ProtoBuf = protobuf
+const protoBufDef = "nyct-subway.proto.txt"
 var stations
 
 function initMtaArrivals() {
@@ -24,6 +25,15 @@ function getDestinationName(gtfsStopId) {
 function getStationName(gtfsStopId) {
     station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
     return `${station.stop_name} - ${station.daytime_routes.join(", ")}`   
+}
+
+function getDirectionLabel(gtfsStopId, Direction) {
+    station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
+    if (Direction == "N") {
+        return station.north_direction_label
+    } else {
+        return station.south_direction_label
+    }
 }
 
 function getLinesForGtfsStopId(gtfsStopId) {
@@ -63,4 +73,95 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
         }
     })  
     return feeds
+}
+
+function getArrivalsForGtfsStopId(gtfsStopId) {
+    return new Promise( (resolve, reject) => {
+        ProtoBuf.load(protoBufDef, (error, root) => {
+            // TODO: The next three variables are a hack to combine multiple lines, a promise might be better here
+            numFeeds = getFeedUrlsForGtfsStopId(gtfsStopId).length
+            iteration = 0
+            arrivals = []
+            if (error) throw error
+            const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
+            for (const feedUrl of getFeedUrlsForGtfsStopId(gtfsStopId)) {
+                fetch(feedUrl, { headers: { 'x-api-key': API_KEY } })
+                .then(res => {
+                    if (res.ok) {
+                        return res
+                    } else {
+                        throw new Error(res.status)
+                    }
+                })
+                .then(res => res.arrayBuffer())
+                .then(body => {
+                    const buf = new Uint8Array(body)
+                    const feed = FeedMessage.decode(buf)
+                    for (const message of feed.entity) {
+                        // Only look at tripUpdates
+                        if (message.tripUpdate) {
+                            // Get the last stop here, might use it later if it this tripUpate matches our station
+                            if (message.tripUpdate.stopTimeUpdate.length > 0) {
+                                lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
+                                lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
+                            }
+                            // Loop through the stopTimeUpdates and only show those for the station we care about
+                            for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
+                                if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == gtfsStopId) {
+                                    // MTA says they remove trains that aren't on schedules tracks from their countdown displays, so we will too. 
+                                    // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
+                                    if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack == stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
+                                        // Calculate number of minutes
+                                        arrivalTime = new Date(stopUpdate.arrival.time * 1000)
+                                        direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
+                                        arrivalDiff = arrivalTime - Date.now()
+                                        // Add to arrivals array
+                                        arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0), "direction":direction })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    iteration++
+                }).then(() => {
+                    
+                    // Only populate the HTML once all of the feeds have been checked
+                    if (iteration == numFeeds) {
+                        // Sort array
+                        arrivals.sort((a, b) => {
+                            return Number(a.minutes) - Number(b.minutes)
+                        })
+
+                        // We're going to send back a nice object
+                        const arrivalQueue = {
+                            northLabel:"", 
+                            northArrivals:[],
+                            southLabel:"",
+                            southArrivals:[]
+                        }
+
+                        // Make an object with the arrivals
+                        var arrivalsObject = Object.create(arrivalQueue)
+                        arrivalsObject.north = getDirectionLabel(gtfsStopId, "N")
+                        arrivalsObject.south = getDirectionLabel(gtfsStopId, "S")
+
+                        // Populate the object
+                        arrivals.forEach(arrival => {
+                            if (arrival.direction == "N") {
+                                arrivalsObject.northArrivals.push(arrival)
+                            } else {
+                                arrivalsObject.southArrivals.push(arrival)
+                            }
+                        })
+                        
+                        // Remove all but the first 3 arrivals for each direction
+                        arrivalsObject.northArrivals.splice(3)
+                        arrivalsObject.southArrivals.splice(3)
+                        
+                        resolve(arrivalsObject)
+                    }
+                })
+            }
+        })
+    })
 }
