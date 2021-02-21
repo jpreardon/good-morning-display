@@ -18,6 +18,10 @@ Now that I have my very own stations.json file, time to use it!
 
 - Use new stations.json file. Relates to #24
 
+Started cleaning up the js code for the trains by moving it over to a separate js file, one that just deals with the fetching and data. I might have gone overboard on the functions though.
+
+I also added direction labels, that's kind of cool, I think.
+
 ### 2021-02-19
 
 Let's try to stop using the destination locations in favor of the last stop.
