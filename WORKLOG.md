@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-21
+
+Read a bit of "You Don't Know Java Script" last night and this morning. Should have read this years ago.
+
+- Use strict mode for MTA js. Relates to #39
+
 ### 2021-02-20
 
 - Don't display trains that are on unscheduled tracks. Fixes #38

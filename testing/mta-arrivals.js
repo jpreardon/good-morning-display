@@ -1,3 +1,4 @@
+"use strict"
 const STATION_JSON_PATH = "./stations.json"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
 const ProtoBuf = protobuf
@@ -23,12 +24,12 @@ function getDestinationName(gtfsStopId) {
 }
 
 function getStationName(gtfsStopId) {
-    station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
+    var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
     return `${station.stop_name} - ${station.daytime_routes.join(", ")}`   
 }
 
 function getDirectionLabel(gtfsStopId, Direction) {
-    station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
+    var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
     if (Direction == "N") {
         return station.north_direction_label
     } else {
@@ -41,7 +42,7 @@ function getLinesForGtfsStopId(gtfsStopId) {
 }
 
 function getFeedForLine(line) {
-    feedUrl = MTA_FEED_URL 
+    var feedUrl = MTA_FEED_URL 
 
     if (line == "A" || line == "C" || line == "E") {
         return feedUrl + "gtfs-ace"
@@ -65,7 +66,7 @@ function getFeedForLine(line) {
 }
 
 function getFeedUrlsForGtfsStopId(gtfsStopId) {
-    feeds = []
+    var feeds = []
     getLinesForGtfsStopId(gtfsStopId).forEach(line => {
         // We only need each feed once
         if (!feeds.includes(getFeedForLine(line))) {
@@ -79,8 +80,8 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
     return new Promise( (resolve, reject) => {
         ProtoBuf.load(protoBufDef, (error, root) => {
             // TODO: The next three variables are a hack to combine multiple lines, a promise might be better here
-            numFeeds = getFeedUrlsForGtfsStopId(gtfsStopId).length
-            iteration = 0
+            var numFeeds = getFeedUrlsForGtfsStopId(gtfsStopId).length
+            var iteration = 0
             arrivals = []
             if (error) throw error
             const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
@@ -102,8 +103,8 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                         if (message.tripUpdate) {
                             // Get the last stop here, might use it later if it this tripUpate matches our station
                             if (message.tripUpdate.stopTimeUpdate.length > 0) {
-                                lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
-                                lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
+                                var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
+                                var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
                             }
                             // Loop through the stopTimeUpdates and only show those for the station we care about
                             for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
@@ -112,9 +113,9 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                                     // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
                                     if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack == stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
                                         // Calculate number of minutes
-                                        arrivalTime = new Date(stopUpdate.arrival.time * 1000)
-                                        direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
-                                        arrivalDiff = arrivalTime - Date.now()
+                                        var arrivalTime = new Date(stopUpdate.arrival.time * 1000)
+                                        var direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
+                                        var arrivalDiff = arrivalTime - Date.now()
                                         // Add to arrivals array
                                         arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0), "direction":direction })
                                     }

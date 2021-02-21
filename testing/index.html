@@ -8,6 +8,7 @@
         <script type="text/javascript" src="mta-arrivals.js"></script>
         <script type="text/javascript" src="api-key.js"></script>
         <script>
+            "use strict"
             function updateArrivals(gtfsStopId) {    
                 getArrivalsForGtfsStopId(gtfsStopId)
                 .then(response => {
@@ -16,7 +17,7 @@
                 })
                 .then(arrivals => {
                     // Fill it up the HTML
-                    html = arrivals.north
+                    var html = arrivals.north
                     arrivals.northArrivals.forEach(arrival => { 
                         html += '<div class="train">'
                         html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
