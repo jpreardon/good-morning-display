@@ -11,6 +11,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 - Finish refactoring the MTA code (for now). 
 - Use strict mode for main.js. Fixes #39
 
+The MTA stuff is looking pretty good. There's still work to be done, especially with the settings (which I don't have right now). I think that will be one of the last steps because I'm still not 100% sure how I want to do it. So, I think I'll do a bit of design work first...
+
+I'm thinking about creating a "micro" display first which incorporates some very limited weather, bikes, and trains. This is going to be a bit of a challenge. I also want to be able to show more than one train station. Since this is for me, I'm going to go for two. As for the question of how "micro" this should be, I'll target the iPhone 6/7/8 size (375x667).
+
+- First draft of "micro" display with all data. Related to #24
+
 ### 2021-02-21
 
 Read a bit of "You Don't Know Java Script" last night and this morning. Should have read this years ago.
