@@ -1,7 +1,6 @@
 "use strict"
 const STATION_JSON_PATH = "./stations.json"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
-const ProtoBuf = protobuf
 const protoBufDef = "nyct-subway.proto.txt"
 var stations
 
@@ -77,6 +76,7 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
 }
 
 function getArrivalsForGtfsStopId(gtfsStopId) {
+    const ProtoBuf = protobuf
     return new Promise( (resolve, reject) => {
         ProtoBuf.load(protoBufDef, (error, root) => {
             // TODO: The next three variables are a hack to combine multiple lines, a promise might be better here
@@ -96,6 +96,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                 })
                 .then(res => res.arrayBuffer())
                 .then(body => {
+                    // TODO: This mess of nested for statements is a mess clean it up
                     const buf = new Uint8Array(body)
                     const feed = FeedMessage.decode(buf)
                     for (const message of feed.entity) {
@@ -126,40 +127,30 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                     iteration++
                 }).then(() => {
                     
-                    // Only populate the HTML once all of the feeds have been checked
+                    // Stations may be in more than one feed, here, we merge them together
                     if (iteration == numFeeds) {
                         // Sort array
                         arrivals.sort((a, b) => {
                             return Number(a.minutes) - Number(b.minutes)
                         })
 
-                        // We're going to send back a nice object
-                        const arrivalQueue = {
-                            northLabel:"", 
-                            northArrivals:[],
-                            southLabel:"",
-                            southArrivals:[]
-                        }
-
                         // Make an object with the arrivals
-                        var arrivalsObject = Object.create(arrivalQueue)
-                        arrivalsObject.north = getDirectionLabel(gtfsStopId, "N")
-                        arrivalsObject.south = getDirectionLabel(gtfsStopId, "S")
-
-                        // Populate the object
+                        var arrivalsFormatted = new Object()
+                        arrivalsFormatted.north = {label:getDirectionLabel(gtfsStopId, "N"), trains:[]}
+                        arrivalsFormatted.south = {label:getDirectionLabel(gtfsStopId, "S"), trains:[]}
                         arrivals.forEach(arrival => {
                             if (arrival.direction == "N") {
-                                arrivalsObject.northArrivals.push(arrival)
+                                arrivalsFormatted.north.trains.push(arrival)
                             } else {
-                                arrivalsObject.southArrivals.push(arrival)
+                                arrivalsFormatted.south.trains.push(arrival)
                             }
                         })
                         
-                        // Remove all but the first 3 arrivals for each direction
-                        arrivalsObject.northArrivals.splice(3)
-                        arrivalsObject.southArrivals.splice(3)
+                        // Only show 3 arrivals in each direction
+                        arrivalsFormatted.north.trains.splice(3)
+                        arrivalsFormatted.south.trains.splice(3)
                         
-                        resolve(arrivalsObject)
+                        resolve(arrivalsFormatted)
                     }
                 })
             }

@@ -17,32 +17,43 @@
                 })
                 .then(arrivals => {
                     // Fill it up the HTML
-                    var html = arrivals.north
-                    arrivals.northArrivals.forEach(arrival => { 
-                        html += '<div class="train">'
-                        html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
-                        html += `<p class="destination">${arrival.destination}</p>`
-                        if (arrival.minutes <= 0) {
-                            html += '<p class="time arriving">ARRIVING</p>'
-                        } else {
-                            html += `<p class="time">${arrival.minutes} min</p>`
-                        }  
-                        html += '</div>'
-                    })
-                    html += arrivals.south
-                    arrivals.southArrivals.forEach(arrival => { 
-                        html += '<div class="train">'
-                        html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
-                        html += `<p class="destination">${arrival.destination}</p>`
-                        if (arrival.minutes <= 0) {
-                            html += '<p class="time arriving">ARRIVING</p>'
-                        } else {
-                            html += `<p class="time">${arrival.minutes} min</p>`
-                        }  
-                        html += '</div>'
-                    })
+                    var html = ""
+                    
+                    if (arrivals.north.label !== "") {
+                        html += arrivals.north.label
+                        arrivals.north.trains.forEach(arrival => { 
+                            html += '<div class="train">'
+                            html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
+                            html += `<p class="destination">${arrival.destination}</p>`
+                                if (arrival.minutes <= 0) {
+                                    html += '<p class="time arriving">ARRIVING</p>'
+                                } else {
+                                    html += `<p class="time">${arrival.minutes} min</p>`
+                                }  
+                            html += '</div>'
+                        })
+                    }
+
+                    if (arrivals.south.label !== "" ) {
+                        html += arrivals.south.label
+                        arrivals.south.trains.forEach(arrival => { 
+                            html += '<div class="train">'
+                            html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
+                            html += `<p class="destination">${arrival.destination}</p>`
+                                if (arrival.minutes <= 0) {
+                                    html += '<p class="time arriving">ARRIVING</p>'
+                                } else {
+                                    html += `<p class="time">${arrival.minutes} min</p>`
+                                }
+                            html += '</div>'  
+                            
+                        })
+                    }
+
                     document.getElementById("arrivals").innerHTML = html
+
                 })
+                    
             }
 
             function ready(fn) {
@@ -54,7 +65,7 @@
             }
 
             ready( () => {
-                const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
+                const STATION_ID = "D43" // D25 should be 7AV & Flatbush in BK
 
                 // Get station information and load display
                 initMtaArrivals()

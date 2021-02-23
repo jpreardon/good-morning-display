@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-22
+
+- Finish refactoring the MTA code (for now). 
+
 ### 2021-02-21
 
 Read a bit of "You Don't Know Java Script" last night and this morning. Should have read this years ago.
