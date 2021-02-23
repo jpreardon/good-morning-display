@@ -1,3 +1,4 @@
+"use strict"
 // Overall Setup
 const PAGE_RELOAD_INTERVAL_MINUTES = 720 // 12 hours
 
@@ -48,7 +49,7 @@ function KphToMph(KilometersPerHour) {
     if (KilometersPerHour == null) {
         return null
     } else {
-        milesPerHour = KilometersPerHour * 0.6213712
+        var milesPerHour = KilometersPerHour * 0.6213712
         return milesPerHour.toFixed(1)
     }
 }
@@ -493,9 +494,9 @@ function loadBikeSettingsForm() {
  * Adds stations to selected stations form and removes them from the main list
  */
 function addStations() {
-    station_list = document.getElementById("station-list") 
-    selected_stations =  document.getElementById("selected-stations")
-    myItems = []
+    var station_list = document.getElementById("station-list") 
+    var selected_stations =  document.getElementById("selected-stations")
+    var myItems = []
 
     // Collect items to move
     for (let item of station_list.selectedOptions) {
@@ -513,9 +514,9 @@ function addStations() {
  */
 // TODO: This just adds them back to the bottom of the list, maybe a resort is in order
 function removeStations() {
-    station_list = document.getElementById("station-list") 
-    selected_stations =  document.getElementById("selected-stations")
-    myItems = []
+    var station_list = document.getElementById("station-list") 
+    var selected_stations =  document.getElementById("selected-stations")
+    var myItems = []
 
     // Collect items to move
     for (let item of selected_stations.selectedOptions) {
