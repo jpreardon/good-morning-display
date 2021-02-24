@@ -17,6 +17,7 @@
                 })
                 .then(arrivals => {
                     // Fill it up the HTML
+                    // TODO: Not so DRY, clean this up
                     var html = ""
                     
                     if (arrivals.north.label !== "") {
@@ -25,10 +26,10 @@
                             html += '<div class="train">'
                             html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
                             html += `<p class="destination">${arrival.destination}</p>`
-                                if (arrival.minutes <= 0) {
+                                if (arrival.seconds <= 30) {
                                     html += '<p class="time arriving">ARRIVING</p>'
                                 } else {
-                                    html += `<p class="time">${arrival.minutes} min</p>`
+                                    html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
                                 }  
                             html += '</div>'
                         })
@@ -40,10 +41,10 @@
                             html += '<div class="train">'
                             html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
                             html += `<p class="destination">${arrival.destination}</p>`
-                                if (arrival.minutes <= 0) {
+                                if (arrival.seconds <= 30) {
                                     html += '<p class="time arriving">ARRIVING</p>'
                                 } else {
-                                    html += `<p class="time">${arrival.minutes} min</p>`
+                                    html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
                                 }
                             html += '</div>'  
                             

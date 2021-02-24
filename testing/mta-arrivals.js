@@ -102,23 +102,21 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                     for (const message of feed.entity) {
                         // Only look at tripUpdates
                         if (message.tripUpdate) {
-                            // Get the last stop here, might use it later if it this tripUpate matches our station
-                            if (message.tripUpdate.stopTimeUpdate.length > 0) {
-                                var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
-                                var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
-                            }
                             // Loop through the stopTimeUpdates and only show those for the station we care about
                             for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
                                 if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == gtfsStopId) {
                                     // MTA says they remove trains that aren't on schedules tracks from their countdown displays, so we will too. 
                                     // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
                                     if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack == stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
-                                        // Calculate number of minutes
-                                        var arrivalTime = new Date(stopUpdate.arrival.time * 1000)
+                                        var arrivalTimeSeconds = (stopUpdate.arrival.time - (Date.now() / 1000))
                                         var direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
-                                        var arrivalDiff = arrivalTime - Date.now()
-                                        // Add to arrivals array
-                                        arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "minutes":(arrivalDiff / 60 / 1000).toFixed(0), "direction":direction })
+                                        // Skip trains that are probably already in the station
+                                        if (arrivalTimeSeconds >= 0) {
+                                            var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
+                                            var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
+
+                                            arrivals.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "seconds":arrivalTimeSeconds, "direction":direction })
+                                        } 
                                     }
                                 }
                             }
