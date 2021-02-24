@@ -8,6 +8,12 @@ Also cleaned up the way last stops were being assigned. I was looping more than 
 
 ## Notes
 
+### 2021-02-24
+
+Introduced a bug last night. Fixed it.
+
+I really need to clean up the fetching of arrivals, it's a mess. I'll focus on that tonight.
+
 ### 2021-02-23
 
 Noticed that the "ARRIVING" status seemed to linger for too long. Changed the logic a bit there. Now I'm not sure we'll see "ARRIVING" much at all. It's really not that useful for this application though. This display is really meant to be more than a few seconds walk from the platform anyway.

@@ -82,7 +82,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
             // TODO: The next three variables are a hack to combine multiple lines, a promise might be better here
             var numFeeds = getFeedUrlsForGtfsStopId(gtfsStopId).length
             var iteration = 0
-            arrivals = []
+            var arrivals = []
             if (error) throw error
             const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
             for (const feedUrl of getFeedUrlsForGtfsStopId(gtfsStopId)) {
@@ -124,12 +124,11 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
                     }
                     iteration++
                 }).then(() => {
-                    
                     // Stations may be in more than one feed, here, we merge them together
                     if (iteration == numFeeds) {
                         // Sort array
                         arrivals.sort((a, b) => {
-                            return Number(a.minutes) - Number(b.minutes)
+                            return Number(a.seconds) - Number(b.seconds)
                         })
 
                         // Make an object with the arrivals
