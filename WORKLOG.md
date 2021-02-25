@@ -4,19 +4,19 @@
 
 For this version 2 of the Good Morning display, I'm currently targeting a Raspberry Pi touch display. It's overkill for simple stuff, but one day, I might want to get more advanced. It would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
 
-Also cleaned up the way last stops were being assigned. I was looping more than really needed.
-
 ## Notes
 
 ### 2021-02-24
 
 Introduced a bug last night. Fixed it.
 
-I really need to clean up the fetching of arrivals, it's a mess. I'll focus on that tonight.
+I really need to clean up the fetching of arrivals, it's a mess. I'll focus on that tonight. I also DRYed up the way the HTML was being created for the arrivals.
 
 ### 2021-02-23
 
 Noticed that the "ARRIVING" status seemed to linger for too long. Changed the logic a bit there. Now I'm not sure we'll see "ARRIVING" much at all. It's really not that useful for this application though. This display is really meant to be more than a few seconds walk from the platform anyway.
+
+Also cleaned up the way last stops were being assigned. I was looping more than really needed.
 
 ### 2021-02-22
 

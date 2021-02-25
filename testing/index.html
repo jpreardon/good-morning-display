@@ -13,42 +13,26 @@
                 getArrivalsForGtfsStopId(gtfsStopId)
                 .then(arrivals => {
                     // Fill it up the HTML
-                    // TODO: Not so DRY, clean this up
                     var html = ""
-                    
-                    if (arrivals.north.label !== "") {
-                        html += arrivals.north.label
-                        arrivals.north.trains.forEach(arrival => { 
-                            html += '<div class="train">'
-                            html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
-                            html += `<p class="destination">${arrival.destination}</p>`
-                                if (arrival.seconds <= 30) {
-                                    html += '<p class="time arriving">ARRIVING</p>'
-                                } else {
-                                    html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
-                                }  
-                            html += '</div>'
-                        })
-                    }
 
-                    if (arrivals.south.label !== "" ) {
-                        html += arrivals.south.label
-                        arrivals.south.trains.forEach(arrival => { 
-                            html += '<div class="train">'
-                            html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
-                            html += `<p class="destination">${arrival.destination}</p>`
-                                if (arrival.seconds <= 30) {
-                                    html += '<p class="time arriving">ARRIVING</p>'
-                                } else {
-                                    html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
-                                }
-                            html += '</div>'  
-                            
-                        })
-                    }
+                    Object.keys(arrivals).forEach(direction => {
+                        if (arrivals[direction].label !== "") {
+                            html += arrivals[direction].label
+                            arrivals[direction].trains.forEach(arrival => { 
+                                html += '<div class="train">'
+                                html += `<p class="line ${arrival.line.toLowerCase()}">${arrival.line}</p>`
+                                html += `<p class="destination">${arrival.destination}</p>`
+                                    if (arrival.seconds <= 30) {
+                                        html += '<p class="time arriving">ARRIVING</p>'
+                                    } else {
+                                        html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
+                                    }  
+                                html += '</div>'
+                            })
+                        }
+                    })
 
                     document.getElementById("arrivals").innerHTML = html
-
                 })
                     
             }
@@ -69,7 +53,7 @@
                     .then(x => {
                         updateArrivals(STATION_ID)
                         document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
-                        window.setInterval(updateArrivals, 1000 * 30, STATION_ID)
+                        //window.setInterval(updateArrivals, 1000 * 30, STATION_ID)
                     })
                     .catch(error => {
                         console.error(error)
