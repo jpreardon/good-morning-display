@@ -11,10 +11,6 @@
             "use strict"
             function updateArrivals(gtfsStopId) {    
                 getArrivalsForGtfsStopId(gtfsStopId)
-                .then(response => {
-                    arrivals = response
-                    return arrivals
-                })
                 .then(arrivals => {
                     // Fill it up the HTML
                     // TODO: Not so DRY, clean this up
