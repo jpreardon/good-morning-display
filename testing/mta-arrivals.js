@@ -85,9 +85,6 @@ function decodeProtoBuf(feedMsg) {
             resolve(FeedMessage.decode(buffer))
         })
     })
-    .then(decodedMsg => {
-        return decodedMsg
-    })
 }
 
 function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
@@ -118,8 +115,8 @@ function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
 }
 
 function getArrivalsForGtfsStopId(gtfsStopId) {
-    var allArrivals = [];
-    var feedPromises = [];
+    var allArrivals = []
+    var feedPromises = []
 
     getFeedUrlsForGtfsStopId(gtfsStopId).forEach(url => {
         feedPromises.push(
@@ -133,16 +130,16 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
             })
             .then(response => response.arrayBuffer())
             .then(response => {
-                return decodeProtoBuf(response);
+                return decodeProtoBuf(response)
             })
             .then(decodedFeed => {
-                return addFeedArrivalsToArray(decodedFeed, gtfsStopId, allArrivals);
+                return addFeedArrivalsToArray(decodedFeed, gtfsStopId, allArrivals)
             })
             .catch(error => {
-                reject(error);
+                return error
             })
         )
-    });
+    })
     
     return new Promise ( (resolve, reject) => {
         Promise.all(feedPromises)
