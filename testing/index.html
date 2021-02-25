@@ -47,13 +47,12 @@
 
             ready( () => {
                 const STATION_ID = "D25" // D25 should be 7AV & Flatbush in BK
-
                 // Get station information and load display
                 initMtaArrivals()
                     .then(x => {
                         updateArrivals(STATION_ID)
                         document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
-                        //window.setInterval(updateArrivals, 1000 * 30, STATION_ID)
+                        window.setInterval(updateArrivals, 1000 * 30, STATION_ID)
                     })
                     .catch(error => {
                         console.error(error)
