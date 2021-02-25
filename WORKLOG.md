@@ -10,7 +10,9 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 Introduced a bug last night. Fixed it.
 
-I really need to clean up the fetching of arrivals, it's a mess. I'll focus on that tonight. I also DRYed up the way the HTML was being created for the arrivals.
+I really need to clean up the fetching of arrivals, it's a mess. I'll focus on that tonight. Unfortunately, it didn't seem to make refreshing any faster, in fact, it looks like it is about 9ms (avg) slower based on my very unscientific test. That's pretty close though. And the code is somewhat more readable. It could still use a bit of work though. 
+
+I also DRYed up the way the HTML was being created for the arrivals.
 
 ### 2021-02-23
 
