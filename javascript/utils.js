@@ -1,3 +1,5 @@
+"use strict"
+
 /** 
  * Returns the response object when status is 200 (OK), otherwise, throws error
  * @param {Response} response - The response object from a fetch statement.

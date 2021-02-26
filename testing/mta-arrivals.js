@@ -72,6 +72,7 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
     return feeds
 }
 
+// TODO: This function fetches two files every time it runs (often). Can those be preloaded?
 function decodeProtoBuf(feedMsg) {
     return new Promise ( (resolve, reject) => {
         const ProtoBuf = protobuf
