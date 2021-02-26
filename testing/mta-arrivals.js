@@ -6,12 +6,9 @@ var stations
 
 function initMtaArrivals() {
     return fetch(STATION_JSON_PATH)
+    .then(handleFetchErrors)
     .then(response => {
-        if (response.ok) {
-            return response.json()
-        } else {
-            throw new Error(`${response.status} - ${response.statusText}`)
-        }
+        return response.json()
     })
     .then(json => {
         stations = json
@@ -125,13 +122,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
     getFeedUrlsForGtfsStopId(gtfsStopId).forEach(url => {
         feedPromises.push(
             fetch(url, { headers: { 'x-api-key': API_KEY } })
-            .then(response => {
-                if (response.ok) {
-                    return response
-                } else {
-                    throw new Error(response.status)
-                }
-            })
+            .then(handleFetchErrors)
             .then(response => response.arrayBuffer())
             .then(response => {
                 return decodeProtoBuf(response)

@@ -8,8 +8,7 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ### 2021-02-25
 
-Not much time tonight. Cleaned up the function that creates the arrivals array.
-
+Not much time tonight. Cleaned up the function that creates the arrivals array. I also added a common error handling function for fetch errors. I put it in a separate utils.js file since it seemed like something that may be useful in many projects.
 
 ### 2021-02-24
 

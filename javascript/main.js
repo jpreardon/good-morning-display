@@ -93,14 +93,9 @@ function getCurrentConditions() {
     return new Promise( (resolve, reject) => {
         var currentConditions = {}
         fetch( getApiEndpoint("current_conditions") ) 
-        .then( (res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                currentConditions.error = new Error(res.status)
-                currentConditions.textStatus = res.statusText
-                reject(currentConditions)
-            }
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
         })
         .then( (json) => {
             currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
@@ -125,16 +120,11 @@ function getForecast() {
     return new Promise( (resolve, reject) => {
         var forecast = []
         fetch( getApiEndpoint("forecast")  )
-        .then( (res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                forecast.error = new Error(res.status)
-                forecast.textStatus = res.statusText
-                reject(forecast)
-            }
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
         })
-        .then( (json) => {
+        .then(json => {
             forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
             forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
             forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
@@ -221,12 +211,9 @@ function validateApiEndpoint(name, variable) {
         }
 
         fetch(endPoint)
-        .then( (res) => {
-            if (res.ok) {
-                resolve("Valid Endpoint")
-            } else {
-                reject("Invalid Endpoint")
-            }
+        .then(handleFetchErrors)
+        .then( () => {
+            resolve("Valid Endpoint")
         })
         .catch( () => {
             reject("Invalid Endpoint")
@@ -294,23 +281,26 @@ function saveLatLon() {
     var stationIdentifier = ""
 
     fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
-        .then( (res) => res.json())
-        .then( (points) => {
-            forecastURL = points.properties.forecast
-            observationStationsURL = points.properties.observationStations
-            office = points.properties.cwa
-            gridX = points.properties.gridX
-            gridY = points.properties.gridY
-            var checkedStation = document.querySelector("input[name='stationId']:checked")
-            stationIdentifier = checkedStation ? checkedStation.value : ''
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then( (points) => {
+        forecastURL = points.properties.forecast
+        observationStationsURL = points.properties.observationStations
+        office = points.properties.cwa
+        gridX = points.properties.gridX
+        gridY = points.properties.gridY
+        var checkedStation = document.querySelector("input[name='stationId']:checked")
+        stationIdentifier = checkedStation ? checkedStation.value : ''
 
-            Promise.all([
-                setUserLocationData("stationName", stationIdentifier),
-                setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
-                setUserLocationData("lat", latitude),
-                setUserLocationData("lon", longitude)
-            ]).then(() => {window.location = "index.html"})
-        })
+        Promise.all([
+            setUserLocationData("stationName", stationIdentifier),
+            setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
+            setUserLocationData("lat", latitude),
+            setUserLocationData("lon", longitude)
+        ]).then(() => {window.location = "index.html"})
+    })
     
     // TODO: This is such a hack, clean this mess up!
     saveStations()
@@ -324,37 +314,43 @@ function saveLatLon() {
  */
 function generateStationList(latitude, longitude, selectedStationId = null) {
     fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
-        .then( (res) => res.json())
-        .then( (points) => {
-            fetch(points.properties.observationStations)
-                .then( (response) => response.json())
-                .then( (stations) => {
-                    document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
-                    for (let i = 0; i < 5; i++) {
-                        var stationId = stations.features[i].properties.stationIdentifier
-                        var stationName = stations.features[i].properties.name
-                        var checked = ""
-                        
-                        if (!selectedStationId == null) {
-                            if (i == 0 ) {
-                                checked = "checked"
-                            }
-                        } else {
-                            if (selectedStationId == stationId) {
-                                checked = "checked"
-                            } 
-                        }
-
-                        
-
-                        var radioButton = "<div>"
-                        radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
-                        radioButton += `<label for="${stationId}">${stationName}</label>`
-                        radioButton += "</div>"
-                        document.getElementById("station-radio-group").innerHTML += radioButton
-                    }
-                })
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then( (points) => {
+        fetch(points.properties.observationStations)
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
         })
+        .then( (stations) => {
+            document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
+            for (let i = 0; i < 5; i++) {
+                var stationId = stations.features[i].properties.stationIdentifier
+                var stationName = stations.features[i].properties.name
+                var checked = ""
+                
+                if (!selectedStationId == null) {
+                    if (i == 0 ) {
+                        checked = "checked"
+                    }
+                } else {
+                    if (selectedStationId == stationId) {
+                        checked = "checked"
+                    } 
+                }
+
+                
+
+                var radioButton = "<div>"
+                radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
+                radioButton += `<label for="${stationId}">${stationName}</label>`
+                radioButton += "</div>"
+                document.getElementById("station-radio-group").innerHTML += radioButton
+            }
+        })
+    })
 }
 
 /** 
@@ -418,14 +414,11 @@ function loadBikeSettingsForm() {
     BIKE_STATION_LIST = []
     return new Promise( (resolve, reject) => {
         fetch( BIKE_STATION_INFO_URL ) 
-        .then( (res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                throw new Error(res.status);
-            }
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
         })
-        .then( (json) => {
+        .then(json => {
             
             json.data.stations.forEach(station => {
                 BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
@@ -626,15 +619,12 @@ function getBikeStationList() {
     var time = Date.now()
     BIKE_STATION_LIST = []
     return new Promise( (resolve, reject) => {
-        fetch( BIKE_STATION_INFO_URL ) 
-        .then( (res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                throw new Error(res.status);
-            }
-        })
-        .then( (json) => {
+        fetch( BIKE_STATION_INFO_URL )
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
+        }) 
+        .then(json => {
             
             json.data.stations.forEach(station => {
                 BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
@@ -677,14 +667,11 @@ function getStations() {
 function getStationInformation() {
     return new Promise( (resolve, reject) => {
         fetch( BIKE_STATION_STATUS_URL ) 
-        .then( (res) => {
-            if (res.ok) {
-                return res.json()
-            } else {
-                throw new Error(res.status);
-            }
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
         })
-        .then( (json) => {
+        .then(json => {
             BIKE_SELECTED_STATIONS.forEach(selectedStation => {
                 // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
                 var returnVal = ""
