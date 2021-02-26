@@ -6,6 +6,11 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-25
+
+Not much time tonight. Cleaned up the function that creates the arrivals array.
+
+
 ### 2021-02-24
 
 Introduced a bug last night. Fixed it.

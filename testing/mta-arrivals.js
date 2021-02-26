@@ -90,25 +90,29 @@ function decodeProtoBuf(feedMsg) {
 function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
     for (const message of decodedFeed.entity) {
         // Only look at tripUpdates
-        if (message.tripUpdate) {
-            // Loop through the stopTimeUpdates and only show those for the station we care about
-            for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
-                if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) == gtfsStopId) {
-                    // MTA says they remove trains that aren't on schedules tracks from their countdown displays, so we will too. 
-                    // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
-                    if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack == stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
-                        var arrivalTimeSeconds = (stopUpdate.arrival.time - (Date.now() / 1000))
-                        var direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
-                        // Skip trains that are probably already in the station
-                        if (arrivalTimeSeconds >= 0) {
-                            var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
-                            var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
-
-                            arrivalsArray.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "seconds":arrivalTimeSeconds, "direction":direction })
-                        } 
-                    }
-                }
+        if (!message.tripUpdate) {
+            continue
+        }
+        // Loop through the stopTimeUpdates
+        for (const stopUpdate of message.tripUpdate.stopTimeUpdate) {
+            //  Don't show stations we don't care about
+            if (stopUpdate.stopId.substr(0, stopUpdate.stopId.length - 1) != gtfsStopId) {
+                continue
             }
+            // MTA removes trains that aren't on scheduled tracks from their countdown displays--we will too. 
+            // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
+            if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack != stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
+                continue
+            }
+            var arrivalTimeSeconds = (stopUpdate.arrival.time - (Date.now() / 1000))
+            var direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
+            // Skip trains that are probably already in the station
+            if (arrivalTimeSeconds < 0) {
+                continue
+            }
+            var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
+            var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
+            arrivalsArray.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "seconds":arrivalTimeSeconds, "direction":direction })
         }
     }
     return arrivalsArray
