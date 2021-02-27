@@ -640,10 +640,8 @@ function updateWeather() {
             console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
         })
         
-        var updateTime = new Date
-        document.querySelector("#update-time").innerHTML = `${updateTime.getHours().toString().padStart(2, 0)}:${updateTime.getMinutes().toString().padStart(2, 0)}`
-
         WEATHER_LAST_UPDATE_TIME = Date.now()
+        updateTimerDisplay("w")
     }
 }
 
@@ -752,6 +750,7 @@ function updateBikes() {
         getStations()
         getStationInformation()
         BIKE_LAST_UPDATE_TIME = Date.now()
+        updateTimerDisplay("b")
     }
 
 }
@@ -777,6 +776,11 @@ function updateDisplay() {
         }
     }
     
+}
+
+function updateTimerDisplay(by = "") {
+    var updateTime = new Date
+    document.querySelector("#update-time").innerHTML = updateTime.toLocaleTimeString('en-GB') + " " + by
 }
 
 function updateArrivals(gtfsStopId) {
@@ -808,6 +812,7 @@ function updateArrivals(gtfsStopId) {
                 document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
                 document.getElementById("arrivals").innerHTML = html
                 SUBWAY_LAST_UPDATE_TIME = Date.now()
+                updateTimerDisplay("s")
             })
         }
     }

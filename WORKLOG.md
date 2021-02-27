@@ -12,6 +12,7 @@ Integration continues! I'm not sure exactly how I want to do it. I have a crap d
 
 - Merge all subway information with the main display. Relates to #24
 - Handle missing subway config data. Fixes #24
+- Fix update time display. Fixes #29
 
 ### 2021-02-26
 
