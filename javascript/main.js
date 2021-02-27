@@ -12,6 +12,9 @@ const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_info
 const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
 const BIKE_UPDATE_INTERVAL_SECONDS = 60
 
+// Subway stuff, not sure it should be here
+const STATION_ID = localStorage.getItem("subwayStation")
+
 // Runtime Globals
 var WEATHER_STATION = ""
 var WEATHER_GRID_COORDINATES = ""
@@ -20,6 +23,7 @@ var BIKE_STATION_LIST = []
 var BIKE_SELECTED_STATIONS = []
 var BIKE_STATIONS_LOADED = false
 var BIKE_LAST_UPDATE_TIME = 0
+var SUBWAY_LAST_UPDATE_TIME = 0
 var LAST_PAGE_RELOAD = ""
 
 // User facing text
@@ -760,6 +764,7 @@ function updateDisplay() {
         LAST_PAGE_RELOAD = Date.now()
     } else {
         updateWeather()
+        updateArrivals(STATION_ID)
 
         // Only get bike info if we need to
         if (localStorage.getItem("showBikes") == "true") {
@@ -767,6 +772,36 @@ function updateDisplay() {
         }
     }
     
+}
+
+function updateArrivals(gtfsStopId) {
+    if ( (Date.now() - SUBWAY_LAST_UPDATE_TIME) > (SUBWAY_UPDATE_INTERVAL_SECONDS * 1000)) {
+        getArrivalsForGtfsStopId(gtfsStopId)
+        .then(arrivals => {
+            // Fill it up the HTML
+            var html = ""
+    
+            Object.keys(arrivals).forEach(direction => {
+                if (arrivals[direction].label !== "") {
+                    html += arrivals[direction].label
+                    arrivals[direction].trains.forEach(arrival => { 
+                        html += '<div class="train">'
+                        html += `<p class="line _${arrival.line.toLowerCase()}">${arrival.line}</p>`
+                        html += `<p class="destination">${arrival.destination}</p>`
+                            if (arrival.seconds <= 30) {
+                                html += '<p class="time arriving">ARRIVING</p>'
+                            } else {
+                                html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
+                            }  
+                        html += '</div>'
+                    })
+                }
+            })
+    
+            document.getElementById("arrivals").innerHTML = html
+            SUBWAY_LAST_UPDATE_TIME = Date.now()
+        })
+    }
 }
 
 /** 
@@ -794,16 +829,29 @@ ready( () => {
         })
     } else {
 
-        if (localStorage.getItem("showBikes") == "true") {
-            document.getElementById("bikestatus").classList.remove("hide")
-            // Only get bike info if we need to
-            getBikeStationList()
-        } else {
-            document.getElementById("forecast").classList.remove("hide")
-        }
+        // Get station information and load display
+        initMtaArrivals()
+        .then(x => {
+            
+            document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
 
-        LAST_PAGE_RELOAD = Date.now()
-        updateWeather()
-        window.setInterval(updateDisplay, 1000)
+            if (localStorage.getItem("showBikes") == "true") {
+                document.getElementById("bikestatus").classList.remove("hide")
+                // Only get bike info if we need to
+                getBikeStationList()
+            } else {
+                document.getElementById("forecast").classList.remove("hide")
+            }
+    
+            LAST_PAGE_RELOAD = Date.now()
+            updateArrivals(STATION_ID)
+            updateWeather()
+            window.setInterval(updateDisplay, 1000)
+
+
+        })
+        .catch(error => {
+            console.error(error)
+        })
     }
 })
