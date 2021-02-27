@@ -376,14 +376,34 @@ h1 {
     color: #ffffff;
 }
 
-._4, ._5, ._6, ._6 {
+._4, ._5, ._6, ._6, ._6x {
     background-color: #00933C;
     color: #ffffff;
 }
 
-._7 {
+._6x {
+    border-radius: 0;
+    transform: rotate(45deg);
+}
+
+._6x span {
+    display: block;
+    transform: rotate(-45deg);
+}
+
+._7, ._7x {
     background-color: #B933AD;
     color: #ffffff;
+}
+
+._7x {
+    border-radius: 0;
+    transform: rotate(45deg);
+}
+
+._7x span {
+    display: block;
+    transform: rotate(-45deg);
 }
 
 ._sir {
