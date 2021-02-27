@@ -12,8 +12,12 @@ const BIKE_STATION_INFO_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_info
 const BIKE_STATION_STATUS_URL = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json"
 const BIKE_UPDATE_INTERVAL_SECONDS = 60
 
-// Subway stuff, not sure it should be here
-const STATION_ID = localStorage.getItem("subwayStation")
+// Subway stuff, not sure if it should be here
+const STATION_ID = localStorage.getItem("subwayStation") ? localStorage.getItem("subwayStation") : ""
+const MTA_API_KEY = localStorage.getItem("subwayApiKey") ? localStorage.getItem("subwayApiKey") : ""
+const STATION_JSON_PATH = "javascript/stations.json"
+const protoBufDef = "javascript/nyct-subway.proto.txt"
+const SUBWAY_UPDATE_INTERVAL_SECONDS = 30
 
 // Runtime Globals
 var WEATHER_STATION = ""
@@ -31,6 +35,7 @@ const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available �
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
 const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
+const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key and station information in settings."
 
 /** 
  * Converts Celsius to Fahrenheit 
@@ -776,31 +781,35 @@ function updateDisplay() {
 
 function updateArrivals(gtfsStopId) {
     if ( (Date.now() - SUBWAY_LAST_UPDATE_TIME) > (SUBWAY_UPDATE_INTERVAL_SECONDS * 1000)) {
-        getArrivalsForGtfsStopId(gtfsStopId)
-        .then(arrivals => {
-            // Fill it up the HTML
-            var html = ""
-    
-            Object.keys(arrivals).forEach(direction => {
-                if (arrivals[direction].label !== "") {
-                    html += arrivals[direction].label
-                    arrivals[direction].trains.forEach(arrival => { 
-                        html += '<div class="train">'
-                        html += `<p class="line _${arrival.line.toLowerCase()}">${arrival.line}</p>`
-                        html += `<p class="destination">${arrival.destination}</p>`
-                            if (arrival.seconds <= 30) {
-                                html += '<p class="time arriving">ARRIVING</p>'
-                            } else {
-                                html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
-                            }  
-                        html += '</div>'
-                    })
-                }
+        if (STATION_ID.trim() == "" || MTA_API_KEY.trim() == "" ) {
+            document.getElementById("arrivals").innerHTML=  ERR_NO_SUBWAY_INFO_SET
+        } else {
+            getArrivalsForGtfsStopId(gtfsStopId)
+            .then(arrivals => {
+                // Fill it up the HTML
+                var html = ""
+                Object.keys(arrivals).forEach(direction => {
+                    if (arrivals[direction].label !== "") {
+                        html += arrivals[direction].label
+                        arrivals[direction].trains.forEach(arrival => { 
+                            html += '<div class="train">'
+                            html += `<p class="line _${arrival.line.toLowerCase()}">${arrival.line}</p>`
+                            html += `<p class="destination">${arrival.destination}</p>`
+                                if (arrival.seconds <= 30) {
+                                    html += '<p class="time arriving">ARRIVING</p>'
+                                } else {
+                                    html += `<p class="time">${Number(arrival.seconds / 60).toFixed()} min</p>`
+                                }  
+                            html += '</div>'
+                        })
+                    }
+                })
+                
+                document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
+                document.getElementById("arrivals").innerHTML = html
+                SUBWAY_LAST_UPDATE_TIME = Date.now()
             })
-    
-            document.getElementById("arrivals").innerHTML = html
-            SUBWAY_LAST_UPDATE_TIME = Date.now()
-        })
+        }
     }
 }
 
@@ -832,8 +841,6 @@ ready( () => {
         // Get station information and load display
         initMtaArrivals()
         .then(x => {
-            
-            document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
 
             if (localStorage.getItem("showBikes") == "true") {
                 document.getElementById("bikestatus").classList.remove("hide")

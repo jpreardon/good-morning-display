@@ -1,9 +1,5 @@
 "use strict"
-const STATION_JSON_PATH = "javascript/stations.json"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
-const MTA_API_KEY = localStorage.getItem("subwayApiKey")
-const protoBufDef = "javascript/nyct-subway.proto.txt"
-const SUBWAY_UPDATE_INTERVAL_SECONDS = 30
 var stations
 
 function initMtaArrivals() {
