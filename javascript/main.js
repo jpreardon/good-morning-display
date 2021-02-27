@@ -304,6 +304,7 @@ function saveLatLon() {
     
     // TODO: This is such a hack, clean this mess up!
     saveStations()
+    saveSubwayStation()
 }
 
 /** 
@@ -403,6 +404,9 @@ function loadFormFromLocalStorage() {
 
     // Load the bike form
     loadBikeSettingsForm()
+
+    // Load the subway form
+    loadSubwaySettingsForm()
 }
 
 /** 
@@ -484,6 +488,19 @@ function loadBikeSettingsForm() {
 }
 
 /** 
+ * Populates the subway part of the settings form
+ */
+// TODO: This needs to be cleaned up and made part of the main settings form loader
+function loadSubwaySettingsForm() {
+    document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
+    document.getElementById("subway-boroughs").value = localStorage.getItem("subwayBorough")
+    populateLinesForBorough(localStorage.getItem("subwayBorough"))
+    document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
+    populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
+    document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
+}
+
+/** 
  * Adds stations to selected stations form and removes them from the main list
  */
 function addStations() {
@@ -546,6 +563,17 @@ function saveStations() {
     } else {
         localStorage.setItem("showBikes", "false")
     }
+}
+
+/** 
+ * Saves selected subway station to local storage
+ */
+function saveSubwayStation() {
+    // Saving everything so we can repopulate the form
+    localStorage.setItem("subwayBorough", document.getElementById("subway-boroughs").value)
+    localStorage.setItem("subwayLine", document.getElementById("subway-lines").value)
+    localStorage.setItem("subwayStation", document.getElementById("subway-stations").value)
+    localStorage.setItem("subwayApiKey", document.getElementById("subway-api-key").value)
 }
 
 /** 
@@ -760,7 +788,10 @@ ready( () => {
     var path = window.location.pathname
 
     if (path.substring(path.length - 13) == "settings.html") {
-        loadFormFromLocalStorage()
+        initMtaArrivals() 
+        .then( () => {
+            loadFormFromLocalStorage()
+        })
     } else {
 
         if (localStorage.getItem("showBikes") == "true") {

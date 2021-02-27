@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-26
+
+MTA testing time is over. Time to really integrate this thing. Tonight, I got the "MVP" of the settings page working on my local. It really lives up to all of the promise of an MVP, it is really just "minimal", not really all that viable, and certainly not a product. The /testing.index page is using those settings instead of the hard coded settings now.
+
+Next step will be to integrate the displays. That's probably a job for tomorrow.
+
 ### 2021-02-25
 
 Not much time tonight. Cleaned up the function that creates the arrivals array. I also added a common error handling function for fetch errors. I put it in a separate utils.js file since it seemed like something that may be useful in many projects.

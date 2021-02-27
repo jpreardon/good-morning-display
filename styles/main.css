@@ -125,7 +125,7 @@ input[type=checkbox] {
     margin-right: 0.5rem;
 }
 
-form input[type=text]{
+form input[type=text], form select {
     display: block;
     margin-bottom: 1rem;
     margin-top: 0.5rem;
@@ -164,6 +164,10 @@ form input[type=button].secondary {
 
 form label {
     display: inline-block;
+}
+
+#subway-api-key {
+    width: 20rem;
 }
 
 .helper-link {

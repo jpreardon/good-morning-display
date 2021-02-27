@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link href="styles/main.css" rel="stylesheet">
         <script src="javascript/main.js"></script>
+        <script src="testing/mta-arrivals.js"></script>
         <script src="javascript/utils.js"></script>
     </head>
 
@@ -49,11 +50,35 @@
                     </div>
                     <div>
                         <select id="selected-stations" multiple>
-       
+                    
                         </select>
                     </div>
                 </div>
             </div>
+
+            <h2>MTA Subway</h2>
+            <p class="body-text">You'll need an MTA API key to use this.</p>
+            <form>
+                <label for="subway-api-key">MTA Developer API Key</label>
+                <input type="text" id="subway-api-key" value=""></input>
+
+                <label for="subway-boroughs">Borough</label>
+                <select id="subway-boroughs" onchange="populateLinesForBorough(this.value)">
+                    <option selected></option>
+                    <option value="Bk">Brooklyn</option>
+                    <option value="Bx">Bronx</option>
+                    <option value="M">Manhattan</option>
+                    <option value="Q">Queens</option>
+                    <option value="SI">Staten Island</option>
+                </select>
+
+                <label for="subway-lines">Line</label>
+                <select id="subway-lines" onchange="populateStationsForBoroughLine(document.getElementById('subway-boroughs').value, this.value)"></select>
+
+                <label for="subway-stations">Station</label>
+                <select id="subway-stations"></select>
+            </form>
+        
             <form>
                 <input class="secondary" type="button" value="Cancel" onclick="window.location = 'index.html'">
                 <input class="primary" type="button" value="Save" onclick="saveLatLon()">

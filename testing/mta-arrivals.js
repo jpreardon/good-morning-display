@@ -1,6 +1,7 @@
 "use strict"
-const STATION_JSON_PATH = "./stations.json"
+const STATION_JSON_PATH = "/testing/stations.json"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
+const MTA_API_KEY = localStorage.getItem("subwayApiKey")
 const protoBufDef = "nyct-subway.proto.txt"
 var stations
 
@@ -99,9 +100,11 @@ function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
             }
             // MTA removes trains that aren't on scheduled tracks from their countdown displays--we will too. 
             // See https://github.com/jpreardon/good-morning-display/issues/38 for detail
-            if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack != stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
+            // This doesn't seem to work very well for the 2/3/4/5 etc. at least on 2021-02-26, only one or two
+            // trains showed up at a time. Commented it out. Check later, maybe something weird was going on.
+          /*   if (stopUpdate[".nyctStopTimeUpdate"].scheduledTrack != stopUpdate[".nyctStopTimeUpdate"].actualTrack) {
                 continue
-            }
+            } */
             var arrivalTimeSeconds = (stopUpdate.arrival.time - (Date.now() / 1000))
             var direction = stopUpdate.stopId.substr(stopUpdate.stopId.length - 1)
             // Skip trains that are probably already in the station
@@ -122,7 +125,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
 
     getFeedUrlsForGtfsStopId(gtfsStopId).forEach(url => {
         feedPromises.push(
-            fetch(url, { headers: { 'x-api-key': API_KEY } })
+            fetch(url, { headers: { 'x-api-key': MTA_API_KEY } })
             .then(handleFetchErrors)
             .then(response => response.arrayBuffer())
             .then(response => {
@@ -165,5 +168,35 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
         .catch(error => {
             reject(error)
         })
+    })
+}
+
+function populateLinesForBorough(borough) {
+    var selectElement = document.getElementById("subway-lines")
+    var lines = []
+    stations.forEach(station => {
+        if (station.borough == borough) {
+            station.daytime_routes.forEach(route => {
+                if (!lines.includes(route)) {
+                    lines.push(route)
+                }
+            })
+        }
+    })
+    selectElement.innerHTML = ""
+    lines.forEach(line => {
+        selectElement.innerHTML += `<option value="${line}">${line}</option>`
+    })
+    // Load up the stations too
+    populateStationsForBoroughLine(borough, selectElement.value)
+}
+
+function populateStationsForBoroughLine(borough, line) {
+    var selectElement = document.getElementById("subway-stations")
+    selectElement.innerHTML = ""
+    stations.forEach(station => {
+        if (station.borough == borough && station.daytime_routes.includes(line)) {
+            selectElement.innerHTML += `<option value="${station.gtfs_stop_id}">${station.stop_name}</option>`
+        }
     })
 }
