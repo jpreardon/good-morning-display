@@ -6,6 +6,19 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-27
+
+Integration continues! I'm not sure exactly how I want to do it. I have a crap design out there for the phone. maybe I'll go ahead and do that just to get everything running in one place, there's likely to be data problems there. Then move on to a better design.
+
+- Merge all subway information with the main display. Relates to #24
+- Handle missing subway config data. Fixes #24
+
+### 2021-02-26
+
+MTA testing time is over. Time to really integrate this thing. Tonight, I got the "MVP" of the settings page working on my local. It really lives up to all of the promise of an MVP, it is really just "minimal", not really all that viable, and certainly not a product. The /testing.index page is using those settings instead of the hard coded settings now.
+
+Next step will be to integrate the displays. That's probably a job for tomorrow.
+
 ### 2021-02-25
 
 Not much time tonight. Cleaned up the function that creates the arrivals array. I also added a common error handling function for fetch errors. I put it in a separate utils.js file since it seemed like something that may be useful in many projects.

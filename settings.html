@@ -12,6 +12,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link href="styles/main.css" rel="stylesheet">
         <script src="javascript/main.js"></script>
+        <script src="javascript/mta-arrivals.js"></script>
         <script src="javascript/utils.js"></script>
     </head>
 
@@ -30,31 +31,55 @@
                 <input id="lon" type="text">
                 <div id="station-radio-group">
                 </div>
-            </form>
+        
 
-            <h2>Citibike</h2>
-            <p class="body-text">Bike station status provided by <a href="https://www.citibikenyc.com/system-data">CitibikeNYC</a></p>
+                <h2>Citibike</h2>
+                <p class="body-text">Bike station status provided by <a href="https://www.citibikenyc.com/system-data">CitibikeNYC</a></p>
 
-            <input type="checkbox" id="show-bikes" /><label for="show-bikes">Show bike status instead of forecast (why would you want to see both?)</label>
+                <input type="checkbox" id="show-bikes" /><label for="show-bikes">Show bike status instead of forecast (why would you want to see both?)</label>
 
-            <div id="bike-settings">
-                <div id="twin-list-picker">
-                    <div>
-                        <select id="station-list" multiple>
-                        </select>
-                    </div>
-                    <div class="vertical-buttons">
-                        <button onclick="addStations()">&gt;</button>
-                        <button onclick="removeStations()">&lt;</button>
-                    </div>
-                    <div>
-                        <select id="selected-stations" multiple>
-       
-                        </select>
+                <div id="bike-settings">
+                    <div id="twin-list-picker">
+                        <div>
+                            <select id="station-list" multiple>
+                            </select>
+                        </div>
+                        <div class="vertical-buttons">
+                            <button onclick="addStations()">&gt;</button>
+                            <button onclick="removeStations()">&lt;</button>
+                        </div>
+                        <div>
+                            <select id="selected-stations" multiple>
+                        
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <form>
+
+                <h2>MTA Subway</h2>
+                <p class="body-text">You'll need an <a href="https://api.mta.info/#/signup">MTA API key</a> to use this.</p>
+           
+                <label for="subway-api-key">MTA Developer API Key</label>
+                <input type="text" id="subway-api-key" value=""></input>
+
+                <label for="subway-boroughs">Borough</label>
+                <select id="subway-boroughs" onchange="populateLinesForBorough(this.value)">
+                    <option selected></option>
+                    <option value="Bk">Brooklyn</option>
+                    <option value="Bx">Bronx</option>
+                    <option value="M">Manhattan</option>
+                    <option value="Q">Queens</option>
+                    <option value="SI">Staten Island</option>
+                </select>
+
+                <label for="subway-lines">Line</label>
+                <select id="subway-lines" onchange="populateStationsForBoroughLine(document.getElementById('subway-boroughs').value, this.value)"></select>
+
+                <label for="subway-stations">Station</label>
+                <select id="subway-stations"></select>
+            
+        
+            
                 <input class="secondary" type="button" value="Cancel" onclick="window.location = 'index.html'">
                 <input class="primary" type="button" value="Save" onclick="saveLatLon()">
             </form>

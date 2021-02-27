@@ -125,7 +125,7 @@ input[type=checkbox] {
     margin-right: 0.5rem;
 }
 
-form input[type=text]{
+form input[type=text], form select {
     display: block;
     margin-bottom: 1rem;
     margin-top: 0.5rem;
@@ -164,6 +164,10 @@ form input[type=button].secondary {
 
 form label {
     display: inline-block;
+}
+
+#subway-api-key {
+    width: 20rem;
 }
 
 .helper-link {
@@ -214,7 +218,7 @@ div#settings {
 
 /* Bikin' */
 
-#bikestatus {
+#bikestatus, #subway-status {
     margin-left: 28.5%;
     margin-top: 4%;
     padding-right: 4%;
@@ -278,6 +282,118 @@ div#settings {
     margin: 1rem;
 }
 
+/* SUBWAY !!! */
+
+#arrivals {
+    width: 100%;
+}
+
+.train {
+    margin: 0.5rem 0;
+    border: 1px solid white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+}            
+
+.line, .destination, .time {
+    display: inline-block;
+}
+
+.line {
+    font-weight: bold;
+}
+
+.destination {
+    margin-left: 0.75rem;
+}
+
+.time {
+    float: right;
+}
+
+h1 {
+    font-size: 1.2rem;
+}
+
+#stop-name {
+    font-size: 1rem;
+    color: gray;
+}
+
+.arriving {
+    color: red;
+}
+
+/* MTA Line decoration below */
+
+.line {
+    font-family: Ariel, sans-serif;
+    width: 1.5rem;
+    height: 1.5rem;
+    line-height: 1.7rem;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+._a, ._c, ._e {
+    background-color: #0039A6;
+    color: #ffffff;
+}
+
+._b, ._d, ._f, ._m {
+    background-color: #FF6319;
+    color: #ffffff;
+}
+
+._g {
+    background-color: #6CBE45;
+    color: #ffffff;
+}
+
+._j, ._z {
+    background-color: #996633;
+    color: #ffffff;
+}
+
+._l {
+    background-color: #A7A9AC;
+    color: #ffffff;
+}
+
+._n, ._q, ._r, ._w {
+    background-color: #FCCC0A;
+    color: black;
+}
+
+._s {
+    background-color: #808183;
+    color: #ffffff;
+}
+
+._1, ._2, ._3 {
+    background-color: #EE352E;
+    color: #ffffff;
+}
+
+._4, ._5, ._6, ._6 {
+    background-color: #00933C;
+    color: #ffffff;
+}
+
+._7 {
+    background-color: #B933AD;
+    color: #ffffff;
+}
+
+._sir {
+    font-size: 0.65rem;
+    background-color: #0078C6;
+    color: #ffffff;
+}
+
+/* End MTA Line decoration */
+
 
 /* Hacked up responsive stylings below... */
 
@@ -294,7 +410,7 @@ div#settings {
         margin-top: 14%;
     }
 
-    #bikestatus {
+    #bikestatus, #subway-status {
         margin-left: 4%;
     }
 
