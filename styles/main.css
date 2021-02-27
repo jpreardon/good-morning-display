@@ -227,7 +227,7 @@ div#settings {
 .bike-station {
     border-bottom: 1px solid gray;
     margin-bottom: 1rem;
-    width: 90%;
+    width: 100%;
 }
 
 .bike-station:last-child {
@@ -243,7 +243,7 @@ div#settings {
 .bike-number {
     display: inline-block;
     width: 29%;
-    padding-left: 3%;
+    padding-left: 4%;
 }
 
 .bike-number p {
@@ -413,10 +413,6 @@ h1 {
     #bikestatus, #subway-status {
         margin-left: 4%;
     }
-
-    .bike-station {
-        width: 100%;
-    }
 }
 
 /* Wide layout */
@@ -444,13 +440,9 @@ h1 {
         display: inline-block;
         vertical-align: top;
         width: 40%;
-        max-width: 800%;
+        max-width: 800px;
     }
 }
-
-
-
-
   
 
   
