@@ -421,6 +421,10 @@ h1 {
 
 /* Wide layout */
 @media (orientation: landscape) {
+    #container {
+        max-width: 100%;
+    }
+
     #current-conditions {
         float: left;
     }
@@ -433,4 +437,20 @@ h1 {
         margin-left: 28.5%;
     }
 
+    #bikestatus, #subway-status {
+        margin-top: inherit; 
+        padding-right: 0;
+        margin-left: 2rem;
+        display: inline-block;
+        vertical-align: top;
+        width: 40%;
+        max-width: 800%;
+    }
 }
+
+
+
+
+  
+
+  
