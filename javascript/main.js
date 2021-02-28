@@ -37,115 +37,18 @@ const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key and station information in settings."
 
-/** 
- * Converts Celsius to Fahrenheit 
- * @param {number} celsius - Reading in celsius.
- */
-function cToF(celsius) {
-    if (celsius == null) {
-        return null
-    } else {
-        celsius = celsius * 9 /5 + 32
-        return celsius.toFixed(0) + "º"
-    }
-}
-
-/** 
- * Converts Kilometers per hour to Miles per hour 
- * @param {number} KilometersPerHour - Speed in KPH.
- */
-function KphToMph(KilometersPerHour) {
-    if (KilometersPerHour == null) {
-        return null
-    } else {
-        var milesPerHour = KilometersPerHour * 0.6213712
-        return milesPerHour.toFixed(1)
-    }
-}
-
-/** 
- * Replaces null values with another value 
- * @param {string} value - The value that might contain a null.
- * @param {string} [replacement] - What will replace a null in value. The default is "--".
- */
-function replaceNulls(value, replacement = "--") {
-    if (value == null) {
-        return replacement
-    } else {
-        return value
-    } 
-}
+/**
+* The functions below are somewhat organized by their common purpose as follows:
+* 1) Settings
+* 2) Weather
+* 3) Bikes
+* 4) Subways
+* 5) Overall display and update
+*/
 
 /**
- * Returns the dash-offset needed to render the relative humidity border
- * @param {Number} relativeHumidity
- * @param {Number} maxLength - Circumference of the circle, or length of arc
+ * 1) Settings
  */
-function mapRelativeHumidity(relativeHumidity, maxLength) {
-    const step = maxLength / 100 
-    var mappedValue = 0
-
-    if (relativeHumidity.toFixed(0) < 0) {
-        mappedValue = maxLength
-    } else if (relativeHumidity.toFixed(0) > 100) {
-        mappedValue = 0
-    } else {
-        mappedValue = maxLength - (relativeHumidity * step)
-    }
-    return mappedValue.toFixed(0)
-}
-
-/**
- * Fetches current weather conditions from server
- */
-function getCurrentConditions() {
-    return new Promise( (resolve, reject) => {
-        var currentConditions = {}
-        fetch( getApiEndpoint("current_conditions") ) 
-        .then(handleFetchErrors)
-        .then(response => {
-            return response.json()
-        })
-        .then( (json) => {
-            currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
-            currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
-            currentConditions.windSpeed = replaceNulls(KphToMph(json.properties.windSpeed.value))
-            currentConditions.windDirection = json.properties.windDirection.value
-            currentConditions.relativeHumidity = json.properties.relativeHumidity.value
-            resolve(currentConditions)
-        })
-        .catch( (error) => {
-            currentConditions.error = error
-            currentConditions.textStatus = error.message
-            reject(currentConditions)
-        })
-    })
-}
-
-/**
- * Fetches current weather forecast from server
- */
-function getForecast() {
-    return new Promise( (resolve, reject) => {
-        var forecast = []
-        fetch( getApiEndpoint("forecast")  )
-        .then(handleFetchErrors)
-        .then(response => {
-            return response.json()
-        })
-        .then(json => {
-            forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
-            forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
-            forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
-            resolve(forecast)
-        })
-        .catch( (error) => {
-            forecast.error = error
-            forecast.textStatus = error.message
-            reject(forecast)
-        })
-    })
-}
 
 /**
  * Saves location data to local storage. If coordinates or a station name are being set, it validates the URL
@@ -187,19 +90,6 @@ function setUserLocationData(dataPoint, value) {
 }
 
 /**
- * Retrieves location data from local storage
- * @param {String} dataPoint - The user setting name to get
- */
-function getUserLocationData(dataPoint) {
-    var returnData = localStorage.getItem(dataPoint)
-    if (returnData == null) {
-        return false
-    } else {
-        return returnData
-    }
-}
-
-/**
  * Validates an endpoint to ensure that it works
  * @param {String} name - The name of the endpoint
  * @param {String} variable - The user value to validate
@@ -229,21 +119,6 @@ function validateApiEndpoint(name, variable) {
         })
     })
 } 
-
-/**
- * Returns a full endpoint URL given the name
- * @param {String} name - The name of the endpoint
- */
-function getApiEndpoint(name) {
-    switch (name) {
-        case "current_conditions":
-            return WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", getUserLocationData("stationName"))
-        case "forecast":
-            return WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", getUserLocationData("coordinates"))
-        default:
-            return null
-    }
-}
 
 /** 
  * Check if local storage is available 
@@ -645,7 +520,152 @@ function updateWeather() {
     }
 }
 
-// BIKE CODE BELOW
+/**
+ * 2) Weather
+ */
+
+/** 
+ * Converts Celsius to Fahrenheit 
+ * @param {number} celsius - Reading in celsius.
+ */
+function cToF(celsius) {
+    if (celsius == null) {
+        return null
+    } else {
+        celsius = celsius * 9 /5 + 32
+        return celsius.toFixed(0) + "º"
+    }
+}
+
+/** 
+ * Converts Kilometers per hour to Miles per hour 
+ * @param {number} KilometersPerHour - Speed in KPH.
+ */
+function KphToMph(KilometersPerHour) {
+    if (KilometersPerHour == null) {
+        return null
+    } else {
+        var milesPerHour = KilometersPerHour * 0.6213712
+        return milesPerHour.toFixed(1)
+    }
+}
+
+/** 
+ * Replaces null values with another value 
+ * @param {string} value - The value that might contain a null.
+ * @param {string} [replacement] - What will replace a null in value. The default is "--".
+ */
+function replaceNulls(value, replacement = "--") {
+    if (value == null) {
+        return replacement
+    } else {
+        return value
+    } 
+}
+
+/**
+ * Returns the dash-offset needed to render the relative humidity border
+ * @param {Number} relativeHumidity
+ * @param {Number} maxLength - Circumference of the circle, or length of arc
+ */
+function mapRelativeHumidity(relativeHumidity, maxLength) {
+    const step = maxLength / 100 
+    var mappedValue = 0
+
+    if (relativeHumidity.toFixed(0) < 0) {
+        mappedValue = maxLength
+    } else if (relativeHumidity.toFixed(0) > 100) {
+        mappedValue = 0
+    } else {
+        mappedValue = maxLength - (relativeHumidity * step)
+    }
+    return mappedValue.toFixed(0)
+}
+
+/**
+ * Fetches current weather conditions from server
+ */
+function getCurrentConditions() {
+    return new Promise( (resolve, reject) => {
+        var currentConditions = {}
+        fetch( getApiEndpoint("current_conditions") ) 
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
+        })
+        .then( (json) => {
+            currentConditions.temperature = replaceNulls(cToF(json.properties.temperature.value))
+            currentConditions.conditions = replaceNulls(json.properties.textDescription, "")
+            currentConditions.windSpeed = replaceNulls(KphToMph(json.properties.windSpeed.value))
+            currentConditions.windDirection = json.properties.windDirection.value
+            currentConditions.relativeHumidity = json.properties.relativeHumidity.value
+            resolve(currentConditions)
+        })
+        .catch( (error) => {
+            currentConditions.error = error
+            currentConditions.textStatus = error.message
+            reject(currentConditions)
+        })
+    })
+}
+
+/**
+ * Fetches current weather forecast from server
+ */
+function getForecast() {
+    return new Promise( (resolve, reject) => {
+        var forecast = []
+        fetch( getApiEndpoint("forecast")  )
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
+        })
+        .then(json => {
+            forecast.push({name:json.properties.periods[0].name, forecast:json.properties.periods[0].detailedForecast})
+            forecast.push({name:json.properties.periods[1].name, forecast:json.properties.periods[1].detailedForecast})
+            forecast.push({name:json.properties.periods[2].name, forecast:json.properties.periods[2].shortForecast})
+            resolve(forecast)
+        })
+        .catch( (error) => {
+            forecast.error = error
+            forecast.textStatus = error.message
+            reject(forecast)
+        })
+    })
+}
+
+
+/**
+ * Retrieves location data from local storage
+ * @param {String} dataPoint - The user setting name to get
+ */
+function getUserLocationData(dataPoint) {
+    var returnData = localStorage.getItem(dataPoint)
+    if (returnData == null) {
+        return false
+    } else {
+        return returnData
+    }
+}
+
+/**
+ * Returns a full endpoint URL given the name
+ * @param {String} name - The name of the endpoint
+ */
+function getApiEndpoint(name) {
+    switch (name) {
+        case "current_conditions":
+            return WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", getUserLocationData("stationName"))
+        case "forecast":
+            return WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", getUserLocationData("coordinates"))
+        default:
+            return null
+    }
+}
+
+/**
+ * 3) Bikes
+ */
 
 /** 
  * Gets the full list of Bike Stations (IDs and Names)
@@ -755,8 +775,16 @@ function updateBikes() {
 
 }
 
+/**
+ * 4) Subways
+ * Hey, no code here! That's because it's in mta-arrivals.js. Maybe the others should be like that too.
+ * Or, maybe the mta-arrivals.js code should be here. Decisions, decisions...
+ */
 
-// OVERALL UPDATE CODE BELOW -- It's all about the timing
+
+/**
+ * 5) Overall Display and Update
+ */
 
 /** 
  * Kicks off the display update for everything. Will reload from server once in a while
@@ -828,7 +856,6 @@ function ready(fn) {
         document.addEventListener('DOMContentLoaded', fn);
     }
 }
-
 
 /** 
  * Kicks off everything
