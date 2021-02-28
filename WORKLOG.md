@@ -16,6 +16,8 @@ Integration continues! I'm not sure exactly how I want to do it. I have a crap d
 - Add express (diamond) icons for the 6 & 7 lines. Fixes #42
 - Cache the protobuffer root object so we're not fetching the files for every request.
 
+The Staten Island Railway isn't working. There's an open issue (#24) for it, but it's a bit beyond me right now. I commented Staten Island out on the settings page so it can't be selected for now. 
+
 ### 2021-02-26
 
 MTA testing time is over. Time to really integrate this thing. Tonight, I got the "MVP" of the settings page working on my local. It really lives up to all of the promise of an MVP, it is really just "minimal", not really all that viable, and certainly not a product. The /testing.index page is using those settings instead of the hard coded settings now.
