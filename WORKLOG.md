@@ -6,6 +6,14 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-02-28
+
+Today, time allowing, I'd like to clean up the settings code. It's an absolute mess and pretty hard to understand at this point.
+
+- Rearrange functions in main.js by common purpose. #24
+
+This brings up an issue I should do some more research on. I put almost all of the subway related code into its own file. This makes the file more manageable, but it means I have to load up additional files in the HTML (which seems wrong). Node style require statements would really come in handy here, but I think the only way to get those is to use something like Browserify. Alternatively, I could start using a build process, which ultimately might be the way to go seeing as some linting would be nice too. Hey, I'll open an issue for this (#47)
+
 ### 2021-02-27
 
 Integration continues! I'm not sure exactly how I want to do it. I have a crap design out there for the phone. maybe I'll go ahead and do that just to get everything running in one place, there's likely to be data problems there. Then move on to a better design.
