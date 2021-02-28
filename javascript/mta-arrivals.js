@@ -1,6 +1,7 @@
 "use strict"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
 var stations
+var protoBuffRoot
 
 function initMtaArrivals() {
     return fetch(STATION_JSON_PATH)
@@ -9,7 +10,18 @@ function initMtaArrivals() {
         return response.json()
     })
     .then(json => {
+        // Cache the stations information, it gets used a lot
         stations = json
+    })
+    .then( () => {
+        // Cache an instance of this protobuffer object so it's not loaded for every request
+        return new Promise ( (resolve, reject) => {
+            protobuf.load(protoBufDef, (error, root) => {
+                protoBuffRoot = root.lookupType('transit_realtime.FeedMessage')
+                if (error) reject(error)
+                resolve()
+            })  
+        }) 
     })
 }
 
@@ -70,17 +82,9 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
     return feeds
 }
 
-// TODO: This function fetches two files every time it runs (often). Can those be preloaded?
 function decodeProtoBuf(feedMsg) {
-    return new Promise ( (resolve, reject) => {
-        const ProtoBuf = protobuf
-        ProtoBuf.load(protoBufDef, (error, root) => {
-            const FeedMessage = root.lookupType('transit_realtime.FeedMessage')
-            const buffer = new Uint8Array(feedMsg)
-            if (error) reject(error)
-            resolve(FeedMessage.decode(buffer))
-        })
-    })
+    const buffer = new Uint8Array(feedMsg)
+    return protoBuffRoot.decode(buffer)
 }
 
 function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {

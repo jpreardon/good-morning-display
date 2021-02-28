@@ -856,8 +856,6 @@ ready( () => {
             }
     
             LAST_PAGE_RELOAD = Date.now()
-            updateArrivals(STATION_ID)
-            updateWeather()
             window.setInterval(updateDisplay, 1000)
 
 

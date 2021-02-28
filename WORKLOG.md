@@ -14,6 +14,7 @@ Integration continues! I'm not sure exactly how I want to do it. I have a crap d
 - Handle missing subway config data. Fixes #24
 - Fix update time display. Fixes #29
 - Add express (diamond) icons for the 6 & 7 lines. Fixes #42
+- Cache the protobuffer root object so we're not fetching the files for every request.
 
 ### 2021-02-26
 
