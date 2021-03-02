@@ -385,68 +385,36 @@ function loadSubwaySettingsForm() {
 }
 
 /** 
- * Adds stations to selected stations form and removes them from the main list
- */
-function addStations() {
-    var station_list = document.getElementById("station-list") 
-    var selected_stations =  document.getElementById("selected-stations")
-    var myItems = []
-
-    // Collect items to move
-    for (let item of station_list.selectedOptions) {
-        myItems.push(item)
-    }
-
-    // Move items
-    myItems.forEach(item => {
-        selected_stations.options[selected_stations.options.length] = station_list.removeChild(station_list.options[item.index])
-    })
-}
-
-/** 
- * Removes stations from the selected stations form and adds them to the main list
+ * Moves bike stations from one list to another in the twin list picker
  */
 // TODO: This just adds them back to the bottom of the list, maybe a resort is in order
-function removeStations() {
-    var station_list = document.getElementById("station-list") 
-    var selected_stations =  document.getElementById("selected-stations")
-    var myItems = []
+function moveBikeStations(fromElementId, toElementId) {
+    var from_list = document.getElementById(fromElementId) 
+    var to_list =  document.getElementById(toElementId)
+    var selectedItems = []
 
-    // Collect items to move
-    for (let item of selected_stations.selectedOptions) {
-        myItems.push(item)
+    // Moving is a two step process, trying to move directly from the collection doesn't work when there are multiple items.
+    for (let item of from_list.selectedOptions) {
+        selectedItems.push(item)
     }
 
-    // Move items
-    myItems.forEach(item => {
-        station_list.options[station_list.options.length] = selected_stations.removeChild(selected_stations.options[item.index])
+    selectedItems.forEach(item => {
+        to_list.options[to_list.options.length] = from_list.removeChild(from_list.options[item.index])
     })
 }
 
 /** 
- * Saves selected stations to local storage
+ * Saves selected bike stations to local storage
  */
 function saveStations() {
     var stationIds = []
-    var stationIdsJSON = ""
 
-    // Put each of the list's values in an array
     for (let station of document.getElementById("selected-stations").options) {
         stationIds.push(station.value)
     }
-    
-    // Create a JSON string of the array
-    stationIdsJSON = JSON.stringify(stationIds)
 
-    // Save the JSON to local storage
-    localStorage.setItem("bikeStations", stationIdsJSON)
-
-    // Save the show bikes option
-    if (document.getElementById("show-bikes").checked) {
-        localStorage.setItem("showBikes", "true")
-    } else {
-        localStorage.setItem("showBikes", "false")
-    }
+    localStorage.setItem("bikeStations", JSON.stringify(stationIds))
+    localStorage.setItem("showBikes", document.getElementById("show-bikes").checked)
 }
 
 /** 
