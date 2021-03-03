@@ -33,7 +33,7 @@ var LAST_PAGE_RELOAD = ""
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
-const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
+const ERR_NO_LOCAL_STORAGE = "This app requires local storage. But, it appears that it is not supported or enabled in this browser. Sorry."
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key and station information in settings."
 
@@ -49,76 +49,6 @@ const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key an
 /**
  * 1) Settings
  */
-
-/**
- * Saves location data to local storage. If coordinates or a station name are being set, it validates the URL
- * @param {String} dataPoint - The user setting name to store
- * @param {String} value - The value of the user setting to store
- */
-function setUserLocationData(dataPoint, value) {
-    // TODO: This function is kind of funky, refactor
-    return new Promise( (resolve, reject) => {
-        var name = ""
-        
-        switch (dataPoint) {
-            case "stationName":
-                name =  "current_conditions"
-                break
-            case "coordinates":
-                name = "forecast"
-                break
-            case "lat":
-                name = "lat"
-                break
-            case "lon":
-                name = "lon"
-                break
-            default:
-                return reject("Invalid Data Point")
-        }
-
-        if (name == "lat" || name == "lon") {
-            localStorage.setItem(dataPoint, value)
-            resolve("Success")
-        } else {
-            validateApiEndpoint(name, value)
-            .then( () => localStorage.setItem(dataPoint, value) )
-            .then( () => resolve("Success"))
-            .catch( (error) => reject(error) )
-        }
-    })   
-}
-
-/**
- * Validates an endpoint to ensure that it works
- * @param {String} name - The name of the endpoint
- * @param {String} variable - The user value to validate
- */
-function validateApiEndpoint(name, variable) {
-    return new Promise( (resolve, reject) => {
-        var endPoint = ""
-        
-        switch (name) {
-            case "current_conditions":
-                endPoint = WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", variable)
-                break
-            case "forecast":
-                endPoint = WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", variable)
-                break
-            default:
-                endPoint = "fail"
-        }
-
-        fetch(endPoint)
-        .then(handleFetchErrors)
-        .then( () => {
-            resolve("Valid Endpoint")
-        })
-        .catch( () => {
-            reject("Invalid Endpoint")
-        })
-    })
-} 
 
 /** 
  * Check if local storage is available 
@@ -151,44 +81,54 @@ function storageAvailable(type) {
 }
 
 /** 
- * Sets all location data based on the lat/lon in the settings form
+ * Saves all form data to local storage
  */
-function saveLatLon() {
+function saveForm() {
     const latitude = document.getElementById("lat").value
     const longitude = document.getElementById("lon").value
-
-    var forecastURL = ""
-    var observationStationsURL = ""
     var office = ""
     var gridX = ""
     var gridY = ""
     var stationIdentifier = ""
 
+    // Need to query NWS to get the weather point information
     fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
     .then(handleFetchErrors)
     .then(response => {
         return response.json()
     })
-    .then( (points) => {
-        forecastURL = points.properties.forecast
-        observationStationsURL = points.properties.observationStations
+    .then(points => {
         office = points.properties.cwa
         gridX = points.properties.gridX
         gridY = points.properties.gridY
         var checkedStation = document.querySelector("input[name='stationId']:checked")
         stationIdentifier = checkedStation ? checkedStation.value : ''
 
-        Promise.all([
-            setUserLocationData("stationName", stationIdentifier),
-            setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
-            setUserLocationData("lat", latitude),
-            setUserLocationData("lon", longitude)
-        ]).then(() => {window.location = "index.html"})
+        localStorage.setItem("stationName", stationIdentifier)
+        localStorage.setItem("coordinates", `${office}/${gridX},${gridY}`)
+        localStorage.setItem("lat", latitude)
+        localStorage.setItem("lon", longitude)
     })
-    
-    // TODO: This is such a hack, clean this mess up!
-    saveStations()
-    saveSubwayStation()
+    .then(() => {
+        // Save the bike information
+        var bikeStationIds = []
+
+        for (let station of document.getElementById("selected-stations").options) {
+            bikeStationIds.push(station.value)
+        }
+
+        localStorage.setItem("bikeStations", JSON.stringify(bikeStationIds))
+        localStorage.setItem("showBikes", document.getElementById("show-bikes").checked)
+            
+        })
+    .then(() => {
+        // Saving all subway form data so we can repopulate
+        localStorage.setItem("subwayBorough", document.getElementById("subway-boroughs").value)
+        localStorage.setItem("subwayLine", document.getElementById("subway-lines").value)
+        localStorage.setItem("subwayStation", document.getElementById("subway-stations").value)
+        localStorage.setItem("subwayApiKey", document.getElementById("subway-api-key").value)
+    })
+    .then(() => {window.location = "index.html"})    
 }
 
 /** 
@@ -203,30 +143,26 @@ function generateStationList(latitude, longitude, selectedStationId = null) {
     .then(response => {
         return response.json()
     })
-    .then( (points) => {
+    .then(points => {
         fetch(points.properties.observationStations)
         .then(handleFetchErrors)
         .then(response => {
             return response.json()
         })
-        .then( (stations) => {
+        .then(stations => {
             document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
+            // Just list the 5 closest stations (they seem to be in order of distance)
             for (let i = 0; i < 5; i++) {
                 var stationId = stations.features[i].properties.stationIdentifier
                 var stationName = stations.features[i].properties.name
                 var checked = ""
                 
-                if (!selectedStationId == null) {
-                    if (i == 0 ) {
-                        checked = "checked"
-                    }
-                } else {
-                    if (selectedStationId == stationId) {
-                        checked = "checked"
-                    } 
+                // If there's no selection stationId, just select the first one
+                if (selectedStationId == null && i == 0) {
+                    checked = "checked"
+                } else if (selectedStationId == stationId) {
+                    checked = "checked"
                 }
-
-                
 
                 var radioButton = "<div>"
                 radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
@@ -239,15 +175,17 @@ function generateStationList(latitude, longitude, selectedStationId = null) {
 }
 
 /** 
- * Return lat/lon based on user's location
+ * Return lat/lon in an array based on user's location
  */
 function getLatLon() {
     return new Promise( (resolve, reject) => {
-        navigator.geolocation.getCurrentPosition( (pos) => {
-            resolve([pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4)])
+        navigator.geolocation.getCurrentPosition(position => {
+            resolve([position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4)])
         }, (error) => { reject(error)} )
     })
 }
+
+// TODO: I think the next three functions can be combined.
 
 /** 
  * Kicks off the population of the settings form with user location data
@@ -403,30 +341,9 @@ function moveBikeStations(fromElementId, toElementId) {
     })
 }
 
-/** 
- * Saves selected bike stations to local storage
+/**
+ * 2) Weather
  */
-function saveStations() {
-    var stationIds = []
-
-    for (let station of document.getElementById("selected-stations").options) {
-        stationIds.push(station.value)
-    }
-
-    localStorage.setItem("bikeStations", JSON.stringify(stationIds))
-    localStorage.setItem("showBikes", document.getElementById("show-bikes").checked)
-}
-
-/** 
- * Saves selected subway station to local storage
- */
-function saveSubwayStation() {
-    // Saving everything so we can repopulate the form
-    localStorage.setItem("subwayBorough", document.getElementById("subway-boroughs").value)
-    localStorage.setItem("subwayLine", document.getElementById("subway-lines").value)
-    localStorage.setItem("subwayStation", document.getElementById("subway-stations").value)
-    localStorage.setItem("subwayApiKey", document.getElementById("subway-api-key").value)
-}
 
 /** 
  * Where the magic happens, for the weather. Updates the display.
@@ -487,10 +404,6 @@ function updateWeather() {
         updateTimerDisplay("w")
     }
 }
-
-/**
- * 2) Weather
- */
 
 /** 
  * Converts Celsius to Fahrenheit 
