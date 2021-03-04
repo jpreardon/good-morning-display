@@ -8,7 +8,8 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ### 2021-03-03
 
-Settings refactoring fun continues. #28
+- Settings refactoring fun continues. #28
+- Added re-sorting to the twin list picker. Moved a couple utility functions to utils.js.
 
 ### 2021-03-02
 

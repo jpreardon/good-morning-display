@@ -274,7 +274,6 @@ function loadBikeSettingsForm() {
 
             // Set the show bikes checkbox
             document.getElementById("show-bikes").checked = localStorage.getItem("showBikes") == "true" ? true : false
-            
         })
         .catch( (error) => {
             console.log(error)
@@ -283,30 +282,13 @@ function loadBikeSettingsForm() {
 }
 
 /** 
- * Sorts an object (alphabetically) on the key
- * @param {Object} obj - Object to sort
- * @param {String} key - Key to sort on
- */
-function sortObject(obj, key) {
-    obj.sort(function (a, b) {
-        var keyA = a[key].toUpperCase()
-        var keyB = b[key].toUpperCase()
-        if ( keyA < keyB ) {
-            return -1
-        }
-        if ( keyA > keyB ) {
-            return 1
-        }
-        return 0
-    })
-    return obj
-}
-
-/** 
  * Moves bike stations from one list to another in the twin list picker
+ * @param {String} fromElementId - The ID of the select list to move the items from
+ * @param {String} toElementId - The ID of the select list to move the items to
+ * @param {Boolean} [sortToList = false] - If true, the to list will be re-sorted alphabetically
+ * @param {Boolean} [retainSelection = true] - If true, the selection state of the moved options will be kept
  */
-// TODO: This just adds them back to the bottom of the list, maybe a resort is in order
-function moveBikeStations(fromElementId, toElementId) {
+function moveBikeStations(fromElementId, toElementId, sortToList = false, retainSelection = true) {
     var from_list = document.getElementById(fromElementId) 
     var to_list =  document.getElementById(toElementId)
     var selectedItems = []
@@ -318,7 +300,12 @@ function moveBikeStations(fromElementId, toElementId) {
 
     selectedItems.forEach(item => {
         to_list.options[to_list.options.length] = from_list.removeChild(from_list.options[item.index])
+        to_list.options[to_list.options.length - 1].selected = retainSelection
     })
+
+    if (sortToList == true) {
+        sortSelectList(to_list)
+    }
 }
 
 /**

@@ -10,3 +10,43 @@ function handleFetchErrors(response) {
     }
     return response;
 };
+
+/** 
+ * Sorts an object (alphabetically) on the key
+ * @param {Object} obj - Object to sort
+ * @param {String} key - Key to sort on
+ */
+function sortObject(obj, key) {
+    obj.sort(function (a, b) {
+        var keyA = a[key].toUpperCase()
+        var keyB = b[key].toUpperCase()
+        if ( keyA < keyB ) {
+            return -1
+        }
+        if ( keyA > keyB ) {
+            return 1
+        }
+        return 0
+    })
+    return obj
+}
+
+/** 
+ * Sorts a given select list in place, alphabetically. 
+ * @param {Select Element} selectList - The select list to be sorted
+ */
+function sortSelectList(selectList) {
+    var options = []
+
+    for (let option of selectList.options) {
+        options.push({text: option.text, selected: option.selected, optionObject: option})
+    }
+    
+    sortObject(options, "text")
+
+    for (var i = 0; i < selectList.length; i++) {
+        selectList.options[i] = options[i].optionObject
+        selectList.options[i].selected = options[i].selected
+    }
+
+}
