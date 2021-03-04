@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-03-03
+
+Settings refactoring fun continues. #28
+
 ### 2021-03-02
 
 Combined a couple functions in the settings form code. #28

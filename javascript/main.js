@@ -181,60 +181,57 @@ function getLatLon() {
     return new Promise( (resolve, reject) => {
         navigator.geolocation.getCurrentPosition(position => {
             resolve([position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4)])
-        }, (error) => { reject(error)} )
+        }, (error) => { reject(error) } )
     })
 }
 
-// TODO: I think the next three functions can be combined.
-
 /** 
- * Kicks off the population of the settings form with user location data
+ * Populates the settings form with weather location and station data
  */
 function getLocation() {
     getLatLon()
-        .then((latLon) => populateSettingsForm(latLon[0], latLon[1]))
-        .then((latLon) => generateStationList(latLon[0], latLon[1]))
-        .catch((error) => console.log(error.message))
+        .then(latLon => {
+            document.getElementById("lat").value = latLon[0]
+            document.getElementById("lon").value = latLon[1]
+            generateStationList(latLon[0], latLon[1])
+        })
+        .catch(error => {
+            console.error(error.message)
+        })
 }
 
 /** 
- * Populates the settings form with location data
- * @param {Number} latitude - Latitude to populate
- * @param {Number} longitude - Longitude to populate
- */
-function populateSettingsForm(lat, lon) {
-    document.getElementById("lat").value = lat
-    document.getElementById("lon").value = lon
-    return [lat,lon]
-}
-
-/** 
- * Populates the settings form
+ * Populate the settings form from local storage
  */
 function loadFormFromLocalStorage() {
-    if (getUserLocationData("lat") && getUserLocationData("lon")) {
-        populateSettingsForm(
-            getUserLocationData("lat"),
-            getUserLocationData("lon")
-        )
-        generateStationList(
-            getUserLocationData("lat"),
-            getUserLocationData("lon"),
-            getUserLocationData("stationName")
-        )
-    }
+    // Load weather information
+    var lat = localStorage.getItem("lat")
+    var lon = localStorage.getItem("lon")
+    var stationName = localStorage.getItem("stationName")
 
-    // Load the bike form
+    document.getElementById("lat").value = lat
+    document.getElementById("lon").value = lon
+    generateStationList(lat, lon, stationName)
+
+    // Load the Bike form
     loadBikeSettingsForm()
 
-    // Load the subway form
-    loadSubwaySettingsForm()
+    // Load the Subway information
+    document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
+    document.getElementById("subway-boroughs").value = localStorage.getItem("subwayBorough")
+    populateLinesForBorough(localStorage.getItem("subwayBorough"))
+    document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
+    populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
+    document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
 }
 
 /** 
  * Populates the bike part of the settings form
  */
 // TODO: This needs to be cleaned up and made part of the main settings form loader
+// Kind of a mess here. The form just needs to be loaded from local storage AND by getting the station information from 
+// the API. The form's a bit complicated since there's a twin list picker.
+// The getBikeStations function might be a candidate for removal if we were to change the way things are getting fetched.
 function loadBikeSettingsForm() {
     var time = Date.now()
     BIKE_STATION_LIST = []
@@ -245,27 +242,13 @@ function loadBikeSettingsForm() {
             return response.json()
         })
         .then(json => {
-            
             json.data.stations.forEach(station => {
                 BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
             });
 
-            // Sort here
-            // TODO: Need this on the settings page, was removed on main.js
-            BIKE_STATION_LIST.sort(function (a, b) {
-                var nameA = a.name.toUpperCase()
-                var nameB = b.name.toUpperCase()
-                if ( nameA < nameB ) {
-                    return -1
-                }
-                if ( nameA > nameB ) {
-                    return 1
-                }
+            sortObject(BIKE_STATION_LIST, "name")
 
-                return 0
-            })
-
-            // Add an option to the selected stations list for each of the stations
+            // Add the stations to the list
             BIKE_STATION_LIST.forEach(station => {
                 var opt = document.createElement("option")
                 opt.value = station.id
@@ -273,10 +256,7 @@ function loadBikeSettingsForm() {
                 document.getElementById("station-list").add(opt)
             })
 
-
-
-            // Load the selected stations
-            getStations()
+            getBikeStations()
 
             BIKE_SELECTED_STATIONS.forEach(station => {
                 var opt = document.createElement("option")
@@ -284,8 +264,6 @@ function loadBikeSettingsForm() {
                 opt.text = station[1]
                 document.getElementById("selected-stations").add(opt)
             })
-
-            
 
             // Remove those options from the station list
             for (let station of document.getElementById("station-list").options) {
@@ -295,13 +273,8 @@ function loadBikeSettingsForm() {
             }
 
             // Set the show bikes checkbox
-            if (localStorage.getItem("showBikes") == "true") {
-                document.getElementById("show-bikes").checked = true
-            } else {
-                document.getElementById("show-bikes").checked = false
-            }
+            document.getElementById("show-bikes").checked = localStorage.getItem("showBikes") == "true" ? true : false
             
-
         })
         .catch( (error) => {
             console.log(error)
@@ -310,16 +283,23 @@ function loadBikeSettingsForm() {
 }
 
 /** 
- * Populates the subway part of the settings form
+ * Sorts an object (alphabetically) on the key
+ * @param {Object} obj - Object to sort
+ * @param {String} key - Key to sort on
  */
-// TODO: This needs to be cleaned up and made part of the main settings form loader
-function loadSubwaySettingsForm() {
-    document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
-    document.getElementById("subway-boroughs").value = localStorage.getItem("subwayBorough")
-    populateLinesForBorough(localStorage.getItem("subwayBorough"))
-    document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
-    populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
-    document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
+function sortObject(obj, key) {
+    obj.sort(function (a, b) {
+        var keyA = a[key].toUpperCase()
+        var keyB = b[key].toUpperCase()
+        if ( keyA < keyB ) {
+            return -1
+        }
+        if ( keyA > keyB ) {
+            return 1
+        }
+        return 0
+    })
+    return obj
 }
 
 /** 
@@ -579,22 +559,13 @@ function getBikeStationList() {
 /** 
  * Gets the selected list of Bike Stations
  */
-function getStations() {
-    var stationIds = []
-    var stationIdsJSON = ""
+function getBikeStations() {
     BIKE_SELECTED_STATIONS = []
 
-    // Get JSON from local storage
-    stationIdsJSON = localStorage.getItem("bikeStations")
-
-    // Convert to an array
-    stationIds = JSON.parse(stationIdsJSON)
-
     // Get the name for each of the IDs
-    stationIds.forEach(id => {
+    JSON.parse(localStorage.getItem("bikeStations")).forEach(id => {
         BIKE_SELECTED_STATIONS.push([id, BIKE_STATION_LIST.find(station => station.id == id).name]) 
     })
-
 }
 
 /** 
@@ -648,7 +619,7 @@ function updateBikes() {
 
     // Updates the display, if conditions are met
     if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
-        getStations()
+        getBikeStations()
         getStationInformation()
         BIKE_LAST_UPDATE_TIME = Date.now()
         updateTimerDisplay("b")
