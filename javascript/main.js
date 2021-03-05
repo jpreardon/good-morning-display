@@ -51,36 +51,6 @@ const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key an
  */
 
 /** 
- * Check if local storage is available 
- * @param {string} type - Can be localStorage or sessionStorage.
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API} for source
- */
-function storageAvailable(type) {
-    var storage;
-    try {
-        storage = window[type]
-        var x = '__storage_test__';
-        storage.setItem(x, x)
-        storage.removeItem(x)
-        return true
-    }
-    catch(e) {
-        return e instanceof DOMException && (
-            // everything except Firefox
-            e.code === 22 ||
-            // Firefox
-            e.code === 1014 ||
-            // test name field too, because code might not be present
-            // everything except Firefox
-            e.name === 'QuotaExceededError' ||
-            // Firefox
-            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-            // acknowledge QuotaExceededError only if there's something already stored
-            (storage && storage.length !== 0)
-    }
-}
-
-/** 
  * Saves all form data to local storage
  */
 function saveForm() {
@@ -135,7 +105,7 @@ function saveForm() {
  * Create a list of stations for a given lat/lon in the settings form
  * @param {Number} latitude - Latitude to lookup
  * @param {Number} longitude - Longitude to lookup
- * @param {Number} selectedStationId - Optional station to select in the form
+ * @param {Number} [selectedStationId = null] - Optional station to select in the form
  */
 function generateStationList(latitude, longitude, selectedStationId = null) {
     fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
@@ -208,13 +178,42 @@ function loadFormFromLocalStorage() {
     var lat = localStorage.getItem("lat")
     var lon = localStorage.getItem("lon")
     var stationName = localStorage.getItem("stationName")
+    var time = Date.now()
 
     document.getElementById("lat").value = lat
     document.getElementById("lon").value = lon
     generateStationList(lat, lon, stationName)
 
-    // Load the Bike form
-    loadBikeSettingsForm()
+    // Load the Bike information
+    BIKE_STATION_LIST = []
+    fetch( BIKE_STATION_INFO_URL ) 
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then(json => {
+        json.data.stations.forEach(station => {
+            BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
+        });
+
+        sortObject(BIKE_STATION_LIST, "name")
+        populateSelectElement("station-list", BIKE_STATION_LIST, "id", "name")
+        getStoredBikeStations()
+        populateSelectElement("selected-stations", BIKE_SELECTED_STATIONS, "id", "name")
+
+        // Remove those options from the station list
+        for (let station of document.getElementById("station-list").options) {
+            if (BIKE_SELECTED_STATIONS.flat().includes(station.value)) {
+                document.getElementById("station-list").removeChild(station)
+            }
+        }
+
+        // Set the show bikes checkbox
+        document.getElementById("show-bikes").checked = localStorage.getItem("showBikes") == "true" ? true : false
+    })
+    .catch( (error) => {
+        console.log(error)
+    })
 
     // Load the Subway information
     document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
@@ -223,62 +222,6 @@ function loadFormFromLocalStorage() {
     document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
     populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
     document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
-}
-
-/** 
- * Populates the bike part of the settings form
- */
-// TODO: This needs to be cleaned up and made part of the main settings form loader
-// Kind of a mess here. The form just needs to be loaded from local storage AND by getting the station information from 
-// the API. The form's a bit complicated since there's a twin list picker.
-// The getBikeStations function might be a candidate for removal if we were to change the way things are getting fetched.
-function loadBikeSettingsForm() {
-    var time = Date.now()
-    BIKE_STATION_LIST = []
-    return new Promise( (resolve, reject) => {
-        fetch( BIKE_STATION_INFO_URL ) 
-        .then(handleFetchErrors)
-        .then(response => {
-            return response.json()
-        })
-        .then(json => {
-            json.data.stations.forEach(station => {
-                BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
-            });
-
-            sortObject(BIKE_STATION_LIST, "name")
-
-            // Add the stations to the list
-            BIKE_STATION_LIST.forEach(station => {
-                var opt = document.createElement("option")
-                opt.value = station.id
-                opt.text = station.name
-                document.getElementById("station-list").add(opt)
-            })
-
-            getBikeStations()
-
-            BIKE_SELECTED_STATIONS.forEach(station => {
-                var opt = document.createElement("option")
-                opt.value = station[0]
-                opt.text = station[1]
-                document.getElementById("selected-stations").add(opt)
-            })
-
-            // Remove those options from the station list
-            for (let station of document.getElementById("station-list").options) {
-                if (BIKE_SELECTED_STATIONS.flat().includes(station.value)) {
-                    document.getElementById("station-list").removeChild(station)
-                }
-            }
-
-            // Set the show bikes checkbox
-            document.getElementById("show-bikes").checked = localStorage.getItem("showBikes") == "true" ? true : false
-        })
-        .catch( (error) => {
-            console.log(error)
-        })
-    })
 }
 
 /** 
@@ -546,12 +489,12 @@ function getBikeStationList() {
 /** 
  * Gets the selected list of Bike Stations
  */
-function getBikeStations() {
+function getStoredBikeStations() {
     BIKE_SELECTED_STATIONS = []
 
     // Get the name for each of the IDs
     JSON.parse(localStorage.getItem("bikeStations")).forEach(id => {
-        BIKE_SELECTED_STATIONS.push([id, BIKE_STATION_LIST.find(station => station.id == id).name]) 
+        BIKE_SELECTED_STATIONS.push( {name: BIKE_STATION_LIST.find(station => station.id == id).name, id: id} )
     })
 }
 
@@ -569,9 +512,9 @@ function getStationInformation() {
             BIKE_SELECTED_STATIONS.forEach(selectedStation => {
                 // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
                 var returnVal = ""
-                var station = json.data.stations.find(station => station.station_id == selectedStation[0])
+                var station = json.data.stations.find(station => station.station_id == selectedStation.id)
 
-                returnVal += `<p class="bike-station-name">${selectedStation[1]}</p>`
+                returnVal += `<p class="bike-station-name">${selectedStation.name}</p>`
                 returnVal += '<div class="bike-number">'
                 returnVal += `<p class="available-bikes">${station.num_bikes_available - station.num_ebikes_available}</p>`
                 returnVal += '</div>'
@@ -606,7 +549,7 @@ function updateBikes() {
 
     // Updates the display, if conditions are met
     if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
-        getBikeStations()
+        getStoredBikeStations()
         getStationInformation()
         BIKE_LAST_UPDATE_TIME = Date.now()
         updateTimerDisplay("b")

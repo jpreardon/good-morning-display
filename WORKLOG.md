@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-03-04
+
+- Add load bike information into main form load function. I'm not really sure if this is an improvement or not. #28
+
 ### 2021-03-03
 
 - Settings refactoring fun continues. #28
