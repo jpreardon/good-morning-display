@@ -15,6 +15,7 @@ Took a look at the settings code. It looks pretty good. I think I can call that 
 I finally looked at how the express trains looked in the wild today. There are some problems. Time to simplify.... man...
 
 - Deal with express trains on any line. Fixes #48.
+- Be more slightly more informative when there are no trains. Fixes #46
 
 ### 2021-03-04
 

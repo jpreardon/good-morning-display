@@ -36,6 +36,7 @@ const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
 const ERR_NO_LOCAL_STORAGE = "This app requires local storage. But, it appears that it is not supported or enabled in this browser. Sorry."
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key and station information in settings."
+const ERR_NO_TRAINS = "Sorry... No trains in this direction ¯\\_(ツ)_/¯"
 
 /**
 * The functions below are somewhat organized by their common purpose as follows:
@@ -604,7 +605,10 @@ function updateArrivals(gtfsStopId) {
                 var html = ""
                 Object.keys(arrivals).forEach(direction => {
                     if (arrivals[direction].label !== "") {
-                        html += arrivals[direction].label
+                        html += `<p>${arrivals[direction].label}</p>`
+                        if (arrivals[direction].trains.length == 0) {
+                            html += `<p class="error">${ERR_NO_TRAINS}</p>`
+                        }
                         arrivals[direction].trains.forEach(arrival => { 
                             html += '<div class="train">'
                             // Some lines run eXpress trains (e.g. 6X). Use the "X" to change the icon in CSS
