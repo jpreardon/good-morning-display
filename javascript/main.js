@@ -607,7 +607,8 @@ function updateArrivals(gtfsStopId) {
                         html += arrivals[direction].label
                         arrivals[direction].trains.forEach(arrival => { 
                             html += '<div class="train">'
-                            html += `<p class="line _${arrival.line.toLowerCase()}"><span>${arrival.line.substr(0, 1)}</span></p>`
+                            // Some lines run eXpress trains (e.g. 6X). Use the "X" to change the icon in CSS
+                            html += `<p class="line _${arrival.line.toLowerCase().split("").join(" ")}"><span>${arrival.line.substr(0, 1)}</span></p>`
                             html += `<p class="destination">${arrival.destination}</p>`
                                 if (arrival.seconds <= 30) {
                                     html += '<p class="time arriving">ARRIVING</p>'

@@ -12,6 +12,10 @@ Took a look at the settings code. It looks pretty good. I think I can call that 
 
 - Add a few semis to the utils.js. #28
 
+I finally looked at how the express trains looked in the wild today. There are some problems. Time to simplify.... man...
+
+- Deal with express trains on any line. Fixes #48.
+
 ### 2021-03-04
 
 - Add load bike information into main form load function. I'm not really sure if this is an improvement or not. #28

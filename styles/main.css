@@ -376,34 +376,28 @@ h1 {
     color: #ffffff;
 }
 
-._4, ._5, ._6, ._6, ._6x {
+._4, ._5, ._6, ._6 {
     background-color: #00933C;
     color: #ffffff;
 }
 
-._6x {
+.x {
     border-radius: 0;
     transform: rotate(45deg);
+    width: 1.25rem;
+    height: 1.25rem;
+    line-height: 1.5rem;
 }
 
-._6x span {
+.x span {
     display: block;
     transform: rotate(-45deg);
+    padding-left: 0.23em;
 }
 
-._7, ._7x {
+._7 {
     background-color: #B933AD;
     color: #ffffff;
-}
-
-._7x {
-    border-radius: 0;
-    transform: rotate(45deg);
-}
-
-._7x span {
-    display: block;
-    transform: rotate(-45deg);
 }
 
 ._sir {
