@@ -47,8 +47,8 @@
                             </select>
                         </div>
                         <div class="vertical-buttons">
-                            <button onclick="addStations()">&gt;</button>
-                            <button onclick="removeStations()">&lt;</button>
+                            <button onclick="moveBikeStations('station-list','selected-stations', false, false)">&gt;</button>
+                            <button onclick="moveBikeStations('selected-stations','station-list', true, true)">&lt;</button>
                         </div>
                         <div>
                             <select id="selected-stations" multiple>
@@ -84,7 +84,7 @@
         
             
                 <input class="secondary" type="button" value="Cancel" onclick="window.location = 'index.html'">
-                <input class="primary" type="button" value="Save" onclick="saveLatLon()">
+                <input class="primary" type="button" value="Save" onclick="saveForm()">
             </form>
 
             <div>

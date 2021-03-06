@@ -33,9 +33,287 @@ var LAST_PAGE_RELOAD = ""
 // User facing text
 const ERR_CURRENT_CONDITIONS_NOT_AVAILABLE = "Current conditions not available ¯\\_(ツ)_/¯"
 const ERR_FORECAST_NOT_AVAILABLE = "Forecast not available ¯\\_(ツ)_/¯"
-const ERR_NO_LOCAL_STORAGE = "It appears that this browser doesn't support local storage, or it isn't enabled."
+const ERR_NO_LOCAL_STORAGE = "This app requires local storage. But, it appears that it is not supported or enabled in this browser. Sorry."
 const ERR_NO_BIKE_STATIONS_SET = "No bike stations setup. Choose at least one station to see status."
 const ERR_NO_SUBWAY_INFO_SET = "No subway information setup. Enter an API key and station information in settings."
+
+/**
+* The functions below are somewhat organized by their common purpose as follows:
+* 1) Settings
+* 2) Weather
+* 3) Bikes
+* 4) Subways
+* 5) Overall display and update
+*/
+
+/**
+ * 1) Settings
+ */
+
+/** 
+ * Saves all form data to local storage
+ */
+function saveForm() {
+    const latitude = document.getElementById("lat").value
+    const longitude = document.getElementById("lon").value
+    var office = ""
+    var gridX = ""
+    var gridY = ""
+    var stationIdentifier = ""
+
+    // Need to query NWS to get the weather point information
+    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then(points => {
+        office = points.properties.cwa
+        gridX = points.properties.gridX
+        gridY = points.properties.gridY
+        var checkedStation = document.querySelector("input[name='stationId']:checked")
+        stationIdentifier = checkedStation ? checkedStation.value : ''
+
+        localStorage.setItem("stationName", stationIdentifier)
+        localStorage.setItem("coordinates", `${office}/${gridX},${gridY}`)
+        localStorage.setItem("lat", latitude)
+        localStorage.setItem("lon", longitude)
+    })
+    .then(() => {
+        // Save the bike information
+        var bikeStationIds = []
+
+        for (let station of document.getElementById("selected-stations").options) {
+            bikeStationIds.push(station.value)
+        }
+
+        localStorage.setItem("bikeStations", JSON.stringify(bikeStationIds))
+        localStorage.setItem("showBikes", document.getElementById("show-bikes").checked)
+            
+        })
+    .then(() => {
+        // Saving all subway form data so we can repopulate
+        localStorage.setItem("subwayBorough", document.getElementById("subway-boroughs").value)
+        localStorage.setItem("subwayLine", document.getElementById("subway-lines").value)
+        localStorage.setItem("subwayStation", document.getElementById("subway-stations").value)
+        localStorage.setItem("subwayApiKey", document.getElementById("subway-api-key").value)
+    })
+    .then(() => {window.location = "index.html"})    
+}
+
+/** 
+ * Create a list of stations for a given lat/lon in the settings form
+ * @param {Number} latitude - Latitude to lookup
+ * @param {Number} longitude - Longitude to lookup
+ * @param {Number} [selectedStationId = null] - Optional station to select in the form
+ */
+function generateStationList(latitude, longitude, selectedStationId = null) {
+    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then(points => {
+        fetch(points.properties.observationStations)
+        .then(handleFetchErrors)
+        .then(response => {
+            return response.json()
+        })
+        .then(stations => {
+            document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
+            // Just list the 5 closest stations (they seem to be in order of distance)
+            for (let i = 0; i < 5; i++) {
+                var stationId = stations.features[i].properties.stationIdentifier
+                var stationName = stations.features[i].properties.name
+                var checked = ""
+                
+                // If there's no selection stationId, just select the first one
+                if (selectedStationId == null && i == 0) {
+                    checked = "checked"
+                } else if (selectedStationId == stationId) {
+                    checked = "checked"
+                }
+
+                var radioButton = "<div>"
+                radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
+                radioButton += `<label for="${stationId}">${stationName}</label>`
+                radioButton += "</div>"
+                document.getElementById("station-radio-group").innerHTML += radioButton
+            }
+        })
+    })
+}
+
+/** 
+ * Return lat/lon in an array based on user's location
+ */
+function getLatLon() {
+    return new Promise( (resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(position => {
+            resolve([position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4)])
+        }, (error) => { reject(error) } )
+    })
+}
+
+/** 
+ * Populates the settings form with weather location and station data
+ */
+function getLocation() {
+    getLatLon()
+        .then(latLon => {
+            document.getElementById("lat").value = latLon[0]
+            document.getElementById("lon").value = latLon[1]
+            generateStationList(latLon[0], latLon[1])
+        })
+        .catch(error => {
+            console.error(error.message)
+        })
+}
+
+/** 
+ * Populate the settings form from local storage
+ */
+function loadFormFromLocalStorage() {
+    // Load weather information
+    var lat = localStorage.getItem("lat")
+    var lon = localStorage.getItem("lon")
+    var stationName = localStorage.getItem("stationName")
+    var time = Date.now()
+
+    document.getElementById("lat").value = lat
+    document.getElementById("lon").value = lon
+    generateStationList(lat, lon, stationName)
+
+    // Load the Bike information
+    BIKE_STATION_LIST = []
+    fetch( BIKE_STATION_INFO_URL ) 
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then(json => {
+        json.data.stations.forEach(station => {
+            BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
+        });
+
+        sortObject(BIKE_STATION_LIST, "name")
+        populateSelectElement("station-list", BIKE_STATION_LIST, "id", "name")
+        getStoredBikeStations()
+        populateSelectElement("selected-stations", BIKE_SELECTED_STATIONS, "id", "name")
+
+        // Remove those options from the station list
+        for (let station of document.getElementById("station-list").options) {
+            if (BIKE_SELECTED_STATIONS.flat().includes(station.value)) {
+                document.getElementById("station-list").removeChild(station)
+            }
+        }
+
+        // Set the show bikes checkbox
+        document.getElementById("show-bikes").checked = localStorage.getItem("showBikes") == "true" ? true : false
+    })
+    .catch( (error) => {
+        console.log(error)
+    })
+
+    // Load the Subway information
+    document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
+    document.getElementById("subway-boroughs").value = localStorage.getItem("subwayBorough")
+    populateLinesForBorough(localStorage.getItem("subwayBorough"))
+    document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
+    populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
+    document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
+}
+
+/** 
+ * Moves bike stations from one list to another in the twin list picker
+ * @param {String} fromElementId - The ID of the select list to move the items from
+ * @param {String} toElementId - The ID of the select list to move the items to
+ * @param {Boolean} [sortToList = false] - If true, the to list will be re-sorted alphabetically
+ * @param {Boolean} [retainSelection = true] - If true, the selection state of the moved options will be kept
+ */
+function moveBikeStations(fromElementId, toElementId, sortToList = false, retainSelection = true) {
+    var from_list = document.getElementById(fromElementId) 
+    var to_list =  document.getElementById(toElementId)
+    var selectedItems = []
+
+    // Moving is a two step process, trying to move directly from the collection doesn't work when there are multiple items.
+    for (let item of from_list.selectedOptions) {
+        selectedItems.push(item)
+    }
+
+    selectedItems.forEach(item => {
+        to_list.options[to_list.options.length] = from_list.removeChild(from_list.options[item.index])
+        to_list.options[to_list.options.length - 1].selected = retainSelection
+    })
+
+    if (sortToList == true) {
+        sortSelectList(to_list)
+    }
+}
+
+/**
+ * 2) Weather
+ */
+
+/** 
+ * Where the magic happens, for the weather. Updates the display.
+ */
+function updateWeather() {
+    // If the refresh time has lapsed, refresh the data
+    if ( (Date.now() - WEATHER_LAST_UPDATE_TIME) > (WEATHER_UPDATE_INTERVAL_SECONDS * 60 * 1000)) {
+
+        // Check to see if local storage is available at all
+        if (storageAvailable("localStorage") == false) {
+            alert(ERR_NO_LOCAL_STORAGE)
+            return false
+        }
+
+        // Redirect to the settings page if station and coordinates don't exist
+        if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
+            window.location = "settings.html"
+        }
+
+        getCurrentConditions().then( (conditions) => { 
+            document.querySelector("#temperature > div.inner > p.big-number").innerHTML = conditions.temperature
+            document.querySelector("#temperature > div.inner > p.big-label").innerHTML = conditions.conditions
+            document.querySelector("#wind > div.inner > p.big-number").innerHTML = conditions.windSpeed
+    
+            if (conditions.windDirection == null) {
+                document.querySelector("#wind-arrow").classList.add("hide")
+            } else {
+                document.querySelector("#wind-arrow").style.transform = "rotate(" + conditions.windDirection + "deg)"
+                document.querySelector("#wind-arrow").classList.remove("hide")
+            }
+    
+            if (conditions.relativeHumidity == null) {
+                document.querySelector("#humidity").classList.add("hide")
+            } else {
+                document.querySelector("#humidity").style.strokeDashoffset = mapRelativeHumidity(conditions.relativeHumidity, 314)
+                document.querySelector("#humidity").classList.remove("hide")
+            }  
+    
+        }).catch( (error) => {
+            document.querySelector("#temperature > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
+            document.querySelector("#wind > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
+            console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
+        })
+    
+        getForecast().then( (forecast) => {
+            document.querySelector("#forecast > #f1-title").innerHTML = forecast[0].name
+            document.querySelector("#forecast > #f1").innerHTML = forecast[0].forecast
+            document.querySelector("#forecast > #f2-title").innerHTML = forecast[1].name
+            document.querySelector("#forecast > #f2").innerHTML = forecast[1].forecast
+            document.querySelector("#forecast > #f3-title").innerHTML = forecast[2].name
+            document.querySelector("#forecast > #f3").innerHTML = forecast[2].forecast
+        }).catch( (error) => {
+            document.querySelector("#forecast").innerHTML = `<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`
+            console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
+        })
+        
+        WEATHER_LAST_UPDATE_TIME = Date.now()
+        updateTimerDisplay("w")
+    }
+}
 
 /** 
  * Converts Celsius to Fahrenheit 
@@ -147,44 +425,6 @@ function getForecast() {
     })
 }
 
-/**
- * Saves location data to local storage. If coordinates or a station name are being set, it validates the URL
- * @param {String} dataPoint - The user setting name to store
- * @param {String} value - The value of the user setting to store
- */
-function setUserLocationData(dataPoint, value) {
-    // TODO: This function is kind of funky, refactor
-    return new Promise( (resolve, reject) => {
-        var name = ""
-        
-        switch (dataPoint) {
-            case "stationName":
-                name =  "current_conditions"
-                break
-            case "coordinates":
-                name = "forecast"
-                break
-            case "lat":
-                name = "lat"
-                break
-            case "lon":
-                name = "lon"
-                break
-            default:
-                return reject("Invalid Data Point")
-        }
-
-        if (name == "lat" || name == "lon") {
-            localStorage.setItem(dataPoint, value)
-            resolve("Success")
-        } else {
-            validateApiEndpoint(name, value)
-            .then( () => localStorage.setItem(dataPoint, value) )
-            .then( () => resolve("Success"))
-            .catch( (error) => reject(error) )
-        }
-    })   
-}
 
 /**
  * Retrieves location data from local storage
@@ -198,37 +438,6 @@ function getUserLocationData(dataPoint) {
         return returnData
     }
 }
-
-/**
- * Validates an endpoint to ensure that it works
- * @param {String} name - The name of the endpoint
- * @param {String} variable - The user value to validate
- */
-function validateApiEndpoint(name, variable) {
-    return new Promise( (resolve, reject) => {
-        var endPoint = ""
-        
-        switch (name) {
-            case "current_conditions":
-                endPoint = WEATHER_CURRENT_CONDITION_ENDPOINT.replace("<stationName>", variable)
-                break
-            case "forecast":
-                endPoint = WEATHER_FORECAST_ENDPOINT.replace("<coordinates>", variable)
-                break
-            default:
-                endPoint = "fail"
-        }
-
-        fetch(endPoint)
-        .then(handleFetchErrors)
-        .then( () => {
-            resolve("Valid Endpoint")
-        })
-        .catch( () => {
-            reject("Invalid Endpoint")
-        })
-    })
-} 
 
 /**
  * Returns a full endpoint URL given the name
@@ -245,407 +454,9 @@ function getApiEndpoint(name) {
     }
 }
 
-/** 
- * Check if local storage is available 
- * @param {string} type - Can be localStorage or sessionStorage.
- * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API} for source
+/**
+ * 3) Bikes
  */
-function storageAvailable(type) {
-    var storage;
-    try {
-        storage = window[type]
-        var x = '__storage_test__';
-        storage.setItem(x, x)
-        storage.removeItem(x)
-        return true
-    }
-    catch(e) {
-        return e instanceof DOMException && (
-            // everything except Firefox
-            e.code === 22 ||
-            // Firefox
-            e.code === 1014 ||
-            // test name field too, because code might not be present
-            // everything except Firefox
-            e.name === 'QuotaExceededError' ||
-            // Firefox
-            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
-            // acknowledge QuotaExceededError only if there's something already stored
-            (storage && storage.length !== 0)
-    }
-}
-
-/** 
- * Sets all location data based on the lat/lon in the settings form
- */
-function saveLatLon() {
-    const latitude = document.getElementById("lat").value
-    const longitude = document.getElementById("lon").value
-
-    var forecastURL = ""
-    var observationStationsURL = ""
-    var office = ""
-    var gridX = ""
-    var gridY = ""
-    var stationIdentifier = ""
-
-    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
-    .then(handleFetchErrors)
-    .then(response => {
-        return response.json()
-    })
-    .then( (points) => {
-        forecastURL = points.properties.forecast
-        observationStationsURL = points.properties.observationStations
-        office = points.properties.cwa
-        gridX = points.properties.gridX
-        gridY = points.properties.gridY
-        var checkedStation = document.querySelector("input[name='stationId']:checked")
-        stationIdentifier = checkedStation ? checkedStation.value : ''
-
-        Promise.all([
-            setUserLocationData("stationName", stationIdentifier),
-            setUserLocationData("coordinates", `${office}/${gridX},${gridY}`),
-            setUserLocationData("lat", latitude),
-            setUserLocationData("lon", longitude)
-        ]).then(() => {window.location = "index.html"})
-    })
-    
-    // TODO: This is such a hack, clean this mess up!
-    saveStations()
-    saveSubwayStation()
-}
-
-/** 
- * Create a list of stations for a given lat/lon in the settings form
- * @param {Number} latitude - Latitude to lookup
- * @param {Number} longitude - Longitude to lookup
- * @param {Number} selectedStationId - Optional station to select in the form
- */
-function generateStationList(latitude, longitude, selectedStationId = null) {
-    fetch(`https://api.weather.gov/points/${latitude},${longitude}`)
-    .then(handleFetchErrors)
-    .then(response => {
-        return response.json()
-    })
-    .then( (points) => {
-        fetch(points.properties.observationStations)
-        .then(handleFetchErrors)
-        .then(response => {
-            return response.json()
-        })
-        .then( (stations) => {
-            document.getElementById("station-radio-group").innerHTML = "<p>Choose a local weather station:</p>"
-            for (let i = 0; i < 5; i++) {
-                var stationId = stations.features[i].properties.stationIdentifier
-                var stationName = stations.features[i].properties.name
-                var checked = ""
-                
-                if (!selectedStationId == null) {
-                    if (i == 0 ) {
-                        checked = "checked"
-                    }
-                } else {
-                    if (selectedStationId == stationId) {
-                        checked = "checked"
-                    } 
-                }
-
-                
-
-                var radioButton = "<div>"
-                radioButton += `<input type="radio" id="${stationId}" name="stationId" value="${stationId}" ${checked} >`
-                radioButton += `<label for="${stationId}">${stationName}</label>`
-                radioButton += "</div>"
-                document.getElementById("station-radio-group").innerHTML += radioButton
-            }
-        })
-    })
-}
-
-/** 
- * Return lat/lon based on user's location
- */
-function getLatLon() {
-    return new Promise( (resolve, reject) => {
-        navigator.geolocation.getCurrentPosition( (pos) => {
-            resolve([pos.coords.latitude.toFixed(4), pos.coords.longitude.toFixed(4)])
-        }, (error) => { reject(error)} )
-    })
-}
-
-/** 
- * Kicks off the population of the settings form with user location data
- */
-function getLocation() {
-    getLatLon()
-        .then((latLon) => populateSettingsForm(latLon[0], latLon[1]))
-        .then((latLon) => generateStationList(latLon[0], latLon[1]))
-        .catch((error) => console.log(error.message))
-}
-
-/** 
- * Populates the settings form with location data
- * @param {Number} latitude - Latitude to populate
- * @param {Number} longitude - Longitude to populate
- */
-function populateSettingsForm(lat, lon) {
-    document.getElementById("lat").value = lat
-    document.getElementById("lon").value = lon
-    return [lat,lon]
-}
-
-/** 
- * Populates the settings form
- */
-function loadFormFromLocalStorage() {
-    if (getUserLocationData("lat") && getUserLocationData("lon")) {
-        populateSettingsForm(
-            getUserLocationData("lat"),
-            getUserLocationData("lon")
-        )
-        generateStationList(
-            getUserLocationData("lat"),
-            getUserLocationData("lon"),
-            getUserLocationData("stationName")
-        )
-    }
-
-    // Load the bike form
-    loadBikeSettingsForm()
-
-    // Load the subway form
-    loadSubwaySettingsForm()
-}
-
-/** 
- * Populates the bike part of the settings form
- */
-// TODO: This needs to be cleaned up and made part of the main settings form loader
-function loadBikeSettingsForm() {
-    var time = Date.now()
-    BIKE_STATION_LIST = []
-    return new Promise( (resolve, reject) => {
-        fetch( BIKE_STATION_INFO_URL ) 
-        .then(handleFetchErrors)
-        .then(response => {
-            return response.json()
-        })
-        .then(json => {
-            
-            json.data.stations.forEach(station => {
-                BIKE_STATION_LIST.push( {name: station.name, id: station.station_id} )
-            });
-
-            // Sort here
-            // TODO: Need this on the settings page, was removed on main.js
-            BIKE_STATION_LIST.sort(function (a, b) {
-                var nameA = a.name.toUpperCase()
-                var nameB = b.name.toUpperCase()
-                if ( nameA < nameB ) {
-                    return -1
-                }
-                if ( nameA > nameB ) {
-                    return 1
-                }
-
-                return 0
-            })
-
-            // Add an option to the selected stations list for each of the stations
-            BIKE_STATION_LIST.forEach(station => {
-                var opt = document.createElement("option")
-                opt.value = station.id
-                opt.text = station.name
-                document.getElementById("station-list").add(opt)
-            })
-
-
-
-            // Load the selected stations
-            getStations()
-
-            BIKE_SELECTED_STATIONS.forEach(station => {
-                var opt = document.createElement("option")
-                opt.value = station[0]
-                opt.text = station[1]
-                document.getElementById("selected-stations").add(opt)
-            })
-
-            
-
-            // Remove those options from the station list
-            for (let station of document.getElementById("station-list").options) {
-                if (BIKE_SELECTED_STATIONS.flat().includes(station.value)) {
-                    document.getElementById("station-list").removeChild(station)
-                }
-            }
-
-            // Set the show bikes checkbox
-            if (localStorage.getItem("showBikes") == "true") {
-                document.getElementById("show-bikes").checked = true
-            } else {
-                document.getElementById("show-bikes").checked = false
-            }
-            
-
-        })
-        .catch( (error) => {
-            console.log(error)
-        })
-    })
-}
-
-/** 
- * Populates the subway part of the settings form
- */
-// TODO: This needs to be cleaned up and made part of the main settings form loader
-function loadSubwaySettingsForm() {
-    document.getElementById("subway-api-key").value = localStorage.getItem("subwayApiKey")
-    document.getElementById("subway-boroughs").value = localStorage.getItem("subwayBorough")
-    populateLinesForBorough(localStorage.getItem("subwayBorough"))
-    document.getElementById("subway-lines").value = localStorage.getItem("subwayLine")
-    populateStationsForBoroughLine(localStorage.getItem("subwayBorough"), localStorage.getItem("subwayLine"))
-    document.getElementById("subway-stations").value = localStorage.getItem("subwayStation")
-}
-
-/** 
- * Adds stations to selected stations form and removes them from the main list
- */
-function addStations() {
-    var station_list = document.getElementById("station-list") 
-    var selected_stations =  document.getElementById("selected-stations")
-    var myItems = []
-
-    // Collect items to move
-    for (let item of station_list.selectedOptions) {
-        myItems.push(item)
-    }
-
-    // Move items
-    myItems.forEach(item => {
-        selected_stations.options[selected_stations.options.length] = station_list.removeChild(station_list.options[item.index])
-    })
-}
-
-/** 
- * Removes stations from the selected stations form and adds them to the main list
- */
-// TODO: This just adds them back to the bottom of the list, maybe a resort is in order
-function removeStations() {
-    var station_list = document.getElementById("station-list") 
-    var selected_stations =  document.getElementById("selected-stations")
-    var myItems = []
-
-    // Collect items to move
-    for (let item of selected_stations.selectedOptions) {
-        myItems.push(item)
-    }
-
-    // Move items
-    myItems.forEach(item => {
-        station_list.options[station_list.options.length] = selected_stations.removeChild(selected_stations.options[item.index])
-    })
-}
-
-/** 
- * Saves selected stations to local storage
- */
-function saveStations() {
-    var stationIds = []
-    var stationIdsJSON = ""
-
-    // Put each of the list's values in an array
-    for (let station of document.getElementById("selected-stations").options) {
-        stationIds.push(station.value)
-    }
-    
-    // Create a JSON string of the array
-    stationIdsJSON = JSON.stringify(stationIds)
-
-    // Save the JSON to local storage
-    localStorage.setItem("bikeStations", stationIdsJSON)
-
-    // Save the show bikes option
-    if (document.getElementById("show-bikes").checked) {
-        localStorage.setItem("showBikes", "true")
-    } else {
-        localStorage.setItem("showBikes", "false")
-    }
-}
-
-/** 
- * Saves selected subway station to local storage
- */
-function saveSubwayStation() {
-    // Saving everything so we can repopulate the form
-    localStorage.setItem("subwayBorough", document.getElementById("subway-boroughs").value)
-    localStorage.setItem("subwayLine", document.getElementById("subway-lines").value)
-    localStorage.setItem("subwayStation", document.getElementById("subway-stations").value)
-    localStorage.setItem("subwayApiKey", document.getElementById("subway-api-key").value)
-}
-
-/** 
- * Where the magic happens, for the weather. Updates the display.
- */
-function updateWeather() {
-    // If the refresh time has lapsed, refresh the data
-    if ( (Date.now() - WEATHER_LAST_UPDATE_TIME) > (WEATHER_UPDATE_INTERVAL_SECONDS * 60 * 1000)) {
-
-        // Check to see if local storage is available at all
-        if (storageAvailable("localStorage") == false) {
-            alert(ERR_NO_LOCAL_STORAGE)
-            return false
-        }
-
-        // Redirect to the settings page if station and coordinates don't exist
-        if (!getUserLocationData("stationName") || !getUserLocationData("coordinates")) {
-            window.location = "settings.html"
-        }
-
-        getCurrentConditions().then( (conditions) => { 
-            document.querySelector("#temperature > div.inner > p.big-number").innerHTML = conditions.temperature
-            document.querySelector("#temperature > div.inner > p.big-label").innerHTML = conditions.conditions
-            document.querySelector("#wind > div.inner > p.big-number").innerHTML = conditions.windSpeed
-    
-            if (conditions.windDirection == null) {
-                document.querySelector("#wind-arrow").classList.add("hide")
-            } else {
-                document.querySelector("#wind-arrow").style.transform = "rotate(" + conditions.windDirection + "deg)"
-                document.querySelector("#wind-arrow").classList.remove("hide")
-            }
-    
-            if (conditions.relativeHumidity == null) {
-                document.querySelector("#humidity").classList.add("hide")
-            } else {
-                document.querySelector("#humidity").style.strokeDashoffset = mapRelativeHumidity(conditions.relativeHumidity, 314)
-                document.querySelector("#humidity").classList.remove("hide")
-            }  
-    
-        }).catch( (error) => {
-            document.querySelector("#temperature > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
-            document.querySelector("#wind > .inner").innerHTML = `<p class="error">${ERR_CURRENT_CONDITIONS_NOT_AVAILABLE}</p>`
-            console.log("[Current Conditions Error]: " + error.textStatus + ": " + error.error)
-        })
-    
-        getForecast().then( (forecast) => {
-            document.querySelector("#forecast > #f1-title").innerHTML = forecast[0].name
-            document.querySelector("#forecast > #f1").innerHTML = forecast[0].forecast
-            document.querySelector("#forecast > #f2-title").innerHTML = forecast[1].name
-            document.querySelector("#forecast > #f2").innerHTML = forecast[1].forecast
-            document.querySelector("#forecast > #f3-title").innerHTML = forecast[2].name
-            document.querySelector("#forecast > #f3").innerHTML = forecast[2].forecast
-        }).catch( (error) => {
-            document.querySelector("#forecast").innerHTML = `<p class="error">${ERR_FORECAST_NOT_AVAILABLE}</p>`
-            console.log("[Forecast Error]: " + error.textStatus + ": " + error.error)
-        })
-        
-        WEATHER_LAST_UPDATE_TIME = Date.now()
-        updateTimerDisplay("w")
-    }
-}
-
-// BIKE CODE BELOW
 
 /** 
  * Gets the full list of Bike Stations (IDs and Names)
@@ -678,22 +489,13 @@ function getBikeStationList() {
 /** 
  * Gets the selected list of Bike Stations
  */
-function getStations() {
-    var stationIds = []
-    var stationIdsJSON = ""
+function getStoredBikeStations() {
     BIKE_SELECTED_STATIONS = []
 
-    // Get JSON from local storage
-    stationIdsJSON = localStorage.getItem("bikeStations")
-
-    // Convert to an array
-    stationIds = JSON.parse(stationIdsJSON)
-
     // Get the name for each of the IDs
-    stationIds.forEach(id => {
-        BIKE_SELECTED_STATIONS.push([id, BIKE_STATION_LIST.find(station => station.id == id).name]) 
+    JSON.parse(localStorage.getItem("bikeStations")).forEach(id => {
+        BIKE_SELECTED_STATIONS.push( {name: BIKE_STATION_LIST.find(station => station.id == id).name, id: id} )
     })
-
 }
 
 /** 
@@ -710,9 +512,9 @@ function getStationInformation() {
             BIKE_SELECTED_STATIONS.forEach(selectedStation => {
                 // For each station, we're going to create a div if it doesn't exist. If it does, we'll update it
                 var returnVal = ""
-                var station = json.data.stations.find(station => station.station_id == selectedStation[0])
+                var station = json.data.stations.find(station => station.station_id == selectedStation.id)
 
-                returnVal += `<p class="bike-station-name">${selectedStation[1]}</p>`
+                returnVal += `<p class="bike-station-name">${selectedStation.name}</p>`
                 returnVal += '<div class="bike-number">'
                 returnVal += `<p class="available-bikes">${station.num_bikes_available - station.num_ebikes_available}</p>`
                 returnVal += '</div>'
@@ -747,7 +549,7 @@ function updateBikes() {
 
     // Updates the display, if conditions are met
     if (BIKE_STATIONS_LOADED && (Date.now() - BIKE_LAST_UPDATE_TIME) > (BIKE_UPDATE_INTERVAL_SECONDS * 1000)) {
-        getStations()
+        getStoredBikeStations()
         getStationInformation()
         BIKE_LAST_UPDATE_TIME = Date.now()
         updateTimerDisplay("b")
@@ -755,8 +557,16 @@ function updateBikes() {
 
 }
 
+/**
+ * 4) Subways
+ * Hey, no code here! That's because it's in mta-arrivals.js. Maybe the others should be like that too.
+ * Or, maybe the mta-arrivals.js code should be here. Decisions, decisions...
+ */
 
-// OVERALL UPDATE CODE BELOW -- It's all about the timing
+
+/**
+ * 5) Overall Display and Update
+ */
 
 /** 
  * Kicks off the display update for everything. Will reload from server once in a while
@@ -828,7 +638,6 @@ function ready(fn) {
         document.addEventListener('DOMContentLoaded', fn);
     }
 }
-
 
 /** 
  * Kicks off everything
