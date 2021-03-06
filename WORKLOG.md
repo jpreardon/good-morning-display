@@ -6,6 +6,12 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-03-05
+
+Took a look at the settings code. It looks pretty good. I think I can call that little refactoring "done" for now.
+
+- Add a few semis to the utils.js. #28
+
 ### 2021-03-04
 
 - Add load bike information into main form load function. I'm not really sure if this is an improvement or not. #28

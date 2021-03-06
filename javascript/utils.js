@@ -34,38 +34,38 @@ function populateSelectElement(elementID, idNameObject, valueLabel, textLabel) {
  */
 function sortObject(obj, key) {
     obj.sort(function (a, b) {
-        var keyA = a[key].toUpperCase()
-        var keyB = b[key].toUpperCase()
+        var keyA = a[key].toUpperCase();
+        var keyB = b[key].toUpperCase();
         if ( keyA < keyB ) {
-            return -1
+            return -1;
         }
         if ( keyA > keyB ) {
-            return 1
+            return 1;
         }
-        return 0
-    })
-    return obj
-}
+        return 0;
+    });
+    return obj;
+};
 
 /** 
  * Sorts a given select list in place, alphabetically. 
  * @param {Select Element} selectList - The select list to be sorted
  */
 function sortSelectList(selectList) {
-    var options = []
+    var options = [];
 
     for (let option of selectList.options) {
-        options.push({text: option.text, selected: option.selected, optionObject: option})
-    }
+        options.push({text: option.text, selected: option.selected, optionObject: option});
+    };
     
-    sortObject(options, "text")
+    sortObject(options, "text");
 
     for (var i = 0; i < selectList.length; i++) {
-        selectList.options[i] = options[i].optionObject
-        selectList.options[i].selected = options[i].selected
-    }
+        selectList.options[i] = options[i].optionObject;
+        selectList.options[i].selected = options[i].selected;
+    };
 
-}
+};
 
 /** 
  * Check if local storage is available 
@@ -75,11 +75,11 @@ function sortSelectList(selectList) {
 function storageAvailable(type) {
     var storage;
     try {
-        storage = window[type]
+        storage = window[type];
         var x = '__storage_test__';
-        storage.setItem(x, x)
-        storage.removeItem(x)
-        return true
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
     }
     catch(e) {
         return e instanceof DOMException && (
@@ -94,5 +94,5 @@ function storageAvailable(type) {
             e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
             // acknowledge QuotaExceededError only if there's something already stored
             (storage && storage.length !== 0)
-    }
-}
+    };
+};
