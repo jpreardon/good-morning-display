@@ -324,6 +324,17 @@ h1 {
     color: red;
 }
 
+.delays::after {
+    content: url(../images/hourglass.svg);
+    margin-left: 0.25rem;
+}
+
+.planned-work::after {
+    content: url(../images/construction.svg);
+    margin-left: 0.25rem;
+}
+
+
 /* MTA Line decoration below */
 
 .line {

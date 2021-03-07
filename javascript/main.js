@@ -601,11 +601,17 @@ function updateArrivals(gtfsStopId) {
         } else {
             getArrivalsForGtfsStopId(gtfsStopId)
             .then(arrivals => {
-                // Fill it up the HTML
+                // HTML fun time!
                 var html = ""
                 Object.keys(arrivals).forEach(direction => {
                     if (arrivals[direction].label !== "") {
-                        html += `<p>${arrivals[direction].label}</p>`
+                        // Only populate the alert icons when there are alerts
+                        var alertIconHTML = ""
+                        if (arrivals[direction].alerts.length > 0) {
+                            if (arrivals[direction].alerts.includes("Delays")) alertIconHTML += '<span class="delays"></span>'
+                            if (arrivals[direction].alerts.includes("Planned Work")) alertIconHTML += '<span class="planned-work"></span>'
+                        }
+                        html += `<p class="direction">${arrivals[direction].label} ${alertIconHTML}</p>`
                         if (arrivals[direction].trains.length == 0) {
                             html += `<p class="error">${ERR_NO_TRAINS}</p>`
                         }
@@ -671,7 +677,6 @@ ready( () => {
     
             LAST_PAGE_RELOAD = Date.now()
             window.setInterval(updateDisplay, 1000)
-
 
         })
         .catch(error => {

@@ -1,5 +1,6 @@
 "use strict"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
+const MTA_ALERT_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-status.json"
 var stations
 var protoBuffRoot
 
@@ -22,6 +23,46 @@ function initMtaArrivals() {
                 resolve()
             })  
         }) 
+    })
+}
+
+/**
+ * Returns alerts as an object with north and south directions for all lines at a given stop
+ * @param {*} gtfsStopId - GTFS Stop ID of the station in question
+ */
+function getAlerts(gtfsStopId) {
+    var lines = getLinesForGtfsStopId(gtfsStopId)
+
+    return fetch(MTA_ALERT_FEED_URL, { headers: { 'x-api-key': MTA_API_KEY } })
+    .then(handleFetchErrors)
+    .then(response => {
+        return response.json()
+    })
+    .then(json => {
+        var routeDetails = json.routeDetails
+        var serviceAlerts = new Object()
+
+        serviceAlerts.north = {summaries:[]}
+        serviceAlerts.south = {summaries:[]}
+
+        lines.forEach(line => {
+            var routeStatusDetails = routeDetails.find(detail => detail.route == line).statusDetails
+            routeStatusDetails.forEach(statusDetail => {
+                if (statusDetail.statusSummary == "Planned Work" || statusDetail.statusSummary == "Delays") {
+                    if (statusDetail.direction == 0) {
+                        if (!serviceAlerts["north"].summaries.includes(statusDetail.statusSummary)) {
+                            serviceAlerts.north.summaries.push(statusDetail.statusSummary)
+                        }
+                    } else if (statusDetail.direction == 1) {
+                        if (!serviceAlerts["south"].summaries.includes(statusDetail.statusSummary)) {
+                            serviceAlerts.south.summaries.push(statusDetail.statusSummary)
+                        }
+                    }
+                } 
+            })
+            
+        })
+        return serviceAlerts
     })
 }
 
@@ -124,6 +165,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
     var allArrivals = []
     var feedPromises = []
 
+
     getFeedUrlsForGtfsStopId(gtfsStopId).forEach(url => {
         feedPromises.push(
             fetch(url, { headers: { 'x-api-key': MTA_API_KEY } })
@@ -144,27 +186,30 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
     return new Promise ( (resolve, reject) => {
         Promise.all(feedPromises)
         .then(() => {
-                // Stop may be in more than one feed, we merge them together here
-                allArrivals.sort((a, b) => {
-                    return Number(a.seconds) - Number(b.seconds)
-                })
-        
-                var arrivalsFormatted = new Object()
-                arrivalsFormatted.north = {label:getDirectionLabel(gtfsStopId, "N"), trains:[]}
-                arrivalsFormatted.south = {label:getDirectionLabel(gtfsStopId, "S"), trains:[]}
-                allArrivals.forEach(arrival => {
-                    if (arrival.direction == "N") {
-                        arrivalsFormatted.north.trains.push(arrival)
-                    } else {
-                        arrivalsFormatted.south.trains.push(arrival)
-                    }
-                })
-                
-                // Only show 3 arrivals in each direction
-                arrivalsFormatted.north.trains.splice(3)
-                arrivalsFormatted.south.trains.splice(3)
-                
-                resolve(arrivalsFormatted)
+            return getAlerts(gtfsStopId)
+        })
+        .then(alerts => {
+            // Arrival times will be all jumbled if there are multiple feeds, sort it out here
+            allArrivals.sort((a, b) => {
+                return Number(a.seconds) - Number(b.seconds)
+            })
+    
+            var arrivalsFormatted = new Object()
+            arrivalsFormatted.north = {label:getDirectionLabel(gtfsStopId, "N"), trains:[], alerts:alerts.north.summaries}
+            arrivalsFormatted.south = {label:getDirectionLabel(gtfsStopId, "S"), trains:[], alerts:alerts.south.summaries}
+            allArrivals.forEach(arrival => {
+                if (arrival.direction == "N") {
+                    arrivalsFormatted.north.trains.push(arrival)
+                } else {
+                    arrivalsFormatted.south.trains.push(arrival)
+                }
+            })
+            
+            // Only show 3 arrivals in each direction
+            arrivalsFormatted.north.trains.splice(3)
+            arrivalsFormatted.south.trains.splice(3)
+            
+            resolve(arrivalsFormatted)
         })
         .catch(error => {
             reject(error)
