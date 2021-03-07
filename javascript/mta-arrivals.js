@@ -233,8 +233,10 @@ function populateLinesForBorough(borough) {
     lines.forEach(line => {
         selectElement.innerHTML += `<option value="${line}">${line}</option>`
     })
+    
     // Load up the stations too
     populateStationsForBoroughLine(borough, selectElement.value)
+    sortSelectList(selectElement)
 }
 
 function populateStationsForBoroughLine(borough, line) {
@@ -245,4 +247,5 @@ function populateStationsForBoroughLine(borough, line) {
             selectElement.innerHTML += `<option value="${station.gtfs_stop_id}">${station.stop_name}</option>`
         }
     })
+    sortSelectList(selectElement)
 }

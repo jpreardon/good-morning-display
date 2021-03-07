@@ -18,6 +18,8 @@ I started looking at adding alerts last night. Here's the statuses I've seen:
 
 The last two are the only ones I care about at this point. Rather than trying to display all of the information. I think I'll just go with a small icon next to the direction label (the alerts have a direction). I hope my guess that direction "0" is North and "1" is South (I couldn't find any documentation on this). I think this is good enough for yet another "MVP"! I'll commit this and keep an eye on it this week to see how it works.
 
+Sort the subway select lists on the settings form.
+
 ### 2021-03-05
 
 Took a look at the settings code. It looks pretty good. I think I can call that little refactoring "done" for now.

@@ -59,8 +59,10 @@ function sortSelectList(selectList) {
     };
     
     sortObject(options, "text");
-
-    for (var i = 0; i < selectList.length; i++) {
+    
+    // Saw the length changing during the for loop for some reason, pulling it out here
+    var listLength = selectList.length
+    for (var i = 0; i < listLength; i++) {
         selectList.options[i] = options[i].optionObject;
         selectList.options[i].selected = options[i].selected;
     };
