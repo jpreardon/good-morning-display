@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-03-07
+
+Doing a little cleanup work today. Documenting the functions that aren't documented.
+
 ### 2021-03-06
 
 I started looking at adding alerts last night. Here's the statuses I've seen:

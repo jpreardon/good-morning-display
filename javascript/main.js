@@ -16,7 +16,7 @@ const BIKE_UPDATE_INTERVAL_SECONDS = 60
 const STATION_ID = localStorage.getItem("subwayStation") ? localStorage.getItem("subwayStation") : ""
 const MTA_API_KEY = localStorage.getItem("subwayApiKey") ? localStorage.getItem("subwayApiKey") : ""
 const STATION_JSON_PATH = "javascript/stations.json"
-const protoBufDef = "javascript/nyct-subway.proto.txt"
+const PROTOBUF_DEFINITION = "javascript/nyct-subway.proto.txt"
 const SUBWAY_UPDATE_INTERVAL_SECONDS = 30
 
 // Runtime Globals
@@ -589,6 +589,10 @@ function updateDisplay() {
     
 }
 
+/**
+ * Updates the update timer. The updater can leave their mark (optional). In practice, we set w, s, or b for weather, subway or bike.
+ * @param {String} [by = ""] 
+ */
 function updateTimerDisplay(by = "") {
     var updateTime = new Date
     document.querySelector("#update-time").innerHTML = updateTime.toLocaleTimeString('en-GB') + " " + by

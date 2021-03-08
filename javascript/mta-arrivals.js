@@ -4,6 +4,9 @@ const MTA_ALERT_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfee
 var stations
 var protoBuffRoot
 
+/**
+ * Initializes the MTA information by loading the station information and proto buffer definition
+ */
 function initMtaArrivals() {
     return fetch(STATION_JSON_PATH)
     .then(handleFetchErrors)
@@ -17,7 +20,7 @@ function initMtaArrivals() {
     .then( () => {
         // Cache an instance of this protobuffer object so it's not loaded for every request
         return new Promise ( (resolve, reject) => {
-            protobuf.load(protoBufDef, (error, root) => {
+            protobuf.load(PROTOBUF_DEFINITION, (error, root) => {
                 protoBuffRoot = root.lookupType('transit_realtime.FeedMessage')
                 if (error) reject(error)
                 resolve()
@@ -66,15 +69,30 @@ function getAlerts(gtfsStopId) {
     })
 }
 
+/**
+ * Returns the stop name for a given GTFS stop ID. 
+ * The "destination" function name is a bit of a legacy.
+ * TODO: Seems a lot like getStationName, maybe they can be combined!
+ * @param {String} gtfsStopId 
+ */
 function getDestinationName(gtfsStopId) {
     return stations.find(sta => sta.gtfs_stop_id == gtfsStopId).stop_name
 }
 
+/**
+ * Returns the stop name and lines that serve the station for a given GTFS stop ID
+ * @param {String} gtfsStopId 
+ */
 function getStationName(gtfsStopId) {
     var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
     return `${station.stop_name} - ${station.daytime_routes.join(", ")}`   
 }
 
+/**
+ * Returns the direction label (e.g. "Manhattan" or "New Lots Ave." for a given GTFS stop ID and direction
+ * @param {String} gtfsStopId 
+ * @param {String} Direction 
+ */
 function getDirectionLabel(gtfsStopId, Direction) {
     var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
     if (Direction == "N") {
@@ -84,10 +102,18 @@ function getDirectionLabel(gtfsStopId, Direction) {
     }
 }
 
+/**
+ * Returns all of the lines serving a given GTFS stop ID
+ * @param {String} gtfsStopId 
+ */
 function getLinesForGtfsStopId(gtfsStopId) {
     return stations.find(station => station.gtfs_stop_id == gtfsStopId).daytime_routes
 }
 
+/**
+ * Returns the full URL for a line's status feed
+ * @param {String} line 
+ */
 function getFeedForLine(line) {
     var feedUrl = MTA_FEED_URL 
 
@@ -112,6 +138,10 @@ function getFeedForLine(line) {
     }
 }
 
+/**
+ * Returns all feeds for a given GTFS stop ID
+ * @param {String} gtfsStopId 
+ */
 function getFeedUrlsForGtfsStopId(gtfsStopId) {
     var feeds = []
     getLinesForGtfsStopId(gtfsStopId).forEach(line => {
@@ -123,11 +153,21 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
     return feeds
 }
 
+/**
+ * Returns a decoded protobuffer feed message
+ * @param {Protobuffer} feedMsg 
+ */
 function decodeProtoBuf(feedMsg) {
     const buffer = new Uint8Array(feedMsg)
     return protoBuffRoot.decode(buffer)
 }
 
+/**
+ * Pushes arriving train information onto the given array
+ * @param {String} decodedFeed 
+ * @param {String} gtfsStopId 
+ * @param {Array} arrivalsArray 
+ */
 function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
     for (const message of decodedFeed.entity) {
         // Only look at tripUpdates
@@ -161,6 +201,10 @@ function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
     return arrivalsArray
 }
 
+/**
+ * Returns the full set of arrival information, including alerts
+ * @param {String} gtfsStopId 
+ */
 function getArrivalsForGtfsStopId(gtfsStopId) {
     var allArrivals = []
     var feedPromises = []
@@ -217,6 +261,10 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
     })
 }
 
+/**
+ * Populates the select list with lines for a given borough
+ * @param {String} borough 
+ */
 function populateLinesForBorough(borough) {
     var selectElement = document.getElementById("subway-lines")
     var lines = []
@@ -233,12 +281,18 @@ function populateLinesForBorough(borough) {
     lines.forEach(line => {
         selectElement.innerHTML += `<option value="${line}">${line}</option>`
     })
-    
+    sortSelectList(selectElement)
+
     // Load up the stations too
     populateStationsForBoroughLine(borough, selectElement.value)
-    sortSelectList(selectElement)
+    
 }
 
+/**
+ * Populates the select list with stations for a given line in a given borough
+ * @param {String} borough 
+ * @param {String} line 
+ */
 function populateStationsForBoroughLine(borough, line) {
     var selectElement = document.getElementById("subway-stations")
     selectElement.innerHTML = ""
