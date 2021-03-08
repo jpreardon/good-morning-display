@@ -634,7 +634,7 @@ function updateArrivals(gtfsStopId) {
                     }
                 })
                 
-                document.getElementById("stop-name").innerHTML = getStationName(STATION_ID)
+                document.getElementById("stop-name").innerHTML = getStationName(STATION_ID, true)
                 document.getElementById("arrivals").innerHTML = html
                 SUBWAY_LAST_UPDATE_TIME = Date.now()
                 updateTimerDisplay("s")

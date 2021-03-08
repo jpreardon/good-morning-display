@@ -1,8 +1,8 @@
 "use strict"
 const MTA_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/nyct%2F"
 const MTA_ALERT_FEED_URL = "https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-status.json"
-var stations
-var protoBuffRoot
+var STATIONS
+var PROTOBUF_ROOT
 
 /**
  * Initializes the MTA information by loading the station information and proto buffer definition
@@ -15,13 +15,13 @@ function initMtaArrivals() {
     })
     .then(json => {
         // Cache the stations information, it gets used a lot
-        stations = json
+        STATIONS = json
     })
     .then( () => {
         // Cache an instance of this protobuffer object so it's not loaded for every request
         return new Promise ( (resolve, reject) => {
             protobuf.load(PROTOBUF_DEFINITION, (error, root) => {
-                protoBuffRoot = root.lookupType('transit_realtime.FeedMessage')
+                PROTOBUF_ROOT = root.lookupType('transit_realtime.FeedMessage')
                 if (error) reject(error)
                 resolve()
             })  
@@ -70,22 +70,17 @@ function getAlerts(gtfsStopId) {
 }
 
 /**
- * Returns the stop name for a given GTFS stop ID. 
- * The "destination" function name is a bit of a legacy.
- * TODO: Seems a lot like getStationName, maybe they can be combined!
+ * Returns the stop name and, optionally, lines that serve the station for a given GTFS stop ID
  * @param {String} gtfsStopId 
+ * @param {Boolean} [showLines=true]
  */
-function getDestinationName(gtfsStopId) {
-    return stations.find(sta => sta.gtfs_stop_id == gtfsStopId).stop_name
-}
-
-/**
- * Returns the stop name and lines that serve the station for a given GTFS stop ID
- * @param {String} gtfsStopId 
- */
-function getStationName(gtfsStopId) {
-    var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
-    return `${station.stop_name} - ${station.daytime_routes.join(", ")}`   
+function getStationName(gtfsStopId, showLines = false) {
+    var station = STATIONS.find(me => me.gtfs_stop_id == gtfsStopId)
+    var stationName = station.stop_name
+    if (showLines) {
+        stationName += ` - ${station.daytime_routes.join(", ")}`
+    }
+    return stationName
 }
 
 /**
@@ -94,7 +89,7 @@ function getStationName(gtfsStopId) {
  * @param {String} Direction 
  */
 function getDirectionLabel(gtfsStopId, Direction) {
-    var station = stations.find(me => me.gtfs_stop_id == gtfsStopId)
+    var station = STATIONS.find(me => me.gtfs_stop_id == gtfsStopId)
     if (Direction == "N") {
         return station.north_direction_label
     } else {
@@ -107,7 +102,7 @@ function getDirectionLabel(gtfsStopId, Direction) {
  * @param {String} gtfsStopId 
  */
 function getLinesForGtfsStopId(gtfsStopId) {
-    return stations.find(station => station.gtfs_stop_id == gtfsStopId).daytime_routes
+    return STATIONS.find(station => station.gtfs_stop_id == gtfsStopId).daytime_routes
 }
 
 /**
@@ -159,7 +154,7 @@ function getFeedUrlsForGtfsStopId(gtfsStopId) {
  */
 function decodeProtoBuf(feedMsg) {
     const buffer = new Uint8Array(feedMsg)
-    return protoBuffRoot.decode(buffer)
+    return PROTOBUF_ROOT.decode(buffer)
 }
 
 /**
@@ -195,7 +190,7 @@ function addFeedArrivalsToArray(decodedFeed, gtfsStopId, arrivalsArray) {
             }
             var lastStop = message.tripUpdate.stopTimeUpdate[message.tripUpdate.stopTimeUpdate.length - 1]
             var lastStopId = lastStop.stopId.substr(0,lastStop.stopId.length - 1)
-            arrivalsArray.push({"line":message.tripUpdate.trip.routeId, "destination":getDestinationName(lastStopId), "seconds":arrivalTimeSeconds, "direction":direction })
+            arrivalsArray.push({"line":message.tripUpdate.trip.routeId, "destination":getStationName(lastStopId), "seconds":arrivalTimeSeconds, "direction":direction })
         }
     }
     return arrivalsArray
@@ -268,7 +263,7 @@ function getArrivalsForGtfsStopId(gtfsStopId) {
 function populateLinesForBorough(borough) {
     var selectElement = document.getElementById("subway-lines")
     var lines = []
-    stations.forEach(station => {
+    STATIONS.forEach(station => {
         if (station.borough == borough) {
             station.daytime_routes.forEach(route => {
                 if (!lines.includes(route)) {
@@ -296,7 +291,7 @@ function populateLinesForBorough(borough) {
 function populateStationsForBoroughLine(borough, line) {
     var selectElement = document.getElementById("subway-stations")
     selectElement.innerHTML = ""
-    stations.forEach(station => {
+    STATIONS.forEach(station => {
         if (station.borough == borough && station.daytime_routes.includes(line)) {
             selectElement.innerHTML += `<option value="${station.gtfs_stop_id}">${station.stop_name}</option>`
         }
