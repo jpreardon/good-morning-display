@@ -6,6 +6,10 @@ For this version 2 of the Good Morning display, I'm currently targeting a Raspbe
 
 ## Notes
 
+### 2021-05-29
+
+MTA status updates have been failing for at least a week. It appears that the format of the alerts feed was changed slightly. The statusDetails was always populated with something originally, but now it only contains information when there is some sort of alert, otherwise it's null.
+
 ### 2021-03-07
 
 Doing a little cleanup work today. Documenting the functions that aren't documented.

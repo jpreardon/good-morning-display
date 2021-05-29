@@ -50,20 +50,22 @@ function getAlerts(gtfsStopId) {
 
         lines.forEach(line => {
             var routeStatusDetails = routeDetails.find(detail => detail.route == line).statusDetails
-            routeStatusDetails.forEach(statusDetail => {
-                if (statusDetail.statusSummary == "Planned Work" || statusDetail.statusSummary == "Delays") {
-                    if (statusDetail.direction == 0) {
-                        if (!serviceAlerts["north"].summaries.includes(statusDetail.statusSummary)) {
-                            serviceAlerts.north.summaries.push(statusDetail.statusSummary)
+            // statusDetails is empty when there is no planned work or delays
+            if (routeStatusDetails != null) {
+                routeStatusDetails.forEach(statusDetail => {
+                    if (statusDetail.statusSummary == "Planned Work" || statusDetail.statusSummary == "Delays") {
+                        if (statusDetail.direction == 0) {
+                            if (!serviceAlerts["north"].summaries.includes(statusDetail.statusSummary)) {
+                                serviceAlerts.north.summaries.push(statusDetail.statusSummary)
+                            }
+                        } else if (statusDetail.direction == 1) {
+                            if (!serviceAlerts["south"].summaries.includes(statusDetail.statusSummary)) {
+                                serviceAlerts.south.summaries.push(statusDetail.statusSummary)
+                            }
                         }
-                    } else if (statusDetail.direction == 1) {
-                        if (!serviceAlerts["south"].summaries.includes(statusDetail.statusSummary)) {
-                            serviceAlerts.south.summaries.push(statusDetail.statusSummary)
-                        }
-                    }
-                } 
-            })
-            
+                    } 
+                })
+            }
         })
         return serviceAlerts
     })
