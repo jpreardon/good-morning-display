@@ -10,12 +10,12 @@ To get subway information, you'll need a (free) [API key from the MTA](https://n
 
 Copy the following to an HTTP server somewhere:
 
-📁 images
-📁 javascript
-📁 styles
-📄 index.html
-📄 settings.html
-📄 manifest.json
+- 📁 images
+- 📁 javascript
+- 📁 styles
+- 📄 index.html
+- 📄 settings.html
+- 📄 manifest.json
 
 Open settings.html and enter your local information.
 
