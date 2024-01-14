@@ -2,9 +2,19 @@
 
 ## Summary
 
-For this version 2 of the Good Morning display, I'm currently targeting a Raspberry Pi touch display. It's overkill for simple stuff, but one day, I might want to get more advanced. It would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
+**Note: Version 2.0.3 will most likely be the last release of V2. V3 is in the works!**
+
+This is version 2 of the Good Morning display. It targets a Raspberry Pi touch display--overkill for simple stuff, but one day, I might want to get more advanced. For example, it would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
 
 ## Notes
+
+### 2024-01-14
+
+This project hasn't seen any work in almost 3 years. I also haven't really been using it. I looked at it a couple times over the last year or so, while the weather and Citibike information still worked, the MTA status was failing. Today I actually looked into why it wasn't working. Turns out, it was just that the developer API key expired. I created a new key, plugged it in, and it worked! Surprising!
+
+Lately, I've been thinking about updating this project. More about that here: [Thoughts on the Good Morning Display](https://jpreardon.com/2024/01/14/thoughts-on-the-good-morning-display/).
+
+I'm going to make a 2.0.3 release today. This will likely be the last one on the 2.0 line. Future work will be version 3. The release today is whatever has been committed since the last release since it has been running fine for quite some time now.
 
 ### 2021-05-29
 

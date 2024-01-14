@@ -1,8 +1,10 @@
 # Good Morning Display
 
+**Note: Version 2.0.3 will most likely be the last release of V2. V3 is in the works!**
+
 This is simple display that shows weather and real-time NYC transit information (Subway and Citibike).
 
-Version 2 is currently in progress here, see my ongoing notes in the [worklog](WORKLOG.md).
+More detailed notes for this and prior versions are in the [worklog](WORKLOG.md).
 
 To get subway information, you'll need a (free) [API key from the MTA](https://new.mta.info/developers).
 
@@ -23,4 +25,4 @@ Open settings.html and enter your local information.
 
 ![good morning display screenshot](docs/screenshot.png)
 
-Copyright (c) 2013-21 John P. Reardon Licensed under the MIT license.
+Copyright (c) 2013-24 John P. Reardon Licensed under the MIT license.
