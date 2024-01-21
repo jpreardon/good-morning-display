@@ -8,6 +8,24 @@ This is version 2 of the Good Morning display. It targets a Raspberry Pi touch d
 
 ## Notes
 
+Interesting links
+
+- [Arduino MTA sign](https://github.com/boscacci/Arduino-Subway-Clock)
+- [MTA API](https://github.com/jonthornton/MTAPI) Flask app that converts GTFS to JSON, does caching. Might be good if one wanted to create a "make your own" departure sign.
+- [Raspi Display](https://github.com/lightalan/subwayclock/wiki) includes some info about turning the display on and off
+- [Interesting Reddit thread](https://www.reddit.com/r/nyc/comments/cpkh1h/moved_to_the_nexus_of_queens_subway_stations_and/)
+- HDMI-CEC lets the Pi control the TV over HDMI and turn it on and off when needed from [Tom's 3D](https://toms3d.org/2019/09/19/building-a-digital-dashboard/)
+- [Dakboard](https://dakboard.com/site) seems to be a popular dashboard thing
+- [IR Touchscreen](https://smartbuilds.io/smart-mirror-touchscreen-raspberry-pi/)!
+
+### 2024-01-20
+
+Getting started on V3...
+
+- Spent some quality time looking for some inspiration for the UI. Found some great stuff. There's a PDF in the docs directory with a bunch of images. Also added a bunch of links above.
+- Learned a new term: "Family Command Center" There are some pretty impressive ones.
+
+
 ### 2024-01-14
 
 This project hasn't seen any work in almost 3 years. I also haven't really been using it. I looked at it a couple times over the last year or so, while the weather and Citibike information still worked, the MTA status was failing. Today I actually looked into why it wasn't working. Turns out, it was just that the developer API key expired. I created a new key, plugged it in, and it worked! Surprising!
