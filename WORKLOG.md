@@ -2,9 +2,7 @@
 
 ## Summary
 
-**Note: Version 2.0.3 will most likely be the last release of V2. V3 is in the works!**
-
-This is version 2 of the Good Morning display. It targets a Raspberry Pi touch display--overkill for simple stuff, but one day, I might want to get more advanced. For example, it would be great if this thing turned itself on and off either based on time of day, or if anyone is standing in front of it, or both.
+This is version 3 of the Good Morning display--a work in progress.
 
 ## Notes
 
@@ -18,13 +16,18 @@ Interesting links
 - [Dakboard](https://dakboard.com/site) seems to be a popular dashboard thing
 - [IR Touchscreen](https://smartbuilds.io/smart-mirror-touchscreen-raspberry-pi/)!
 
+### 2023-01-21
+
+- Did some housekeeping in the docs directory to separate versions.
+- Looked into why the v2 version doesn't work on an old iPad. Suspected it was lack of support for promises, but that doesn't look to be the problem. I'm going to put that issue to the side for now, I can figure it out later. Will concentrate on the design.
+
 ### 2024-01-20
 
 Getting started on V3...
 
-- Spent some quality time looking for some inspiration for the UI. Found some great stuff. There's a PDF in the docs directory with a bunch of images. Also added a bunch of links above.
+- Spent some quality time looking for some inspiration for the UI. Found some great stuff. There's a PDF in the docs directory with a lot of images. Also added several links above that might be useful later in the project.
 - Learned a new term: "Family Command Center" There are some pretty impressive ones.
-
+- Found out that the current 2x version doesn't run on an old iPad.
 
 ### 2024-01-14
 

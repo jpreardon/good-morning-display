@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Test Pattern</title>
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                font-family: sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0;
+                height: 100vh;
+            }
+        </style>
+    </head>
+    <body>
+        <p>TEST</p>
+        <p id="output"></p>
+        <script>
+            if(typeof Promise !== "undefined" && Promise.toString().indexOf("[native code]") !== -1){
+                document.getElementById("output").innerHTML = "promises, promises"
+            } else {
+                document.getElementById("output").innerHTML = "no promises"
+            }
+        </script>
+    </body>
+</html>
