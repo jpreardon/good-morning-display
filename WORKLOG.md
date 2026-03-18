@@ -9,12 +9,22 @@ This is version 3 of the Good Morning display--a work in progress.
 Interesting links
 
 - [Arduino MTA sign](https://github.com/boscacci/Arduino-Subway-Clock)
-- [MTA API](https://github.com/jonthornton/MTAPI) Flask app that converts GTFS to JSON, does caching. Might be good if one wanted to create a "make your own" departure sign.
+- [MTAPI](https://github.com/jonthornton/MTAPI) Flask app that converts GTFS to JSON, does caching. Might be good if one wanted to create a "make your own" departure sign.
 - [Raspi Display](https://github.com/lightalan/subwayclock/wiki) includes some info about turning the display on and off
 - [Interesting Reddit thread](https://www.reddit.com/r/nyc/comments/cpkh1h/moved_to_the_nexus_of_queens_subway_stations_and/)
 - HDMI-CEC lets the Pi control the TV over HDMI and turn it on and off when needed from [Tom's 3D](https://toms3d.org/2019/09/19/building-a-digital-dashboard/)
 - [Dakboard](https://dakboard.com/site) seems to be a popular dashboard thing
 - [IR Touchscreen](https://smartbuilds.io/smart-mirror-touchscreen-raspberry-pi/)!
+
+Resources
+
+- [MTA Stations Data](https://data.ny.gov/Transportation/MTA-Subway-Stations/39hk-dx4f/about_data)
+
+### 2026-01-03
+
+Just about three years later, and I'm back at it! I messed around a bit with MTAPI, I think that's better than the current javascri pt implementation. I have a PR to add the service alerts to it. I also added the destination names to my local branch, I might make a PR for that as well.
+
+I was looking into how to add direction labels to MTAPI. I had to do some digging to come up with this stations information [that had been moved to the NYS Open Data site](https://groups.google.com/g/mtadeveloperresources/c/0J07edOWH-Q?pli=1). That can come down as JSON. So it should get used for sure.
 
 ### 2023-01-21
 
