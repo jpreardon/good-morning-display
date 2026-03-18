@@ -25,4 +25,4 @@ Open settings.html and enter your local information.
 
 ![good morning display screenshot](docs/screenshot.png)
 
-Copyright (c) 2013-24 John P. Reardon Licensed under the MIT license.
+Copyright (c) 2013-26 John P. Reardon Licensed under the MIT license.
